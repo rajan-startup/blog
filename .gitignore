@@ -1,6 +1,5 @@
-*.class
-
-# Package Files #
-*.jar
-*.war
-*.ear
+/.classpath
+/.externalToolBuilders
+/.project
+/.settings
+/target
