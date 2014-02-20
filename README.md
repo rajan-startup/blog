@@ -30,4 +30,4 @@ b. Google App Engine > ORM > give exact path of entity class and class package -
 [5] mvn install
 [6] mvn gae:debug
 
-C:\XXXXX\maven.repo\rdhabalia\gae\com\google\appengine\appengine-java-sdk\1.8.9\appengine-java-sdk-1.8.9\bin\appcfg.cmd --enable_jar_splitting update target\spring-gae-jdo-1-SNAPSHOT\
+C:\XXXXX\maven.repo\XXXXX\gae\com\google\appengine\appengine-java-sdk\1.8.9\appengine-java-sdk-1.8.9\bin\appcfg.cmd --enable_jar_splitting update target\spring-gae-jdo-1-SNAPSHOT\
