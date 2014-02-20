@@ -1,7 +1,6 @@
 package com.blog.controller;
 
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -17,6 +16,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.blog.constant.BlogConstants;
 import com.blog.entity.BlogDao;
 import com.blog.entity.Topic;
+import com.google.appengine.api.datastore.Text;
 
 
 @RequestMapping("/blog/")
@@ -25,6 +25,7 @@ public class BlogController {
 	private final BlogDao BlogDao;
 	
 	private static final String DELIMITER = "$";
+	private static final String TOPIC_DIR = "doc";
 	
 	private static boolean inIt = false;
 	
@@ -59,15 +60,10 @@ public class BlogController {
 	}
 
 	@RequestMapping(value = "/postTopics", method = RequestMethod.POST)
-	public View sign(@RequestParam("content") final String content,@RequestParam("id") final long id) {
+	public View sign(@RequestParam("content") final String content,@RequestParam("id") final long id,@RequestParam("title") final String title) {
 		StringTokenizer st = new StringTokenizer(content, DELIMITER);
 		
-		List<String> list = new ArrayList<String>();
-		while(st.hasMoreElements()){
-			list.add(st.nextToken());
-		}
-		
-		Topic topic = new Topic(id,list);
+		Topic topic = new Topic(id,title,new Text(content));
 		BlogDao.store(topic);
 
 		return new RedirectView("/blog/", true, true, false);
@@ -75,17 +71,32 @@ public class BlogController {
 	
 	private void init() {
 		
-		long id = 1;
+		List<Topic> topics = FileHandler.getInstance().getAllTopics(TOPIC_DIR);
+		
+		if(topics!=null && !topics.isEmpty()){
+			for(Topic topic : topics){
+				BlogDao.store(topic);
+			}
+		}
+		
+		
+	}
+	
+	private void initTest() {
+		
 //		Topic topic = BlogDao.getTopic(id);
 		List<Topic> topic = BlogDao.getAll();
 		if(topic==null || topic.isEmpty()){
 			
-			List<String> content = new ArrayList<String>();
-			content.add("H1"+BlogConstants.TOPIC_TAG_DELIMITER+"Header"+BlogConstants.TOPIC_DELIMITER);
-			content.add("H4"+BlogConstants.TOPIC_TAG_DELIMITER+"Test"+BlogConstants.TOPIC_DELIMITER);
-			content.add("IMG"+BlogConstants.TOPIC_TAG_DELIMITER+"http://www.w3schools.com/tags/smiley.gif"+BlogConstants.TOPIC_DELIMITER);
+			StringBuilder content = new StringBuilder();
+			content.append("H1"+BlogConstants.TOPIC_TAG_DELIMITER+"Header"+BlogConstants.TOPIC_DELIMITER);
+			content.append("H4"+BlogConstants.TOPIC_TAG_DELIMITER+"Test"+BlogConstants.TOPIC_DELIMITER);
+			content.append("IMG"+BlogConstants.TOPIC_TAG_DELIMITER+"http://www.w3schools.com/tags/smiley.gif"+BlogConstants.TOPIC_DELIMITER);
 			
-			Topic newTopic = new Topic(1,content);
+			Topic newTopic = new Topic(1,"git",new Text(content.toString()));
+			
+			List<Topic> topics = FileHandler.getInstance().getAllTopics("doc");
+			
 			BlogDao.store(newTopic);
 			
 		}

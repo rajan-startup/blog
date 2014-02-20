@@ -14,6 +14,7 @@
 		<include path="/js/*" />
 		<include path="/images/*" />
 		<include path="/css/*" />
+		<include path="/doc/*" />
 	</static-files>
 	
 	

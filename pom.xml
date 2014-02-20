@@ -444,6 +444,7 @@ warSrcDirIsOutput=true]]>
 			<version>${gae.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
+<!-- 			<scope>provided</scope>  -->
 		</dependency>
 		<dependency>
 			<groupId>com.google.appengine</groupId>
@@ -566,10 +567,11 @@ warSrcDirIsOutput=true]]>
 	<properties>
 		<maven.executable>mvn</maven.executable>
 		 <gae.home>C:\googleappEngine\appengine-java-sdk-1.8.9</gae.home>
-		<gaeApplicationName>library-to-office</gaeApplicationName>
+<!-- 		<gae.home>C:\googleappEngine\appengine-java-sdk-1.6.4</gae.home> -->
+<!-- 		<gaeApplicationName>library-to-office</gaeApplicationName> -->
 		<gae.wait>true</gae.wait>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	<!--	<gae.version>1.6.4</gae.version> -->
+<!-- 		<gae.version>1.6.4</gae.version> -->
 		<gae.version>1.8.9</gae.version> 
 		<spring.version>3.1.0.RELEASE</spring.version>
 		<datanucleus.version>1.1.5</datanucleus.version>

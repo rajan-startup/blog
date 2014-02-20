@@ -22,3 +22,12 @@ Ans: Datanucleus is not getting enhannced due to two reason: solutions:
 2.
 a. maven > disable nature -> cmd: mvn eclipse:eclipse -> convert maven project 
 b. Google App Engine > ORM > give exact path of entity class and class package -> mvn clean install -> mvn gae:debug
+
+[1] check jdk = 1.7
+[2] properties : Google > ORM > set all classes and packages as an entity
+[3] mvn clean
+[4] Build project 
+[5] mvn install
+[6] mvn gae:debug
+
+C:\rdhabalia\maven.repo\rdhabalia\gae\com\google\appengine\appengine-java-sdk\1.8.9\appengine-java-sdk-1.8.9\bin\appcfg.cmd --enable_jar_splitting update target\spring-gae-jdo-1-SNAPSHOT\

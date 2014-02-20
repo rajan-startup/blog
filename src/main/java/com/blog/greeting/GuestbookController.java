@@ -31,7 +31,7 @@ public class GuestbookController {
 	public String read(Model model) {
 		System.out.println("I am in get method");
 		List<Greeting> greetings = guestbookDao.getAll();
-		model.addAttribute("greetings", greetings);
+//		model.addAttribute("greetings", greetings);
 		return "index";
 	}
 
