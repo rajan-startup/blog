@@ -132,8 +132,8 @@
 						</div>
 					</div>
 					<footer>
-						<p>I can also forward my resume to people who are already part of big software giants.</p>
-						<a href="#contact" class="button button-big">Forward my resume.</a>
+						<p>I also want to contribute in this mission.</p>
+						<a href="#contact" class="button button-big">Please provide feedback.</a>
 					</footer>
 				</article>
 			</div>
@@ -142,8 +142,8 @@
 			<div class="wrapper wrapper-style4">
 				<article id="contact" class="container small">
 					<header>
-						<h2>Want to find out best suitable job?</h2>
-						<span>Please attach your resume and write your brief description.</span>
+						<h2>Want to provide feedback?</h2>
+						<span>Please send email with your feedback.</span>
 					</header>
 					<div>
 						<div class="row">

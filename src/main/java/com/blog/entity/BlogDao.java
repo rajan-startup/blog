@@ -9,5 +9,5 @@ public interface BlogDao {
 
 	List<Topic> getAll();
 	
-	Topic getTopic(long id);
+	List<Topic> getTopic(long id);
 }

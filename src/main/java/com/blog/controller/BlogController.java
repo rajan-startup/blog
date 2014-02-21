@@ -7,6 +7,7 @@ import java.util.StringTokenizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,10 +17,11 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.blog.constant.BlogConstants;
 import com.blog.entity.BlogDao;
 import com.blog.entity.Topic;
+import com.blog.model.Index;
 import com.google.appengine.api.datastore.Text;
 
 
-@RequestMapping("/blog/")
+@RequestMapping("/blog")
 @Controller
 public class BlogController {
 	private final BlogDao BlogDao;
@@ -44,21 +46,27 @@ public class BlogController {
 			inIt = true;
 		}
 		
-		List<Topic> topics = BlogDao.getAll();
+		Index index = FileHandler.getInstance().getIndex(TOPIC_DIR);
+		
+		/*List<Topic> topics = BlogDao.getAll();
+		model.addAttribute("topics", topics);*/
+		model.addAttribute("index", index);
+		return "blog";
+	}
+	
+	
+
+	@RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
+	public String read(Model model,@PathVariable final Long id) {
+		System.out.println("I am in get method");
+		List<Topic> topics = BlogDao.getTopic(id);
 		model.addAttribute("topics", topics);
 		return "blog";
 	}
 	
 	
-
-	@RequestMapping(value = "id", method = RequestMethod.GET)
-	public String read(Model model,@RequestParam("id") final Long id) {
-		System.out.println("I am in get method");
-		Topic topic = BlogDao.getTopic(id);
-		model.addAttribute("topic", topic);
-		return "blog";
-	}
-
+	
+	
 	@RequestMapping(value = "/postTopics", method = RequestMethod.POST)
 	public View sign(@RequestParam("content") final String content,@RequestParam("id") final long id,@RequestParam("title") final String title) {
 		StringTokenizer st = new StringTokenizer(content, DELIMITER);

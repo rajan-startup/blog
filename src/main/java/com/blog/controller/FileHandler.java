@@ -1,17 +1,18 @@
 package com.blog.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import com.google.appengine.api.datastore.Text;
 
 import org.springframework.core.io.FileSystemResource;
 
 import com.blog.constant.BlogConstants;
 import com.blog.entity.Topic;
+import com.blog.model.Bullet;
+import com.blog.model.Index;
+import com.google.appengine.api.datastore.Text;
 
 public class FileHandler {
 
@@ -125,6 +126,36 @@ public class FileHandler {
 			
 		}
 		System.out.println(strs.length);
+	}
+
+	public Index getIndex(String topicDir) {
+		
+		List<String> fileNames = getFileNameList(topicDir);
+		
+		if(fileNames!=null && !fileNames.isEmpty()){
+			
+			Index index = new Index();
+			
+			for(String fileName : fileNames){
+				File file = new File(fileName);
+				String[] idStr = file.getName().split("-");
+				
+				try{
+					if(idStr.length>=2){
+						index.getBullets().add(new Bullet(idStr[0],idStr[1]));
+					}
+					
+				}catch(NumberFormatException e){
+					e.printStackTrace();
+				}
+				
+				
+			}
+			
+			return index;
+		}
+		
+		return null;
 	}
 	
 }

@@ -7,6 +7,8 @@
 <%@page import="java.sql.Date"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="com.blog.entity.Topic"%>
+<%@page import="com.blog.model.Index"%>
+<%@page import="com.blog.model.Bullet"%>
 <%@page import="com.blog.constant.BlogConstants"%>
 <%@page import="com.google.appengine.api.datastore.Text"%>
 
@@ -30,6 +32,15 @@
 			<link rel="stylesheet" href="../../css/style-desktop.css" />
 			<link rel="stylesheet" href="../../css/menu.css" />
 		</noscript>
+		<link href="http://alexgorbatchev.com/pub/sh/current/styles/shCore.css" rel="stylesheet" type="text/css"/>
+		<link href="http://alexgorbatchev.com/pub/sh/current/styles/shThemeDefault.css" rel="stylesheet" type="text/css"/>
+		<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js" type="text/javascript"></script>
+		<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushXml.js" type="text/javascript"></script>
+		<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJava.js" type="text/javascript"></script>
+		<script src="http://alexgorbatchev.com/pub/sh/current/scripts/shBrushJScript.js" type="text/javascript"></script>
+		<script language="javascript" type="text/javascript">
+		SyntaxHighlighter.all();
+		</script>
 		
 		<style type="text/css">
 		
@@ -105,10 +116,22 @@
 					<div >
 						
 						<div >
-							
-							
-							<%if (request.getAttribute("topics") != null) { 
-		List<Topic> leagues = (List<Topic>) request.getAttribute("topics"); %>
+		
+		<% if(request.getAttribute("index") != null) {
+			
+			Index index = (Index) request.getAttribute("index");
+			if(index.getBullets()!=null && !index.getBullets().isEmpty()){%>
+				<div id="list8">
+				<ul>
+				<%for(Bullet bullet : index.getBullets()){%>
+					<li><a href="/blog/id/<%=bullet.getId() %>">[<%= bullet.getId() %>] <%=bullet.getName() %></a></li>
+			  	<%}%>
+				</ul>
+				</div>
+			<%}%>
+		 <%}else if (request.getAttribute("topics") != null) { 
+			 
+			List<Topic> leagues = (List<Topic>) request.getAttribute("topics"); %>
 		
 		
 			<% for (Iterator it = leagues.iterator(); it.hasNext(); ) {
@@ -121,57 +144,83 @@
 				<p style="font-family:arial;color:black;font-size:20px;">
 				
 			    <% if(topic.getContent()!=null){
+			    	
+			    	String text = topic.getContent().getValue();
+			    	
+			    	String[] contents = text.split(BlogConstants.CODE_DELIMITER);
+			    	
+			    	for(String content : contents){
+			    		
+			    		if(content.trim().startsWith(BlogConstants.CODE_SNIPPET_START)){
+			    			
+			    			String[] codeSnippet = content.trim().split(BlogConstants.CODE_SNIPPET_START);%>
+  			    		
+			    			<pre class="brush: java;">
+			    			
+			    			<%for(int i=0;i<codeSnippet.length;i++){ %>
+			    				<%=codeSnippet[i] %>
+			    			<%} %>
+			    			</pre>	
+			    			
+			    		<%}else{
 
-						String content = topic.getContent().getValue();
-						
-						String[] lines = content.split(BlogConstants.TOPIC_DELIMITER);
-						
-						for(String line : lines){%>
-							
-						<%String[] tokens = line.split(BlogConstants.TOPIC_TAG_DELIMITER);
 
-						String token0 = tokens[0];
-						
-						if(tokens.length>1){
+							String[] lines = content.split(BlogConstants.TOPIC_DELIMITER);
 							
-							String token1 = tokens[1];
+							for(String line : lines){%>
+								
+								
+							<%String[] tokens = line.split(BlogConstants.TOPIC_TAG_DELIMITER);
+
+							String token0 = tokens[0];
 							
-							if(token0.equalsIgnoreCase("H1")){%>
-								<h1><%=token1 %></h1>
-							<%}else if(token0.equalsIgnoreCase("H2")){%>
-								<h2><%=token1 %></h2>
-							<%}else if(token0.equalsIgnoreCase("H3")){%>
-								<h3><%=token1 %></h3>
-							<%}else if(token0.equalsIgnoreCase("H4")){%>
-								<h4><%=token1 %></h4>
-							<%}else if(token0.equalsIgnoreCase("b")){%>
-								<%=token1 %><br/>
-							<%}else if(token0.equalsIgnoreCase("i")){%>
-								<i><%=token1 %></i>
-							<%}else if(token0.equalsIgnoreCase("p")){%>
-								<p><%=token1 %></p>
-							<%}else if(token0.equalsIgnoreCase("a")){%>
-								<a href="<%=token1 %>">
-								<% if(tokens.length>2){%> <%=tokens[2] %><%} %></a>
-							<%}else if(token0.equalsIgnoreCase("img")){%>
-								<img src="<%=token1 %>">
+							if(tokens.length>1){
+								
+								String token1 = tokens[1];
+								
+								if(token0.equalsIgnoreCase("H1")){%>
+									<h1><%=token1 %></h1>
+								<%}else if(token0.equalsIgnoreCase("H2")){%>
+									<h2><%=token1 %></h2>
+								<%}else if(token0.equalsIgnoreCase("H3")){%>
+									<h3><%=token1 %></h3>
+								<%}else if(token0.equalsIgnoreCase("H4")){%>
+									<h4><%=token1 %></h4>
+								<%}else if(token0.equalsIgnoreCase("b")){%>
+									<%=token1 %><br/>
+								<%}else if(token0.equalsIgnoreCase("i")){%>
+									<i><%=token1 %></i>
+								<%}else if(token0.equalsIgnoreCase("p")){%>
+									<p><%=token1 %></p>
+								<%}else if(token0.equalsIgnoreCase("a")){%>
+									<a href="<%=token1 %>">
+									<% if(tokens.length>2){%> <%=tokens[2] %><%} %></a>
+								<%}else if(token0.equalsIgnoreCase("img")){%>
+									<img src="<%=token1 %>">
+								<%}else{%>
+									<%=token1 %>
+								<%}%>
 							<%}else{%>
-								<%=token1 %>
+								<%=token0 %>
 							<%}%>
-						<%}else{%>
-							<%=token0 %>
-						<%}%>
-							
-							
-						<%}
-					 
-					}
+								
+								
+							<%}
+						 
+						
+			    		}
+			    		
+			    	}
+			    	
+			    	
+			    }
 					%>
-			  <%}
-	}%>
+			  <%}%>
+			</p>
+			<a href="#work" class="button button-big">Download Sample Project to start hands on it.</a>
+	<%}%>
 							
-							</p>
-							<a href="#work" class="button button-big">Download Sample Project to start hands on it.</a>
+							
 						</div>
 					</div>
 				</article>
