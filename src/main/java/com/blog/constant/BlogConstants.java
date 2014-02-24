@@ -18,5 +18,6 @@ public class BlogConstants {
 	
 	//File
 	public static final String FILE_NAME_KEY_VALUE_SEPARATOR = "-";
+	public static final String SCHOOL_DIR = "school";
 	
 }

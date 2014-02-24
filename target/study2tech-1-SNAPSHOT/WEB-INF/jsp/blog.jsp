@@ -60,7 +60,7 @@
 			    text-decoration: none;
 			    color: #fff;
 			    padding: 0px;
-				width: 100px;
+				width: 125px;
 			    display:inline-block;
 			}
 			ul#menu li ul.sub-menu li a {
@@ -179,10 +179,10 @@
 					<li><a href="/book/1@Core Java@">Core Java</a>
 							<ul class="sub-menu">
 				            <li>
-				                <a href="#">Data Structure</a>
+				                <a href="#">Collection</a>
 				            </li>
 				            <li>
-				                <a href="#">Logical</a>
+				                <a href="#">Thread</a>
 				            </li>
 				            <li>
 				                <a href="#">Miscellaneous</a>
@@ -190,13 +190,37 @@
 				           
 				        </ul>
 					</li>
-					<li><a href="/blog/">OSGi</a></li>
-					<li><a href="/blog/">Git</a></li>
-					<li><a href="/blog/">Spring</a></li>
+					<li><a href="/blog/">Data Structure</a></li>
+					<li><a href="/blog/">Logical</a></li>
+					<li><a href="/blog/">Design Pattern</a></li>
 				</ul>
 				
 				
-				<%} %>
+				<%}else if(type!= null && type.equalsIgnoreCase(BlogConstants.SCHOOL_DIR)){%>
+				
+				<ul class="container" id="menu">
+					<li><a href="/">Home</a></li>
+					<li><a href="/school/1@USC@">USC</a>
+							<ul class="sub-menu">
+				            <li>
+				                <a href="#">Computer Science</a>
+				            </li>
+				            <li>
+				                <a href="#">Software Engineering</a>
+				            </li>
+				            <li>
+				                <a href="#">Computer Engineering</a>
+				            </li>
+				           
+				        </ul>
+					</li>
+					<li><a href="/blog/">UC-Irvine</a></li>
+					<li><a href="/blog/">SJSU</a></li>
+					<li><a href="/blog/">UCT</a></li>
+				</ul>
+				
+				
+				<%}%> 
 			
 				
 			</nav>

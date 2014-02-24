@@ -1,8 +1,6 @@
 package com.blog.controller;
 
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,12 +26,13 @@ import com.blog.entity.Topic;
 import com.blog.model.Bullet;
 import com.blog.model.Index;
 import com.blog.model.SearchResult;
+import com.blog.model.SearchText;
 import com.google.appengine.api.datastore.Text;
 
 
-@RequestMapping("/blog")
+@RequestMapping("/school")
 @Controller
-public class BlogController {
+public class SchoolController {
 	private final BlogDao BlogDao;
 	private static boolean inIt = false;
 	private static final String metaFileName = "meta/blogMeta.txt";
@@ -39,7 +40,7 @@ public class BlogController {
 	
 	
 	@Autowired
-	public BlogController(final BlogDao BlogDao) {
+	public SchoolController(final BlogDao BlogDao) {
 		this.BlogDao = BlogDao;
 	}
 
@@ -51,9 +52,9 @@ public class BlogController {
 			inIt = true;
 		}
 		
-		Index index = FileHandler.getInstance().getIndex(BlogConstants.BLOG_TOPIC_DIR);
+		Index index = FileHandler.getInstance().getIndex(BlogConstants.SCHOOL_DIR);
 		model.addAttribute("index", index);
-		model.addAttribute("type", "blog");
+		model.addAttribute("type", "school");
 		return "blog";
 	}
 	
@@ -63,7 +64,7 @@ public class BlogController {
 	public String read(Model model,@PathVariable final String id) {
 		List<Topic> topics = BlogDao.getTopic(id);
 		model.addAttribute("topics", topics);
-		model.addAttribute("type", "blog");
+		model.addAttribute("type", "school");
 		return "blog";
 	}
 	
@@ -75,32 +76,20 @@ public class BlogController {
 		if(content!=null && !content.trim().isEmpty() && meta!=null && meta.getMeta()!=null && meta.getMeta().keySet()!=null){
 			
 			Index index = new Index();
-			Set<Bullet> bullets = new HashSet<Bullet>();
 			
 			for(String key : meta.getMeta().keySet()){
 				
-				String[] tokens = content.split(" ");
-				
-				for(String token: tokens){
+				if(meta.getMeta().get(key).contains(content)){
 					
-					if(!token.trim().isEmpty()){
-						
-						if(meta.getMeta().get(key).contains(token.trim())){
-							
-							String[] ids = key.split(BlogConstants.FILE_NAME_KEY_VALUE_SEPARATOR);
-							
-							if(ids!=null && ids.length==2)
-							
-								bullets.add(new Bullet(ids[0],ids[1]));
-							
-						}
-						
-					}
+					String[] ids = key.split(BlogConstants.FILE_NAME_KEY_VALUE_SEPARATOR);
+					
+					if(ids!=null && ids.length==2)
+					
+					index.getBullets().add(new Bullet(ids[0],ids[1]));
+					
 				}
 				
 			}
-			
-			index.getBullets().addAll(new ArrayList<Bullet>(bullets));
 			
 			model.addAttribute("index", index);
 			model.addAttribute("searchResult", content);
