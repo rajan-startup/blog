@@ -36,14 +36,13 @@ public class JdoBlogDao extends AbstractJdoDao implements BlogDao {
 	@Override
 	@Transactional
 	@SuppressWarnings("unchecked")
-	public List<Topic> getTopic(long id) {
+	public List<Topic> getTopic(String id) {
 		
 		Query q = getPersistenceManager().newQuery(Topic.class);
 		q.setFilter("id == idParameter");
-		q.declareParameters("long idParameter");
+		q.declareParameters("String idParameter");
 		
-		List<Topic> topics = (List<Topic>)  getPersistenceManager()
-				.newQuery(Topic.class).execute(id);
+		List<Topic> topics = (List<Topic>) q.execute(id);
 		
 		return topics;
 		

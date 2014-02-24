@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.javanto</groupId>
-	<artifactId>spring-gae-jdo</artifactId>
+	<artifactId>study2tech</artifactId>
 	<version>1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
@@ -568,7 +568,7 @@ warSrcDirIsOutput=true]]>
 		<maven.executable>mvn</maven.executable>
 		 <gae.home>C:\googleappEngine\appengine-java-sdk-1.8.9</gae.home>
 <!-- 		<gae.home>C:\googleappEngine\appengine-java-sdk-1.6.4</gae.home> -->
-<!-- 		<gaeApplicationName>library-to-office</gaeApplicationName> -->
+<!-- 		<gaeApplicationName>study2tech</gaeApplicationName> -->
 		<gae.wait>true</gae.wait>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 <!-- 		<gae.version>1.6.4</gae.version> -->

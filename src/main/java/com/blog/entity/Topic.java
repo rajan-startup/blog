@@ -23,10 +23,10 @@ public class Topic {
 	private String title;
 	
 	@Persistent
-	private long id;
+	private String id;
 
 
-	public Topic(long id,String title,Text content) {
+	public Topic(String id,String title,Text content) {
 		this.id = id;
 		this.content = content;
 		this.title = title;
@@ -44,11 +44,11 @@ public class Topic {
 		this.content = content;
 	}
 
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

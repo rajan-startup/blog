@@ -23,6 +23,7 @@ Ans: Datanucleus is not getting enhannced due to two reason: solutions:
 a. maven > disable nature -> cmd: mvn eclipse:eclipse -> convert maven project 
 b. Google App Engine > ORM > give exact path of entity class and class package -> mvn clean install -> mvn gae:debug
 
+[0] run : mvn eclipse:eclipse -> to fetch datanucleus plugin for eclipse
 [1] check jdk = 1.7
 [2] properties : Google > ORM > set all classes and packages as an entity
 [3] mvn clean

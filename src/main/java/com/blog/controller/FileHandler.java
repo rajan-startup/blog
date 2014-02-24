@@ -4,7 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.springframework.core.io.FileSystemResource;
 
@@ -38,7 +43,7 @@ public class FileHandler {
 				Text text = new Text(content);
 				
 				try{
-					Topic topic = new Topic(Integer.parseInt(idStr[0].trim()),idStr[1].trim(),text);
+					Topic topic = new Topic(idStr[0].trim(),idStr[1].trim(),text);
 					topics.add(topic);
 				}catch(NumberFormatException e){
 					e.printStackTrace();
@@ -109,24 +114,7 @@ public class FileHandler {
 		return null;
 	}
 
-	public static void main(String[] args){
-		
-		FileHandler handler = new FileHandler();
-		String dir = "src/main/webapp/doc/";
-//		handler.getAllTopics(dir);
-		
-		String str = handler.readFileText(dir+"1-git.txt");
-		
-		String[] strs = str.split(BlogConstants.TOPIC_DELIMITER);
-		for(String tag: strs){
-			
-			String[] tokens = tag.split("#@");
-			System.out.println(tokens.length);
-			
-			
-		}
-		System.out.println(strs.length);
-	}
+
 
 	public Index getIndex(String topicDir) {
 		
@@ -157,5 +145,79 @@ public class FileHandler {
 		
 		return null;
 	}
+	
+	
+	public Map<String,Set<String>> getMeta(String fileName) {
+		
+		Map<String,Set<String>> metaMap = new HashMap<String,Set<String>>();
+		String content = readFileText(fileName);
+		
+		if(content!=null){
+			
+			String[] metas = content.split(BlogConstants.LINE_DELIMITER);
+			
+			if(metas!=null){
+				
+				for(String meta : metas){
+					
+					String[] topicMeta = meta.split(":");
+					
+					if(topicMeta!=null && topicMeta.length==2){
+						
+						StringTokenizer st = new StringTokenizer(topicMeta[1],";");
+						
+						Set<String> metaTagSet = new HashSet<String>();
+						metaMap.put(topicMeta[0], metaTagSet);
+						
+						while(st.hasMoreElements()){
+							metaTagSet.add(st.nextToken().trim());
+						}
+						
+					}
+					
+				}
+			}
+		}
+		
+		return metaMap;
+	}
+
+	
+	
+	
+	
+	
+	
+	
+	/************************** Helper method **************/
+	
+	public static void main(String[] args){
+		
+		FileHandler handler = new FileHandler();
+//		handler.testBlogFiles();
+		handler.getMeta("C:/startup/code/2_9/blog/src/main/webapp/meta/meta.txt");
+		
+	}
+	
+	private void testBlogFiles() {
+		
+		FileHandler handler = new FileHandler();
+		String dir = "src/main/webapp/doc/";
+//		handler.getAllTopics(dir);
+		
+		String str = handler.readFileText(dir+"1-git.txt");
+		
+		String[] strs = str.split(BlogConstants.TOPIC_DELIMITER);
+		for(String tag: strs){
+			
+			String[] tokens = tag.split("#@");
+			System.out.println(tokens.length);
+			
+			
+		}
+		System.out.println(strs.length);
+		
+	}
+	
 	
 }
