@@ -137,6 +137,12 @@
 			    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(0, 0, 0, 0.9) inset;
 			    text-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 			    }
+			 .callout { 
+				color: #616263;padding: 1em 2em; border: 1px dashed #BBB; background: #FAFAFA; border-radius: 3px; 
+					width: 1438px;
+				    padding: 0px;
+				    margin: 0px;
+				}
 		
 		</style>
 	
@@ -310,7 +316,7 @@
 			    	
 			    	String text = topic.getContent().getValue();
 			    	
-			    	String[] contents = text.split(BlogConstants.CODE_DELIMITER);
+			    	String[] contents = text.split(BlogConstants.CODE_DELIMITER+"|"+BlogConstants.BOX_DELIMITER);
 			    	
 			    	for(String content : contents){
 			    		
@@ -324,6 +330,23 @@
 			    				<%=codeSnippet[i] %>
 			    			<%} %>
 			    			</pre>	
+			    			
+			    		<%}else if(content.trim().startsWith(BlogConstants.BOX_CONTENT_START)){
+
+			    			String[] boxContent = content.trim().split(BlogConstants.BOX_CONTENT_START);%>
+	  			    		
+			    			<div class="callout">
+			    			<%for(int i=0;i<boxContent.length;i++){ %>
+			    				<%if(!boxContent[i].trim().isEmpty()){
+			    					String boxText = boxContent[i].replaceAll("\t| ", "&nbsp"); 
+			    					boxText = boxText.trim().replaceAll("\r\n|\n\r", "<br/>");
+			    					boxText = boxText.replaceAll("\r|\n", "<br/>");
+			    					
+			    				%>
+			    					<%=boxText %>
+			    				 <%}%>
+			    			<%} %>
+			    			</div>	
 			    			
 			    		<%}else{
 
@@ -364,21 +387,17 @@
 								<%}else if(token0.equalsIgnoreCase("img")){%>
 									<img src="<%=token1 %>">
 								<%}else{%>
-									<p style="font-family:arial;color:black;font-size:20px;"><%=token1 %></p>
+									<p style="font-family:arial;color:black;font-size:20px;"><%=token1.replaceAll("\t| ", "&nbsp") %></p>
 								<%}%>
 							<%}else{%>
-								<%=token0 %>
+								<% if(token0!=null && !token0.trim().isEmpty()){%><br/>
+								<% String tokenText = token0.replaceAll("\t| ", "&nbsp"); %>
+								<%=tokenText%>
+								<%}%>
 							<%}%>
-								
-								
 							<%}
-						 
-						
 			    		}
-			    		
 			    	}
-			    	
-			    	
 			    }
 					%>
 			  <%}%>

@@ -195,7 +195,10 @@ public class FileHandler {
 		
 		FileHandler handler = new FileHandler();
 //		handler.testBlogFiles();
-		handler.getMeta("C:/startup/code/2_9/blog/src/main/webapp/meta/meta.txt");
+//		handler.getMeta("C:/startup/code/2_9/blog/src/main/webapp/meta/meta.txt");
+		String  str = "\trajan\t\n";
+		System.out.println(str.replaceAll("\t|\n","RAJ"));
+		
 		
 	}
 	

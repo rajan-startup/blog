@@ -105,7 +105,7 @@
 								<article class="box box-style2">
 									<a href="/blog/" class="image image-full"><img src="images/portfolio01.jpg" alt="" /></a>
 									<h3><a href="/blog/">Learn technologies</a></h3>
-									<p>Learn and hands on with new technologies1.</p>
+									<p>Learn and hands on with new technologies.</p>
 								</article>
 							</div>
 							<div class="4u">
