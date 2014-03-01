@@ -28,6 +28,11 @@ public class GuestbookController {
 //		model.addAttribute("greetings", greetings);
 		return "index";
 	}
+	
+	@RequestMapping(value = "/construction", method = RequestMethod.GET)
+	public String construction(Model model) {
+		return "construction";
+	}
 
 	
 }

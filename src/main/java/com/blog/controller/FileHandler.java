@@ -116,7 +116,7 @@ public class FileHandler {
 
 
 
-	public Index getIndex(String topicDir) {
+	public Index getIndex(String type,String topicDir) {
 		
 		List<String> fileNames = getFileNameList(topicDir);
 		
@@ -130,7 +130,7 @@ public class FileHandler {
 				
 				try{
 					if(idStr.length>=2){
-						index.getBullets().add(new Bullet(idStr[0],idStr[1]));
+						index.getBullets().add(new Bullet(type,idStr[0],idStr[1]));
 					}
 					
 				}catch(NumberFormatException e){

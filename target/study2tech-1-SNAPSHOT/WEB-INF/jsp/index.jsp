@@ -124,6 +124,18 @@
 							</div>
 						</div>
 						<div class="row">
+							<div class="4u">
+								
+							</div>
+							<div class="4u">
+								<article class="box box-style2">
+									<a href="/community/" class="image image-full"><img src="images/dev-community.jpg" alt="" /></a>
+									<h3><a href="/community/">Join Developer community</a></h3>
+									<p>Share innovation: Find people and organize huddle.</p>
+								</article>
+							</div>
+						</div>
+						<div class="row">
 							
 							
 							<div class="4u">

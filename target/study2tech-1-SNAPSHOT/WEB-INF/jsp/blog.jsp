@@ -47,6 +47,15 @@
 		
 		<style type="text/css">
 		
+			body {color:black;}
+			
+			h1, h2, h3, h4 {
+				margin-top: 15px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				padding:0;
+			}
+		
 			ul#menu, ul#menu ul.sub-menu {
 			   margin-left: auto;
 				margin-right: auto;
@@ -60,7 +69,7 @@
 			    text-decoration: none;
 			    color: #fff;
 			    padding: 0px;
-				width: 125px;
+				width: 145px;
 			    display:inline-block;
 			}
 			ul#menu li ul.sub-menu li a {
@@ -83,6 +92,11 @@
 			}
 			ul#menu li:hover ul.sub-menu {
 			    display:block;
+			}
+		
+			table,th,td
+			{
+				border:4px solid gray;
 			}
 		
 			.wrapper
@@ -139,7 +153,7 @@
 			    }
 			 .callout { 
 				color: #616263;padding: 1em 2em; border: 1px dashed #BBB; background: #FAFAFA; border-radius: 3px; 
-					width: 1438px;
+					width: 1138px;
 				    padding: 0px;
 				    margin: 0px;
 				}
@@ -150,14 +164,15 @@
 <body>
 			<nav id="nav">
 			
-			<% 
-				String type = request.getAttribute("type")!=null ? request.getAttribute("type").toString() : null;
-			
-				if(type!= null && type.equalsIgnoreCase(BlogConstants.BLOG_TOPIC_DIR)) {%>
+			<%
+							String type = request.getAttribute("type")!=null ? request.getAttribute("type").toString() : null;
+							
+								if(type!= null && type.equalsIgnoreCase(BlogConstants.BLOG)) {
+						%>
 				
 				<ul class="container" id="menu">
 					<li><a href="/">Home</a></li>
-					<li><a href="/blog/">Hadoop</a>
+					<li><a href="/blog/id/2@BLOG@">Hadoop</a>
 							<ul class="sub-menu">
 				            <li>
 				                <a href="#">Map Reduce</a>
@@ -174,35 +189,39 @@
 				        </ul>
 					</li>
 					<li><a href="/blog/">OSGi</a></li>
-					<li><a href="/blog/1@git@">Git</a></li>
+					<li><a href="/blog/id/1@git@">Git</a></li>
 					<li><a href="/blog/">Spring</a></li>
 				</ul>
 				
-				<%}else if(type!= null && type.equalsIgnoreCase(BlogConstants.BOOK_TOPIC_DIR)){%>
+				<%
+									}else if(type!= null && type.equalsIgnoreCase(BlogConstants.BOOK)){
+								%>
 				
 				<ul class="container" id="menu">
 					<li><a href="/">Home</a></li>
-					<li><a href="/book/1@Core Java@">Core Java</a>
+					<li><a href="/book/id/1@Core Java@">Architecture Prb</a>
 							<ul class="sub-menu">
 				            <li>
-				                <a href="#">Collection</a>
+				                <a href="#">Scalability</a>
 				            </li>
 				            <li>
-				                <a href="#">Thread</a>
+				                <a href="#">Performance</a>
 				            </li>
 				            <li>
-				                <a href="#">Miscellaneous</a>
+				                <a href="#">Security</a>
 				            </li>
 				           
 				        </ul>
 					</li>
 					<li><a href="/blog/">Data Structure</a></li>
-					<li><a href="/blog/">Logical</a></li>
+					<li><a href="/blog/">Core Java</a></li>
 					<li><a href="/blog/">Design Pattern</a></li>
 				</ul>
 				
 				
-				<%}else if(type!= null && type.equalsIgnoreCase(BlogConstants.SCHOOL_DIR)){%>
+				<%
+													}else if(type!= null && type.equalsIgnoreCase(BlogConstants.SCHOOL)){
+												%>
 				
 				<ul class="container" id="menu">
 					<li><a href="/">Home</a></li>
@@ -226,6 +245,13 @@
 				</ul>
 				
 				
+				<%}else if(type!= null && type.equalsIgnoreCase(BlogConstants.ME)){%>
+				
+				<ul class="container" id="menu">
+					<li><a href="/">Home</a></li>
+					<li><a href="#">Git projects</a></li>
+					<li><a href="#">Store Application</a></li>
+				</ul>
 				<%}%> 
 			
 				
@@ -277,7 +303,6 @@
 					<p style="font-family:arial;color:red;font-size:30px;"> No result found for:<%=result %> </p>
 				<%}
 			
-			
 			}%>
 				
 			<%if(request.getAttribute("index") != null) {
@@ -291,7 +316,7 @@
 					for(int i =0; i<index.getBullets().size();i++){
 						bullet = index.getBullets().get(i);
 					%>
-						<li><a href="/blog/id/<%=bullet.getId() %>">[<%= i+1 %>] <%=bullet.getName() %></a></li>
+						<li><a href="/<%=bullet.getType()%>/id/<%=bullet.getId() %>">[<%= i+1 %>] <%=bullet.getName() %></a></li>
 				  	<%}%>
 					</ul>
 					</div>
@@ -316,7 +341,7 @@
 			    	
 			    	String text = topic.getContent().getValue();
 			    	
-			    	String[] contents = text.split(BlogConstants.CODE_DELIMITER+"|"+BlogConstants.BOX_DELIMITER);
+			    	String[] contents = text.split(BlogConstants.CODE_DELIMITER+"|"+BlogConstants.BOX_DELIMITER+"|"+BlogConstants.TABLE_DELIMITER);
 			    	
 			    	for(String content : contents){
 			    		
@@ -324,12 +349,10 @@
 			    			
 			    			String[] codeSnippet = content.trim().split(BlogConstants.CODE_SNIPPET_START);%>
   			    		
-			    			<pre class="brush: java;">
-			    			
-			    			<%for(int i=0;i<codeSnippet.length;i++){ %>
-			    				<%=codeSnippet[i] %>
-			    			<%} %>
-			    			</pre>	
+			    			<pre class="brush: java;"><%for(int i=0;i<codeSnippet.length;i++){ 
+			    				if(!codeSnippet[i].trim().isEmpty()){
+			    				%><%=codeSnippet[i]%><%} %>
+			    			<%} %></pre>	
 			    			
 			    		<%}else if(content.trim().startsWith(BlogConstants.BOX_CONTENT_START)){
 
@@ -347,6 +370,32 @@
 			    				 <%}%>
 			    			<%} %>
 			    			</div>	
+			    			
+			    		<%}else if(content.trim().startsWith(BlogConstants.TABLE_CONTENT_START)){
+
+			    			String[] tableContent = content.trim().split(BlogConstants.TABLE_CONTENT_START+"|"+BlogConstants.TABLE_ROW);%>
+	  			    		
+			    			<table border="1" style="width:800px">
+			    			<%for(int i=0;i<tableContent.length;i++){ %>
+			    				<%if(!tableContent[i].trim().isEmpty()){%>
+			    					<tr>
+			    					
+			    					<%if(tableContent[i].trim().contains(BlogConstants.TABLE_HEADER)){String[] headers= tableContent[i].trim().split(BlogConstants.TABLE_HEADER);
+				    					for(int j=0;j<headers.length;j++){%>
+				    						<th style="background-color:#D8D8D8"><%=headers[j].trim() %></th>
+				    					<%}
+				    				}%>
+				    					
+			    					<%if(tableContent[i].trim().contains(BlogConstants.TABLE_COLUMN)){String[] columns= tableContent[i].trim().split(BlogConstants.TABLE_COLUMN);
+				    					for(int j=0;j<columns.length;j++){%>
+				    						<td><%=columns[j].trim() %></td>
+				    					<%}
+			    					
+			    					}%>
+			    					
+			    				 <%}%>
+			    			<%} %>
+			    			</table>
 			    			
 			    		<%}else{
 
@@ -379,6 +428,8 @@
 									<div style="font-family:arial;color:black;font-size:20px;"> <%=token1 %><br/></div>
 								<%}else if(token0.equalsIgnoreCase("i")){%>
 									<i><%=token1 %></i>
+								<%}else if(token0.equalsIgnoreCase("bo")){%>
+									<b style="font-family:arial;color:black;font-size:20px;"><%=token1 %></b>
 								<%}else if(token0.equalsIgnoreCase("p")){%>
 									<p style="font-family:arial;color:black;font-size:20px;"><%=token1 %></p>
 								<%}else if(token0.equalsIgnoreCase("a")){%>
@@ -390,7 +441,9 @@
 									<p style="font-family:arial;color:black;font-size:20px;"><%=token1.replaceAll("\t| ", "&nbsp") %></p>
 								<%}%>
 							<%}else{%>
-								<% if(token0!=null && !token0.trim().isEmpty()){%><br/>
+								<% if(token0!=null && token0.equalsIgnoreCase("b")){%>
+									</br/>									
+								<%}else if(token0!=null && !token0.trim().isEmpty()){%><br/>
 								<% String tokenText = token0.replaceAll("\t| ", "&nbsp"); %>
 								<%=tokenText%>
 								<%}%>
@@ -402,7 +455,10 @@
 					%>
 			  <%}%>
 			</p>
-	<%}%>
+	<%}if(type!= null && type.equalsIgnoreCase(BlogConstants.ME)){
+	%>
+	<img src="/images/me/1.png">
+	 <%} %>
 							
 							
 						</div>

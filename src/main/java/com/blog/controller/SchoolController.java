@@ -48,11 +48,11 @@ public class SchoolController {
 	public String read(Model model) {
 		
 		if(!inIt){
-			BlogRequestHandler.getInstance().initBlog(BlogDao,BlogConstants.BLOG_TOPIC_DIR);
+			BlogRequestHandler.getInstance().initBlog(BlogDao,BlogConstants.BLOG);
 			inIt = true;
 		}
 		
-		Index index = FileHandler.getInstance().getIndex(BlogConstants.SCHOOL_DIR);
+		Index index = FileHandler.getInstance().getIndex(BlogConstants.SCHOOL,BlogConstants.SCHOOL);
 		model.addAttribute("index", index);
 		model.addAttribute("type", "school");
 		return "blog";
@@ -85,7 +85,7 @@ public class SchoolController {
 					
 					if(ids!=null && ids.length==2)
 					
-					index.getBullets().add(new Bullet(ids[0],ids[1]));
+					index.getBullets().add(new Bullet(BlogConstants.SCHOOL,ids[0],ids[1]));
 					
 				}
 				
@@ -117,7 +117,7 @@ public class SchoolController {
 					
 					if(ids!=null && ids.length==2)
 					
-					index.getBullets().add(new Bullet(ids[0],ids[1]));
+					index.getBullets().add(new Bullet(BlogConstants.SCHOOL,ids[0],ids[1]));
 					
 				}
 				
@@ -146,7 +146,7 @@ public class SchoolController {
 	@RequestMapping(value = "/initDB", method = RequestMethod.GET)
 	public void init() {
 		
-		List<Topic> topics = FileHandler.getInstance().getAllTopics(BlogConstants.BLOG_TOPIC_DIR);
+		List<Topic> topics = FileHandler.getInstance().getAllTopics(BlogConstants.BLOG);
 		
 		if(topics!=null && !topics.isEmpty()){
 			for(Topic topic : topics){

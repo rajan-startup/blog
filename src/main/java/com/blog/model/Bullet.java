@@ -4,11 +4,13 @@ public class Bullet{
 	
 	private String id;
 	private String name;
+	private String type;
 	
-	public Bullet(String id, String name) {
+	public Bullet(String type,String id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.type = type;
 	}
 	
 	public Bullet() {}
@@ -55,6 +57,14 @@ public class Bullet{
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 	

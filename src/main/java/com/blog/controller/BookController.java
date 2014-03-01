@@ -38,11 +38,11 @@ public class BookController {
 	public String read(Model model) {
 		
 		if(!inIt){
-			BlogRequestHandler.getInstance().initBlog(BlogDao,BlogConstants.BOOK_TOPIC_DIR);
+			BlogRequestHandler.getInstance().initBlog(BlogDao,BlogConstants.BOOK);
 			inIt = true;
 		}
 		
-		Index index = FileHandler.getInstance().getIndex(BlogConstants.BOOK_TOPIC_DIR);
+		Index index = FileHandler.getInstance().getIndex(BlogConstants.BOOK,BlogConstants.BOOK);
 		model.addAttribute("index", index);
 		model.addAttribute("type", "book");
 		return "blog";

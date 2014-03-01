@@ -9,15 +9,19 @@ Let's complete some pre-req before starting actual hands on it.
 3.	Download hadoop-core: http://archive.apache.org/dist/hadoop/core/hadoop-0.19.1/ 
 4.	Download eclipse : http://www.eclipse.org/downloads/packages/release/europa/winter
 
+b#@
+b#@
 H2#@Download cygwin installer from http://www.cygwin.com
 
-b#@
 While installing cygwin: make sure you install "Openssh".This package is required for the correct functioning of the Hadoop cluster and Eclipse plug-in.
 img#@http://v-lad.org/Tutorials/Hadoop/Images/04%20cygwin%20ssh.png
+b#@
 b#@
 Verify cygwin environment variable:
 img#@http://v-lad.org/Tutorials/Hadoop/Images/04.5.3%20setup%20env%20vars.png
 
+b#@
+b#@
 H2#@Setup SSH daemon
 1.	Open the Cygwin command prompt.
 2.	Execute the following command:
@@ -31,6 +35,8 @@ BOX_END#
 6.	Here is an example session of this command. Note that the input typed by the user is shown in pink and output from the system is shown in gray.
 img#@http://v-lad.org/Tutorials/Hadoop/Images/05%20cygwin%20ssh.png
 
+b#@
+b#@
 H3#@Start SSH daemon
 
 1.	Find My Computer icon either on your desktop or in the start-up menu, right-click on it and select Manage from the context menu.
@@ -39,12 +45,14 @@ H3#@Start SSH daemon
 4.	Select Start from the context menu. 
 img#@http://v-lad.org/Tutorials/Hadoop/Images/06%20cygwin%20sshd.png
 
-
+b#@
+b#@
 H3#@Setup SSH key
 img#@http://v-lad.org/Tutorials/Hadoop/Images/07%20cygwin%20sshd.png
 
 
-
+b#@
+b#@
 H2#@Unpack Hadoop Installation.
 
 To unpack the package follow these steps:
@@ -77,6 +85,8 @@ START_BOX_CONTENT
       -rw-r--r--   1 rd None   11358 Feb 19 19:13 LICENSE.txt
 BOX_END#
 
+b#@
+b#@
 H3#@Configure Hadoop
 1. Open a new Cygwin window and execute the following commands:
 BOX_START#
@@ -123,6 +133,8 @@ img#@http://v-lad.org/Tutorials/Hadoop/Images/11%20configure%20hadoop.png
 
 6. Close the Eclipse, Cygwin command and Explorer windows.
 
+b#@
+b#@
 H3#@Format the namenode
 
 1. Open a new Cygwin window.
@@ -169,7 +181,8 @@ img#@http://v-lad.org/Tutorials/Hadoop/Images/13.5.3%20copy%20hadoop%20plugin.pn
 
 Now that the we installed and configured hadoop cluster and eclipse plugin i's a time to test the setup by running a simple project.
 
-
+b#@
+b#@
 H3#@Start the local hadoop cluster
 1. Close all the windows on the desktop, open five Cygwin windows and arrange them as shown below.
 
@@ -203,6 +216,8 @@ img#@http://v-lad.org/Tutorials/Hadoop/Images/16%20hadoop%20is%20running.png
 
 At this point the cluster is running and you can proceed to the next step.
 
+b#@
+b#@
 H3#@Setup Hadoop Location in Eclipse
 
 Next step is to configure Hadoop location in the Eclipse environment.
@@ -234,6 +249,8 @@ BOX_END#
 
 img#@http://v-lad.org/Tutorials/Hadoop/Images/19%20setup%20hadoop%20eclipse%20location.png
 
+b#@
+b#@
 H3#@Upload data to HDFS
 We are now ready to run the first Map/Reduce project but data is still missing. This section explains how to upload data to the Hadoop Distributed File System (HDFS).
 
@@ -259,6 +276,8 @@ The result of these commands is a newly created directory -- named In -- in the 
 
 Close the Cygwin Window.
 
+b#@
+b#@
 H4#@Verify if the files were uploaded correctly
 
 In this section we will check if the files were uploaded correctly.
@@ -273,6 +292,8 @@ img#@http://v-lad.org/Tutorials/Hadoop/Images/22%20upload%20data.png
 5.	When you get to the In directory, double-click on the file LICENCE.txt to open it.
 6.	If you see something similar to the image above then the data was uploaded correctly and you can proceed to your first Hadoop project.
 
+b#@
+b#@
 H3#@Create and run Hadoop project
 Creating and configuring Hadoop eclipse project.
 
@@ -294,6 +315,8 @@ img#@http://v-lad.org/Tutorials/Hadoop/Images/25%20configure%20hadoop%20director
 8. After entering the location close the Preferences window by pressing the OK button. Then close the Project window with the Finish button.
 9.You have now created your first Hadoop Eclipse project. You should see its name in the Project Explorer tab.
 
+b#@
+b#@
 H2#@Creating Map/Reduce driver class
 1. Right-click on the newly created Hadoop project in the Project Explorer tab and select New -> Other from the context menu.
 2. Go to the Map/Reduce folder, select MapReduceDriver, then press the Next button as shown in the image below.
@@ -321,6 +344,8 @@ img#@http://v-lad.org/Tutorials/Hadoop/Images/27%20create%20and%20modify%20the%2
 You need to import the following classes: TextInputFormat, TextOutputFormat, FileInputFormat, FileOutputFormat.
 6. After the missing classes are imported you are ready to run the project.
 
+b#@
+b#@
 H2#@Running Hadoop Project
 1. Right-click on the TestDriver class in the Project Explorer tab and select Run As --> Run on Hadoop. This will bring up a window like the one shown below.
 img#@http://v-lad.org/Tutorials/Hadoop/Images/28%20Launch%20the%20proj.png
@@ -348,6 +373,9 @@ BOX_END#
 7.	Write following three classes.
 
 
+
+b#@
+b#@
 H4#@1.	Driver class:
 CODE_START#
 START_SNIPPET
@@ -391,6 +419,8 @@ public class WordCount {
 CODE_END#
 
 
+b#@
+b#@
 H4#@2.	Mapper Class:
 CODE_START#
 START_SNIPPET
@@ -428,7 +458,8 @@ public class WordMapper extends MapReduceBase implements Mapper{
 }
 CODE_END#
 
-
+b#@
+b#@
 H4#@3.	Reducer Class:
 
 CODE_START#
