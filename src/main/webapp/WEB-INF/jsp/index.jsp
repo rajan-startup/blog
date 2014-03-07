@@ -110,7 +110,7 @@
 							</div>
 							<div class="4u">
 								<article class="box box-style2">
-									<a href="/schoool" class="image image-full"><img src="images/portfolio02.jpg" alt="" /></a>
+									<a href="/school" class="image image-full"><img src="images/portfolio02.jpg" alt="" /></a>
 									<h3><a href="/school">Prepare for exam</a></h3>
 									<p>Find your school assignments and labs.</p>
 								</article>

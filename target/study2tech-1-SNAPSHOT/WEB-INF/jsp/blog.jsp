@@ -361,7 +361,7 @@
 			    			<div class="callout">
 			    			<%for(int i=0;i<boxContent.length;i++){ %>
 			    				<%if(!boxContent[i].trim().isEmpty()){
-			    					String boxText = boxContent[i].replaceAll("\t| ", "&nbsp"); 
+			    					String boxText = boxContent[i];//boxContent[i].replaceAll("\t| ", "&nbsp"); 
 			    					boxText = boxText.trim().replaceAll("\r\n|\n\r", "<br/>");
 			    					boxText = boxText.replaceAll("\r|\n", "<br/>");
 			    					
