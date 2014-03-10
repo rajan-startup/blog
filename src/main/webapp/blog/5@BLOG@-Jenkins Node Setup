@@ -4,8 +4,7 @@ Jenkins is an open-source continuous integration software tool written in the Ja
 b#@
 Jenkins is a fork of a project called Hudson, which is trademarked by Oracle and is currently being developed parallel to Jenkins. The development community and its governing body hosts open meetings about the software.
 b#@
-H4#@Why should I use Jenkins?
-To use Jenkins you need:
+H4#@To use Jenkins you need:
 1.	An accessible source code repository, e.g., a Git repository, with your code checked in.
 2.	A working build script, e.g., a Maven script, checked into the repository
 Jenkins can be started via the command line or can run in a web application server. Under Linux you can also install Jenkins as system service.
@@ -48,6 +47,6 @@ img#@http://www.vogella.com/tutorials/Jenkins/images/xjenkins10.png.pagespeed.ic
 img#@http://www.vogella.com/tutorials/Jenkins/images/xandroid_jenkins02.png.pagespeed.ic.3ZWKo6SBoH.png
 b#@You configure from where the source should be cloned.
 img#@http://www.vogella.com/tutorials/Jenkins/images/xandroid_jenkins10.png.pagespeed.ic.L0Q3zxtXaC.png
-b#@Once you configure your jib -> Click on Build -> Jenkins will start building your job.
+b#@Once you configure your job -> Click on Build -> Jenkins will start building your job.
 
 
