@@ -252,6 +252,13 @@
 					<li><a href="#">Git projects</a></li>
 					<li><a href="#">Store Application</a></li>
 				</ul>
+				<%}else if(type!= null && type.equalsIgnoreCase(BlogConstants.AUTHOR)){%>
+				
+				<ul class="container" id="menu">
+					<li><a href="/">Home</a></li>
+					<li><a href="#">Git projects</a></li>
+					<li><a href="#">Store Application</a></li>
+				</ul>
 				<%}%> 
 			
 				
@@ -458,7 +465,10 @@
 	<%}if(type!= null && type.equalsIgnoreCase(BlogConstants.ME)){
 	%>
 	<img src="/images/me/1.png">
-	 <%} %>
+	 <%}else if(type!= null && type.equalsIgnoreCase(BlogConstants.AUTHOR)){
+			%>
+			<img src="/images/me/1.png">
+	<%} %>
 							
 							
 						</div>

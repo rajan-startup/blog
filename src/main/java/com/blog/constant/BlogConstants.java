@@ -35,6 +35,7 @@ public class BlogConstants {
 	public static final String SCHOOL = "school";
 	
 	public static final String ME = "me";
+	public static final String AUTHOR = "author";
 	
 	
 }
