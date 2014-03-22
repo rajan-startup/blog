@@ -1,0 +1,390 @@
+I hope you have already configured hadoop as per described into hadoop wiki. We have successfully created and executed one map-reduce sample project in that section.
+
+Now, as you already have hadoop configured, let's make our hands dirtry with HDFS, HIVE, SQOOP, PIG.
+
+Now, we will jump into HDFS. Open command line and make sure hadoop class path is configured properly.
+
+BOX_START#
+START_BOX_CONTENT
+1. Verify it.
+>hadoop
+2.Access HDFS
+>hadoop fs
+It will show you help message describing all commands.
+>hadoop fs -ls /
+This will show you HDFS root directory content.
+3. In hadoop section : we had created In direcotry and put all sample text files into HDFS. You can verify it through
+>hadoop fs -ls /In
+4. Create a new directory into HDFS and add more files.
+	a. Create a direcotry
+	>hadoop fs -mkdir test
+	b. Create a sample text file named: test.txt into current working directory and put that file into HDFS.
+	>hadoop fs -put test.txt /test/test.txt
+	c. check file content
+	>hadoop fs -cat /test/ | tail -n 100
+	It prints last 100 lines of part1 of the test.txt
+BOX_END#
+	
+	
+H1#@ How to write Hadoop map-reduce JUnit
+
+CODE_START#
+START_SNIPPET
+/*Mapper*/
+package com.sample.test;
+import java.io.IOException;
+
+ 
+public class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
+  @Override
+  public void map(LongWritable key, Text value, Context context)
+      throws IOException, InterruptedException {
+    String text = value.toString();
+    for (String word : text.split("\\W+")) {
+      if (word.length() > 0) {
+        context.write(new Text(word), new IntWritable(1));
+      }
+    }
+  }
+}
+CODE_END#
+
+CODE_START#
+START_SNIPPET
+/*Reducerr*/
+package com.sample.test;
+import java.io.IOException;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+
+public class TotalWordSumReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+
+  @Override
+  public void reduce(Text key, Iterable<IntWritable> values, Context context)
+      throws IOException, InterruptedException {
+    int count = 0;
+    for (IntWritable value : values) {
+      count += value.get();
+    }
+    context.write(key, new IntWritable(count));
+  }
+}
+CODE_END#
+
+CODE_START#
+START_SNIPPET
+/*Test-MapReduce*/
+package com.sample.test;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mrunit.mapreduce.MapDriver;
+import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
+import org.apache.hadoop.mrunit.mapreduce.ReduceDriver;
+import org.junit.Before;
+import org.junit.Test;
+
+public class TestWordCount {
+
+  
+  MapDriver<LongWritable, Text, Text, IntWritable> mapperDriver;
+  ReduceDriver<Text, IntWritable, Text, IntWritable> reducereDriver;
+  MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> mapReduceDriver;
+
+ 
+  @Before
+  public void setUp() {
+
+    
+    WordCountMapper mapper = new WordCountMapper();
+    mapperDriver = new MapDriver<LongWritable, Text, Text, IntWritable>();
+    mapperDriver.setMapper(mapper);
+
+    
+    TotalWordSumReducer reducer = new TotalWordSumReducer();
+    reducereDriver = new ReduceDriver<Text, IntWritable, Text, IntWritable>();
+    reducereDriver.setReducer(reducer);
+
+    
+    mapReduceDriver = new MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable>();
+    mapReduceDriver.setMapper(mapper);
+    mapReduceDriver.setReducer(reducer);
+  }
+
+  
+  @Test
+  public void testWordCountMR() {
+
+    
+    mapperDriver.withInput(new LongWritable(1), new Text("one one two"));
+
+    
+    mapperDriver.withOutput(new Text("one"), new IntWritable(1));
+    mapperDriver.withOutput(new Text("one"), new IntWritable(1));
+    mapperDriver.withOutput(new Text("two"), new IntWritable(1));
+
+    
+    mapperDriver.runTest();
+  }
+
+  
+  @Test
+  public void testReducer() {
+
+    List<IntWritable> values = new ArrayList<IntWritable>();
+    values.add(new IntWritable(1));
+    values.add(new IntWritable(1));
+
+    
+    reducereDriver.withInput(new Text("one"), values);
+
+    
+    reducereDriver.withOutput(new Text("one"), new IntWritable(2));
+
+    
+    reducereDriver.runTest();
+  }
+
+  
+  @Test
+  public void testMapReduce() {
+
+    
+    mapReduceDriver.withInput(new LongWritable(1), new Text("one one two"));
+
+    
+    mapReduceDriver.addOutput(new Text("one"), new IntWritable(2));
+    mapReduceDriver.addOutput(new Text("two"), new IntWritable(1));
+
+    
+    mapReduceDriver.runTest();
+  }
+}
+CODE_END#
+
+
+
+H1#@Sqoop
+Sqoop is a batch data migration tool for transferring data between traditional databases and Hadoop. The first version of Sqoop is a heavy client that drives and oversees data transfer via MapReduce. In Sqoop 2, the majority of the work was moved to a server that a thin client communicates with. Also, any client can communicate with the Sqoop 2 server over its JSON-REST protocol. Sqoop 2 was chosen instead of its predecessors because of its client-server design.
+
+H3#@Import data from Sqoop to HDFS
+Apache Sqoop is a tool designed for efficiently transferring bulk data between Apache Hadoop and structured datastores such as relational databases. 
+Sqoop imports data from external structured datastores into HDFS or related systems like Hive and HBase. 
+Sqoop can also be used to extract data from Hadoop and export it to external structured datastores such as relational databases and enterprise data warehouses. 
+Sqoop works with relational databases such as: Teradata, Netezza, Oracle, MySQL, Postgres, and HSQLDB.
+
+1.	Login to MySQL and move to databaes named: netflix
+>mysql --user=root --password=password netflix
+
+2.	Let's see how many tables are present into that database
+mysql>show tables
+
+3.	Let's assume we have a table named as "USER" into "netflix" database. Following command will show all columns in USER table.
+mysql>describe USER
+
+4.	Now, let's quit from mysql.
+mysql>quit
+
+H3#@Let's import with Sqoop
+Sqoop provides a pluggable connector mechanism for optimal connectivity to external systems. 
+The Sqoop extension API provides a convenient framework for building new connectors which can be dropped into Sqoop installations to provide connectivity to various systems. 
+Sqoop itself comes bundled with various connectors that can be used for popular database and data warehousing systems.
+
+1.	Download and install sqoop and make sure your classpath is confgiured properly.
+2.	Let's verify the installatiion.
+>sqoop help
+3.	Now, let's list all the tables into netflix datatabase.
+>sqoop list-databases --connect jdbc:mysql://localhost/netflix --username root --password password
+4.	Now, let's import USER table into HDFS. Here each record's column will be delimited by '\t'
+>sqoop import --connect jdbc:mysql://localhost/USER --table user --fields-terminated-by '\t' \ --username root --password password
+5.	Now, let's verify data into HDFS
+>hadoop fs -ls user
+>hadoop fs -tail user/part-m-00000
+
+
+H1#@HIVE
+
+H4#@Why should I use HIVE?
+
+H4#@Reason #1: Apache Hadoop is the future of enterprise data management.
+And Apache Hive is the gateway for business intelligence and visualization tools integrated with Apache Hadoop.
+
+Learning Apache Hive puts developers on the path to innovate on new data architecture projects and new business applications. I think it’s always more exciting to write code for something that’s ramping up, rather than for maintaining mature systems.
+
+H4#@Reason #2: Learning Hive is easy for those who already know SQL.
+Facebook originally created Hive because they had a pressing need to analyze their petabytes of data at Internet scale. But they did not have enough time to teach all of their data analysts to write Java programs that would kick off MapReduce jobs.
+
+Their analysts already knew how to write SQL queries, so Facebook created Hive as a tool those analysts could use with their existing SQL skills. After Facebook contributed their code to the Apache Foundation, the open community continued developing Hive along these same lines. So the same is true today as it was in the beginning: developers already familiar with SQL can learn Hive quickly and then take part in all of the new opportunities promised by Hadoop v2.0.
+
+H4#@Reason #3: Hive is about to get a lot faster (thanks to the Stinger Initiative and Apache Tez)
+Apache Tez generalizes the MapReduce framework so that Apache Pig and Hive can meet demands for faster response times. At Hortonworks, we launched the Stinger Initiative to improve Hive performance by 100x and to make Hive SQL-compatible.
+
+We have completed Phase 1 of Stinger with impressive results. Phase 2 of Stinger is underway, and we expect to push performance on several types of Hive queries across the 100x threshold.
+
+As Hive performance improves, the number of Hive use cases will grow (along with the number of opportunities for engineers who understand Hive).
+
+1.	Download sample csv data file which we will import into HDFS.
+a#@http://community.jaspersoft.com/sites/default/files/wiki_attachments/accounts.csv@SampleDataFile.CSV
+
+2.	Let's load above downloaded file data into HDFS.
+Copy the data file to HDFS filesystem, change the paths according to your filesystem.
+BOX_START#
+START_BOX_CONTENT
+hadoop fs -copyFromLocal $LOCAL_PATH/accounts.csv /user/hdfs
+BOX_END#
+
+3.	Start hive as hdfs user
+BOX_START#
+START_BOX_CONTENT
+sudo -u hdfs hive
+BOX_END#
+
+4.	Create the table accounts on Hive
+BOX_START#
+START_BOX_CONTENT
+CREATE TABLE accounts (
+id STRING,
+date_entered STRING,
+date_modified STRING,
+modified_user_id STRING,
+assigned_user_id STRING,
+created_by STRING,
+name STRING,
+parent_id STRING,
+account_type STRING,
+industry STRING,
+annual_revenue STRING,
+phone_fax STRING,
+billing_address_street STRING,
+billing_address_city STRING,
+billing_address_state STRING,
+billing_address_postalcode STRING,
+billing_address_country STRING,
+description STRING,
+rating STRING,
+phone_office STRING,
+phone_alternate STRING,
+email1 STRING,
+email2 STRING,
+website STRING,
+ownership STRING,
+employees STRING,
+sic_code STRING,
+ticker_symbol STRING,
+shipping_address_street STRING,
+shipping_address_city STRING,
+shipping_address_state STRING,
+shipping_address_postalcode STRING,
+shipping_address_country STRING,
+deleted BOOLEAN
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\;'
+STORED AS TEXTFILE;
+BOX_END#
+
+5.	Fill the table with the data stored in SampleData.csv
+BOX_START#
+START_BOX_CONTENT
+LOAD DATA INPATH '/user/hdfs/SampleData.csv' OVERWRITE INTO TABLE accounts;
+BOX_END#
+
+
+Now, we are having some sample account data into our  HDFS. Now, we can execute queries with the help of HIVE on HDFS data.
+BOX_START#
+START_BOX_CONTENT
+select * from accounts
+BOX_END#
+
+a#@http://hortonworks.com/wp-content/uploads/2012/03/Hortonworks_Tutorial_Hive_5.22.pdf#@Please visit for more information.
+
+H1#@PIG
+Pig is a high level scripting language that is used with Apache Hadoop. Pig enables data workers to write complex data transformations without knowing Java. Pig’s simple SQL-like scripting language is called Pig Latin, and appeals to developers already familiar with scripting languages and SQL.
+
+Pig is complete, so you can do all required data manipulations in Apache Hadoop with Pig. Through the User Defined Functions(UDF) facility in Pig, Pig can invoke code in many languages like JRuby, Jython and Java. You can also embed Pig scripts in other languages. The result is that you can use Pig as a component to build larger and more complex applications that tackle real business problems.
+
+Pig works with data from many sources, including structured and unstructured data, and store the results into the Hadoop Data File System.
+
+Pig scripts are translated into a series of MapReduce jobs that are run on the Apache Hadoop cluster.
+
+a#@http://pig.apache.org/releases.html#Download#@Download
+
+H3#@Hands on
+
+Batch Mode - We can run Pig in batch mode using Pig scripts and the "pig" command (in local or hadoop mode).
+
+Sample:
+
+BOX_START#
+START_BOX_CONTENT
+$pig -x local test.pig $pig -x mapreduce test.pig
+BOX_END#
+
+4. Pig Word Count
+
+a#@http://salsahpc.indiana.edu/ScienceCloud/pig-wordcount-7-26.tar#@Pig Word Count Download Package
+
+H4#@Pig Word Count Scripts
+
+BOX_START#
+START_BOX_CONTENT
+A = load './input.txt';
+B = foreach A generate flatten(TOKENIZE((chararray)$0)) as word;
+C = group B by word;
+D = foreach C generate COUNT(B), group;
+store D into './wordcount';
+BOX_END#
+
+
+H4#@Running Pig Word Count Script
+BOX_START#
+START_BOX_CONTENT
+local mode:
+bin/pig -x local wordcount.pig
+mapreduce mode:
+hadoop dfs -copyFromLocal input.txt input/input.txt
+bin/pig -x mapreduce wordcount.pig
+BOX_END#
+
+
+H4#@Programming Word Count using Pig
+Here are major steps to develop Pig word count application. 
+
+BOX_START#
+START_BOX_CONTENT
+Loads data from the file system.
+LOAD 'data' [USING function] [AS schema];
+Sample: 
+records = load 'student.txt' as (name:chararray, age:int, gpa:double);
+Generates data transformations based on columns of data.
+alias = FOREACH { gen_blk | nested_gen_blk } [AS schema]; Sample: 
+words = foreach lins generate flatten(TOKENIZE((chararray)$0)) as word;
+BOX_END#
+
+
+H4#@Sometimes we want to eliminate nesting. This can be accomplished via the FLATTEN keyword.
+BOX_START#
+START_BOX_CONTENT
+words = foreach lines generate flatten(TOKENIZE((chararray)$0)) as word;
+The GROUP operator groups together tuples that have the same group key (key field).
+alias = GROUP alias { ALL | BY expression} [, alias ALL | BY expression …] [USING 'collected'] [PARALLEL n];
+BOX_END#
+
+
+H4#@Sample:
+BOX_START#
+START_BOX_CONTENT
+word_groups = group words by word;
+Use the COUNT function to compute the number of elements in a bag.
+COUNT(expression)
+Sample:
+D = foreach C generate COUNT(B), group;
+BOX_END#
+
+
+The above program steps will generate parallel executable tasks which can be distributed across multiple machines in a Hadoop cluster to count the number of words in a text file.
