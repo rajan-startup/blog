@@ -1,0 +1,509 @@
+H2#@How to Start Hadooop node?
+
+Hadoop is a powerful framework for automatic parallelization of computing tasks. Unfortunately programming for it poses certain challenges. It is really hard to understand and debug Hadoop programs. One way to make it a little easier is to have a simplified version of the Hadoop cluster that runs locally on the developer's machine. This tutorial describes how to set up such a cluster on a computer running Microsoft Windows. It also describes how to integrate this cluster with Eclipse, a prime Java development environment.
+
+Let's complete some pre-req before starting actual hands on it.
+
+1.	Set JAVA_HOME= export JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Home
+2.	Open ~/.profile and save with: export JAVA_HOME=/Library/Java/Home
+3.	Download hadoop-core: http://archive.apache.org/dist/hadoop/core/hadoop-0.19.1/ 
+4.	Download eclipse : http://www.eclipse.org/downloads/packages/release/europa/winter
+
+b#@
+b#@
+H2#@Download cygwin installer from http://www.cygwin.com
+
+While installing cygwin: make sure you install "Openssh".This package is required for the correct functioning of the Hadoop cluster and Eclipse plug-in.
+img#@http://v-lad.org/Tutorials/Hadoop/Images/04%20cygwin%20ssh.png
+b#@
+b#@
+Verify cygwin environment variable:
+img#@http://v-lad.org/Tutorials/Hadoop/Images/04.5.3%20setup%20env%20vars.png
+
+b#@
+b#@
+H2#@Setup SSH daemon
+1.	Open the Cygwin command prompt.
+2.	Execute the following command:
+BOX_START#
+START_BOX_CONTENT
+    ssh-host-config
+BOX_END#
+3.	When asked if privilege separation should be used, answer no.
+4.	When asked if sshd should be installed as a service, answer yes.
+5.	When asked about the value of CYGWIN environment variable, enter ntsec.
+6.	Here is an example session of this command. Note that the input typed by the user is shown in pink and output from the system is shown in gray.
+img#@http://v-lad.org/Tutorials/Hadoop/Images/05%20cygwin%20ssh.png
+
+b#@
+b#@
+H3#@Start SSH daemon
+
+1.	Find My Computer icon either on your desktop or in the start-up menu, right-click on it and select Manage from the context menu.
+2.	Open Services and Applications in the left-hand panel then select the Services item.
+3.	Find the CYGWIN sshd item in the main section and right-click on it.
+4.	Select Start from the context menu. 
+img#@http://v-lad.org/Tutorials/Hadoop/Images/06%20cygwin%20sshd.png
+
+b#@
+b#@
+H3#@Setup SSH key
+img#@http://v-lad.org/Tutorials/Hadoop/Images/07%20cygwin%20sshd.png
+
+
+b#@
+b#@
+H2#@Unpack Hadoop Installation.
+
+To unpack the package follow these steps:
+
+A. Open a new Cygwin window.
+B. After the new Cygwin window appears, execute the following command:
+BOX_START#
+START_BOX_CONTENT
+    tar -xzf hadoop-0.19.1.tar.gz
+BOX_END#
+
+This will start unpacking the Hadoop distribution. After several minutes you should see a new Cygwin prompt again as shown in the screenshot below:
+
+img#@http://v-lad.org/Tutorials/Hadoop/Images/09%20unpack%20hadoop.png
+
+C. When you see the new prompt, execute the following command:
+ls -l
+This command will list the contents of your home directory. You should see a newly created directory called hadoop-0.19.1 
+
+D. Next execute the following commands:
+cd hadoop-0.19.1
+ls -l
+
+If you get output similar to the following, everything was unpacked correctly and you can go to the next step.
+total 4145
+BOX_START#
+START_BOX_CONTENT
+      -rw-r--r--   1 rd None  295315 Feb 19 19:13 CHANGES.txt
+
+      -rw-r--r--   1 rd None   11358 Feb 19 19:13 LICENSE.txt
+BOX_END#
+
+b#@
+b#@
+H3#@Configure Hadoop
+1. Open a new Cygwin window and execute the following commands:
+BOX_START#
+START_BOX_CONTENT
+	cd hadoop-0.19.1
+	cd conf
+	explorer .	  
+BOX_END#
+	
+img#@http://v-lad.org/Tutorials/Hadoop/Images/10%20configure%20hadoop.png
+
+2. The last command will cause the Explorer window for the 'conf' directory to pop up. Minimize it for now or move it to the side.
+3. Launch Eclipse.
+4. Bring up the 'conf' Explorer window opened in Step 2 and drag the file hadoop-site to the Eclipse main window.
+5. Insert the following lines between <configuration> and </configuration> tags.  
+CODE_START#
+START_SNIPPET	  
+<property>
+
+<name>fs.default.name</name>
+
+<value>hdfs://localhost:9100</value>
+
+</property>
+
+<property>
+
+<name>mapred.job.tracker</name>
+
+<value>localhost:9101</value>
+
+</property>
+
+<property>
+
+<name>dfs.replication</name>
+
+<value>1</value>
+
+</property>
+CODE_END#
+
+img#@http://v-lad.org/Tutorials/Hadoop/Images/11%20configure%20hadoop.png
+
+6. Close the Eclipse, Cygwin command and Explorer windows.
+
+b#@
+b#@
+H3#@Format the namenode
+
+1. Open a new Cygwin window.
+2. Execute the following commands:
+BOX_START#
+START_BOX_CONTENT
+	cd hadoop-0.19.1
+	mkdir logs
+	bin/hadoop namenode -format
+BOX_END#
+	
+img#@http://v-lad.org/Tutorials/Hadoop/Images/12%20format%20the%20namenode.png
+	
+3. 	The last command will run for some time and produce output similar to that shown below:
+
+img#@http://v-lad.org/Tutorials/Hadoop/Images/13%20format%20the%20namenode.png
+Now that the filesystem has been created you can proceed to the next step.
+
+H3#@Install Hadoop plug-in
+1. Open a new Cygwin window and execute the following commands:
+BOX_START#
+START_BOX_CONTENT
+	cd hadoop-0.19.1
+	cd contrib
+	cd eclipse-plugin
+	explorer .
+BOX_END#
+	
+2. http://v-lad.org/Tutorials/Hadoop/Images/13.5.1%20copy%20hadoop%20plugin.png
+
+3. Shrink the newly popped window and move it to the right of the screen.
+4. Open another Explorer window either through "My Computer" icon or by using the "Start -> Run" menu. Navigate to the Eclipse installation and open the "plugins" folder.
+5. Copy the file "hadoop-0.19.1-eclipse-plugin.jar" from the Hadoop eclipse-plugin folder to the Eclipse plugins folder as shown in the figure below.
+
+img#@http://v-lad.org/Tutorials/Hadoop/Images/13.5.2%20copy%20hadoop%20plugin.png
+
+6. Close both explorer windows
+7. Start Eclipse
+8. Click on the open perspective icon ,which is usually located in the upper-right corner the eclipse application. Then select Other from the menu.
+9. Select Map/Reduce from the list of perspectives and press "OK" button.
+10. As a result your IDE should open a new perspective that looks similar to the image below.
+
+img#@http://v-lad.org/Tutorials/Hadoop/Images/13.5.3%20copy%20hadoop%20plugin.png
+
+Now that the we installed and configured hadoop cluster and eclipse plugin i's a time to test the setup by running a simple project.
+
+b#@
+b#@
+H3#@Start the local hadoop cluster
+1. Close all the windows on the desktop, open five Cygwin windows and arrange them as shown below.
+
+img#@http://v-lad.org/Tutorials/Hadoop/Images/14%20open%205%20cygwin%20windows%20copy.png
+CODE_START#
+START_SNIPPET
+
+2.	Start the namenode in the first window by executing:
+	cd hadoop-0.19.1
+	bin/hadoop namenode
+
+3.	Start the secondary namenode in the second window by executing:
+	cd hadoop-0.19.1
+	bin/hadoop secondarynamenode
+
+4.	Start the job tracker the third window by executing:
+	cd hadoop-0.19.1
+	bin/haoop jobtracker
+
+5.	Start the data node the fourth window by executing:
+	cd hadoop-0.19.1
+	bin/haoop datanode
+
+6.	Start the task tracker the fifth window by executing:
+	cd hadoop-0.19.1
+	bin/haoop tasktracker
+CODE_END#
+
+7. Now you should have an operational hadoop cluster. If everthing went fine your screen should look like the image below:
+img#@http://v-lad.org/Tutorials/Hadoop/Images/16%20hadoop%20is%20running.png
+
+At this point the cluster is running and you can proceed to the next step.
+
+b#@
+b#@
+H3#@Setup Hadoop Location in Eclipse
+
+Next step is to configure Hadoop location in the Eclipse environment.
+
+1. Launch the Eclipse environment.
+2. Open Map/Reduce perspective by clicking on the open perspective icon (), select "Other" from the menu, and then select "Map/Reduce" from the list of perspectives.
+img#@http://v-lad.org/Tutorials/Hadoop/Images/17%20setup%20hadoop%20eclipse%20location.png
+
+3. After switching to the Map/Reduce perspective, select the Map/Reduce Locations tab located at the bottom of the Eclipse environment. Then right click on the blank space in that tab and select "New Hadoop location...." from the context menu. You should see a dialog box similar to the one shown below.
+img#@http://v-lad.org/Tutorials/Hadoop/Images/18%20setup%20hadoop%20eclipse%20location.png
+
+4. Fill in the following items, as shown on the figure above.
+BOX_START#
+START_BOX_CONTENT
+	Location Name -- localhost
+	Map/Reduce Master
+	Host -- localhost
+	Port -- 9101
+	DFS Master
+Check "Use M/R Master Host"
+	Port -- 9100
+	User name -- User
+Then press the Finish button.
+BOX_END#
+
+5. After closing the Hadoop location settings dialog you should see a new location in the "Map/Reduce Locations" tab.
+
+6. In the Project Explorer tab on the left hand side of the Eclipse window, find the DFS Locations item. Open it using the "+" icon on its left. Inside, you should see the localhost location reference with the blue elephant icon. Keep opening the items below it until you see something like the image below.
+
+img#@http://v-lad.org/Tutorials/Hadoop/Images/19%20setup%20hadoop%20eclipse%20location.png
+
+b#@
+b#@
+H3#@Upload data to HDFS
+We are now ready to run the first Map/Reduce project but data is still missing. This section explains how to upload data to the Hadoop Distributed File System (HDFS).
+
+H4#@Upload Files To HDFS
+
+1. Open a new CYGWIN command window.
+img#@http://v-lad.org/Tutorials/Hadoop/Images/20%20upload%20data.png
+
+	cd hadoop-0.19.1
+
+2. Execute the following commands in the new CYGWIN window as shown on the image above. 
+BOX_START#
+START_BOX_CONTENT
+	bin/hadoop fs -mkdir In
+	bin/hadoop fs -put *.txt In
+BOX_END#
+	
+	
+When the last of the above commands starts executing, you should see some activity in other Hadoop windows as shown in the image below.
+img#@http://v-lad.org/Tutorials/Hadoop/Images/21%20upload%20data.png
+
+The result of these commands is a newly created directory -- named In -- in the HDFS which contains a set of text files that comes with the Hadoop distribution.
+
+Close the Cygwin Window.
+
+b#@
+b#@
+H4#@Verify if the files were uploaded correctly
+
+In this section we will check if the files were uploaded correctly.
+
+1.	Open the Eclipse environment.
+2.	Open DFS locations folder which is located in the Project Explorer tab of Map/Reduce perspective.
+3.	Open localhost folder in DFS locations folder.
+4.	Keep opening HDFS folders until you navigate to the newly created In directory, as shown in the image below.
+
+img#@http://v-lad.org/Tutorials/Hadoop/Images/22%20upload%20data.png
+
+5.	When you get to the In directory, double-click on the file LICENCE.txt to open it.
+6.	If you see something similar to the image above then the data was uploaded correctly and you can proceed to your first Hadoop project.
+
+b#@
+b#@
+H3#@Create and run Hadoop project
+Creating and configuring Hadoop eclipse project.
+
+1. Launch Eclipse.
+2. Right-click on the blank space in the Project Explorer window and select New -> Project.. to create a new project.
+3. Select Map/Reduce Project from the list of project types as shown in the image below.
+
+img#@http://v-lad.org/Tutorials/Hadoop/Images/23%20Create%20Project.png
+
+4. Press the Next button.
+5. You will see the project properties window similar to the one shown below
+img#@http://v-lad.org/Tutorials/Hadoop/Images/24%20configure%20hadoop%20directory.png
+
+6. Fill in the project name and click on Configure Hadoop Installation link on the right hand side of the project configuration window. This will bring up the project Preferences window shown in the image below.
+
+img#@http://v-lad.org/Tutorials/Hadoop/Images/25%20configure%20hadoop%20directory.png
+
+7. In the project Preferences window enter the location of the Hadoop directory in the Hadoop installation directory field as shown above.
+8. After entering the location close the Preferences window by pressing the OK button. Then close the Project window with the Finish button.
+9.You have now created your first Hadoop Eclipse project. You should see its name in the Project Explorer tab.
+
+b#@
+b#@
+H2#@Creating Map/Reduce driver class
+1. Right-click on the newly created Hadoop project in the Project Explorer tab and select New -> Other from the context menu.
+2. Go to the Map/Reduce folder, select MapReduceDriver, then press the Next button as shown in the image below.
+img#@http://v-lad.org/Tutorials/Hadoop/Images/26%20create%20and%20modify%20the%20driver.png
+3. When the MapReduce Driver wizard appears, enter TestDriver in the Name field and press the Finish button. This will create the skeleton code for the MapReduce Driver. 
+img#@http://v-lad.org/Tutorials/Hadoop/Images/27.5%20create%20and%20modify%20the%20driver.png
+4.
+Unfortunately the Hadoop plug-in for Eclipse is slightly out of step with the recent Hadoop API, so we need to edit the driver code a bit.
+CODE_START#
+START_SNIPPET
+Find the following two lines in the source code and comment them out: 
+	conf.setInputPath(new Path("src"));
+	conf.setOutputPath(new Path("out"));
+Enter the following code immediatly after the two lines you just commented out (see image below):
+
+	conf.setInputFormat(TextInputFormat.class);
+	conf.setOutputFormat(TextOutputFormat.class);
+
+	FileInputFormat.setInputPaths(conf, new Path("In"));
+	FileOutputFormat.setOutputPath(conf, new Path("Out"));
+CODE_END#
+img#@http://v-lad.org/Tutorials/Hadoop/Images/27%20create%20and%20modify%20the%20driver.png
+5.  After you have changed the code, you will see the new lines marked as incorrect by Eclipse. Click on the error icon for each line and select Eclipse's suggestion to import the missing class.
+
+You need to import the following classes: TextInputFormat, TextOutputFormat, FileInputFormat, FileOutputFormat.
+6. After the missing classes are imported you are ready to run the project.
+
+b#@
+b#@
+H2#@Running Hadoop Project
+1. Right-click on the TestDriver class in the Project Explorer tab and select Run As --> Run on Hadoop. This will bring up a window like the one shown below.
+img#@http://v-lad.org/Tutorials/Hadoop/Images/28%20Launch%20the%20proj.png
+2. In the window shown above select "Choose existing Hadoop location" , then select localhost from the list below. After that click Finish button to start your project.
+3. If you see console output similar to the one shown below, Congratulations! You have started the project successfully!
+img#@http://v-lad.org/Tutorials/Hadoop/Images/29%20running%20proj.png
+
+
+	  
+	  
+	  
+	  
+	  
+
+4.	Don’t forget to create log directory before starting namenode: 
+BOX_START#
+START_BOX_CONTENT
+	cd hadoop-0.19.1
+	mkdir logs
+	bin/hadoop namenode -format
+BOX_END#
+
+5.	Start namenode, secondarynamenode, datanode, jobtracker, and tasktracker. If you are getting error of "JAVA_HOME is not set" then set JAVA_HOME according to 1st step.
+6.	Complete all steps mentioned above website.
+7.	Write following three classes.
+
+
+
+b#@
+b#@
+H4#@1.	Driver class:
+CODE_START#
+START_SNIPPET
+package org.hadoop.wordcount;
+
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.FileInputFormat;
+import org.apache.hadoop.mapred.FileOutputFormat;
+import org.apache.hadoop.mapred.JobClient;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.Mapper;
+import org.apache.hadoop.mapred.Reducer;
+
+public class WordCount {
+
+	public static void main(String[] args) {
+		JobClient client = new JobClient();
+		JobConf conf = new JobConf(WordCount.class);
+		conf.setJobName("WordCount");
+		Path[] p = new Path[1];
+		p[0] = new Path("In");
+		FileInputFormat.setInputPaths(conf, p);
+		FileOutputFormat.setOutputPath(conf, new Path("/hadoop"));
+		conf.setMapperClass(WordMapper.class);
+		conf.setMapOutputKeyClass(Text.class);
+		conf.setMapOutputValueClass(IntWritable.class);
+		conf.setReducerClass(SumReducer.class);
+		conf.setOutputKeyClass(Text.class);
+		conf.setOutputValueClass(IntWritable.class);
+		client.setConf(conf);
+		try {
+			JobClient.runJob(conf);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		;
+	}
+}
+CODE_END#
+
+
+b#@
+b#@
+H4#@2.	Mapper Class:
+CODE_START#
+START_SNIPPET
+package org.hadoop.wordcount;
+
+import java.io.IOException; 
+import java.util.StringTokenizer;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.Mapper;
+import org.apache.hadoop.mapred.MapReduceBase;
+import org.apache.hadoop.mapred.OutputCollector;
+import org.apache.hadoop.mapred.Reporter;
+
+public class WordMapper extends MapReduceBase implements Mapper{
+
+	private Text word = new Text(); 
+	private final static IntWritable one = new IntWritable(1);
+	
+	
+	public void map(Object key, Object valueO, OutputCollector output,
+			Reporter arg3) throws IOException {
+		// TODO Auto-generated method stub
+		// Break line into words for processing 
+		Text value = (Text) valueO;
+		System.out.println("Value-Rajan :"+value.toString());
+		StringTokenizer wordList = new StringTokenizer(value.toString());
+		
+		while (wordList.hasMoreTokens()) { 
+			word.set(wordList.nextToken());
+//			System.out.println("Mappered-Rajan: word= "+word.toString());
+			output.collect(word, one);
+		}
+	}
+}
+CODE_END#
+
+b#@
+b#@
+H4#@3.	Reducer Class:
+
+CODE_START#
+START_SNIPPET
+package org.hadoop.wordcount;
+
+import java.io.IOException;
+import java.util.Iterator;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.WritableComparable;
+import org.apache.hadoop.mapred.MapReduceBase;
+import org.apache.hadoop.mapred.OutputCollector;
+import org.apache.hadoop.mapred.Reducer;
+import org.apache.hadoop.mapred.Reporter;
+
+public class SumReducer extends MapReduceBase implements Reducer {
+
+	private IntWritable totalWordCount = new IntWritable();
+	
+	public void reduce(Object keyO, Iterator valuesO, OutputCollector output,
+			Reporter arg3) throws IOException {
+		// TODO Auto-generated method stub
+		int wordCount = 0;
+		Text key = (Text) keyO;
+		Iterator values = (Iterator) valuesO;
+		
+		while (values.hasNext()) {
+			wordCount += ((IntWritable)values.next()).get();
+			System.out.println("Reducer-Rajan: Key= "+key+" count= "+wordCount);
+		}
+		
+		totalWordCount.set(wordCount); 
+		output.collect(key, totalWordCount);
+		
+	}
+
+}
+CODE_END#
+
+BOX_START#
+START_BOX_CONTENT
+1.	Check your output log at: hadoopDir/logs/userlogs
+2.	Check HDFS output at:
+bin/hadoop fs -text /hadoop/part-00000
+BOX_END#

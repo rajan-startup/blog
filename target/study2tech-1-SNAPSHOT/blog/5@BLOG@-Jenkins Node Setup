@@ -1,0 +1,52 @@
+
+H3#@What is Jenkins?
+Jenkins is an open-source continuous integration software tool written in the Java programming language for testing and reporting on isolated changes in a larger code base in real time. The software enables developers to find and solve defects in a code base rapidly and to automate testing of their builds.
+b#@
+Jenkins is a fork of a project called Hudson, which is trademarked by Oracle and is currently being developed parallel to Jenkins. The development community and its governing body hosts open meetings about the software.
+b#@
+H4#@To use Jenkins you need:
+1.	An accessible source code repository, e.g., a Git repository, with your code checked in.
+2.	A working build script, e.g., a Maven script, checked into the repository
+Jenkins can be started via the command line or can run in a web application server. Under Linux you can also install Jenkins as system service.
+
+H4#@Please follow below steps to set up your own Jenkins node on your local machine.
+
+1.	First of all Download Jenkins artifact/war from:  http://mirrors.jenkins-ci.org/war/latest/
+2.	Configure environment variable called HUDSON_HOME.
+	a. In Windows:
+BOX_START#
+START_BOX_CONTENT
+	set HUDSON_HOME=C:\jenkins_home
+BOX_END#
+	
+	b.In Linux :
+BOX_START#
+START_BOX_CONTENT
+	export HUDSON_HOME=/home/ciuser/jenkins_home
+BOX_END#
+
+3.	Now, place downloaded Jenkins war file to $HUDSON_HOME directory. 
+BOX_START#
+START_BOX_CONTENT
+	cp jenkins.war $HUDSON_HOME
+BOX_END#
+4.	Start jenkins node
+BOX_START#
+START_BOX_CONTENT
+	java -jar jenkins.war
+BOX_END#
+
+5.	verify if node is working by opening browser and access jenkins at http://hostname:8080
+img#@http://www.vogella.com/tutorials/Jenkins/images/xjenkins10.png.pagespeed.ic.z-e7aHG_qB.jpg
+6. 	It will show Jenkins dashboard which will allow you to perform various tasks. But to perform it we need to configure Jenkins.
+7.	Now, let's configure Jenkins
+	a.	Click 'Jenkins' -> "Manage Jenkins" -> "Configure system"
+8.	Install necessary Jenkins plugins by 
+	Click "Jenkins" -> "Manage Jenkins" -> "Configure system" -> Select "plugins" button -> Click on install button.
+9. Now, you can create a new job
+img#@http://www.vogella.com/tutorials/Jenkins/images/xandroid_jenkins02.png.pagespeed.ic.3ZWKo6SBoH.png
+b#@You configure from where the source should be cloned.
+img#@http://www.vogella.com/tutorials/Jenkins/images/xandroid_jenkins10.png.pagespeed.ic.L0Q3zxtXaC.png
+b#@Once you configure your job -> Click on Build -> Jenkins will start building your job.
+
+

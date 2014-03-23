@@ -1,0 +1,759 @@
+H1#@Spring framework
+Spring Framework is a Java platform that provides comprehensive infrastructure support for developing Java applications. Spring handles the infrastructure so you can focus on your application.
+
+Spring enables you to build applications from “plain old Java objects” (POJOs) and to apply enterprise services non-invasively to POJOs. 
+This capability applies to the Java SE programming model and to full and partial Java EE.
+
+Examples of how you, as an application developer, can use the Spring platform advantage:
+
+1.	Make a Java method execute in a database transaction without having to deal with transaction APIs.
+2.	Make a local Java method a remote procedure without having to deal with remote APIs.
+3.	Make a local Java method a management operation without having to deal with JMX APIs.
+4.	Make a local Java method a message handler without having to deal with JMS APIs.
+
+H3#@Spring Modules:
+
+img#@http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/images/spring-overview.png
+
+H2#@ Hands on
+I hope you have good understanding of NoSql and one of the NoSQL product MongoDB. So, now, let's build web application which has database as MongoDB.
+
+H4#@What is MongoDB?
+MongoDB (from "humongous") is a scalable, high-performance, open source, document-oriented database. Written in C++, MongoDB features:
+
+1.	Document-oriented storage
+2.	Full Index Support
+3.	Replication & High Availability
+4.	Scale horizontally without compromising functionality.
+5.	Rich, document-based queries.
+6.	Atomic modifiers for contention-free performance.
+7.	Flexible aggregation and data processing.
+8.	Store files of any size without complicating your stack.
+9.	Enterprise class support, training, and consulting available.
+
+Source: http://www.mongodb.org/
+
+H4#@Prerequisites
+In order to complete this tutorial, you will be required to install a copy of MongoDB. 
+If you don't have one yet, grab a copy now by visiting http://www.mongodb.org/display/DOCS/Quickstart. Installation is really easy.
+
+H3#@Development
+Our application is a simple CRUD system for managing a list of Persons. Data is stored in MongoDB database. 
+We'll start by declaring our domain objects. Then we'll discuss the service layer. And lastly we'll add the controllers.
+
+The Domain Layer
+Our application contains a single domain object named Person. It consists the following properties:
+1.	pid
+2.	firstName
+3.	lastName
+4.	money
+
+Here's the class declaration:
+
+H4#@Person.java
+CODE_START#
+START_SNIPPET
+package study2tech.spring;
+ import java.io.Serializable;
+ 
+/**
+ * A simple POJO representing a Person
+ * 
+ */
+public class Person implements Serializable {
+ 
+ private static final long serialVersionUID = -5527566248002296042L;
+  
+ private String pid;
+ private String firstName;
+ private String lastName;
+ private Double money;
+ 
+ public String getPid() {
+  return pid;
+ }
+ 
+ public void setPid(String pid) {
+  this.pid = pid;
+ }
+ 
+ public String getFirstName() {
+  return firstName;
+ }
+ 
+ public void setFirstName(String firstName) {
+  this.firstName = firstName;
+ }
+ 
+ public String getLastName() {
+  return lastName;
+ }
+ 
+ public void setLastName(String lastName) {
+  this.lastName = lastName;
+ }
+ 
+ public Double getMoney() {
+  return money;
+ }
+ 
+ public void setMoney(Double money) {
+  this.money = money;
+ }
+}
+CODE_END#
+
+H4#@Warning!
+In the original tutorial we used id to signify the primary identity of the Person. But in this tutorial we used pid instead. This is because when we use id with Spring Data, it messes up the id property by merging it with the built-in _id property of MongoDB. 
+
+For now, if you plan to use Spring Data, don't use id as your id field. Choose a different name instead. I have filed already an inquiry about this behavior in the Spring forums. See it here.
+
+The Service Layer
+Our service class contains the main changes in the original application. Instead of calling native MongoDB methods for performing CRUD operations, we use Spring Data's MongoTemplate instead.
+
+H4#@What is MongoTemplate?
+The template offers convenience methods and automatic mapping between MongoDB JSON documents and your domain classes. Out of the box, MongoTemplate uses a Java-based default converter but you can also write your own converter classes to be used for reading and storing domain objects.
+
+H4#@PersonService.java
+CODE_START#
+START_SNIPPET
+package org.krams.tutorial.service;
+ 
+import java.util.List;
+import java.util.UUID;
+ 
+import javax.annotation.Resource;
+import org.apache.log4j.Logger;
+import org.krams.tutorial.domain.Person;
+import org.springframework.data.document.mongodb.MongoTemplate;
+import org.springframework.data.document.mongodb.query.Query;
+import org.springframework.data.document.mongodb.query.Update;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import static org.springframework.data.document.mongodb.query.Criteria.where;
+ 
+/**
+ * Service for processing {@link Person} objects.
+ * Uses Spring's {@link MongoTemplate} to perform CRUD operations.
+ * <p>
+ * For a complete reference to MongoDB
+ * see http://www.mongodb.org/
+ * <p>
+ * For a complete reference to Spring Data MongoDB 
+ * see http://www.springsource.org/spring-data
+ * 
+ */
+@Service("personService")
+@Transactional
+public class PersonService {
+ 
+ protected static Logger logger = Logger.getLogger("service");
+  
+ @Resource(name="mongoTemplate")
+ private MongoTemplate mongoTemplate;
+  
+ /**
+  * Retrieves all persons
+  */
+ public List<Person> getAll() {
+  logger.debug("Retrieving all persons");
+  
+  // Find an entry where pid property exists
+        Query query = new Query(where("pid").exists(true));
+        // Execute the query and find all matching entries
+        List<Person> persons = mongoTemplate.find(query, Person.class);
+         
+  return persons;
+ }
+  
+ /**
+  * Retrieves a single person
+  */
+ public Person get( String id ) {
+  logger.debug("Retrieving an existing person");
+   
+  // Find an entry where pid matches the id
+        Query query = new Query(where("pid").is(id));
+        // Execute the query and find one matching entry
+        Person person = mongoTemplate.findOne("mycollection", query, Person.class);
+      
+  return person;
+ }
+  
+ /**
+  * Adds a new person
+  */
+ public Boolean add(Person person) {
+  logger.debug("Adding a new user");
+   
+  try {
+    
+   // Set a new value to the pid property first since it's blank
+   person.setPid(UUID.randomUUID().toString());
+   // Insert to db
+      mongoTemplate.insert("mycollection", person);
+ 
+   return true;
+    
+  } catch (Exception e) {
+   logger.error("An error has occurred while trying to add new user", e);
+   return false;
+  }
+ }
+  
+ /**
+  * Deletes an existing person
+  */
+ public Boolean delete(String id) {
+  logger.debug("Deleting existing person");
+   
+  try {
+    
+   // Find an entry where pid matches the id
+         Query query = new Query(where("pid").is(id));
+         // Run the query and delete the entry
+         mongoTemplate.remove(query);
+          
+   return true;
+    
+  } catch (Exception e) {
+   logger.error("An error has occurred while trying to delete new user", e);
+   return false;
+  }
+ }
+  
+ /**
+  * Edits an existing person
+  */
+ public Boolean edit(Person person) {
+  logger.debug("Editing existing person");
+   
+  try {
+    
+   // Find an entry where pid matches the id
+         Query query = new Query(where("pid").is(person.getPid()));
+          
+   // Declare an Update object. 
+         // This matches the update modifiers available in MongoDB
+   Update update = new Update();
+          
+         update.set("firstName", person.getFirstName());
+         mongoTemplate.updateMulti(query, update);
+          
+         update.set("lastName", person.getLastName());
+         mongoTemplate.updateMulti(query, update);
+          
+         update.set("money", person.getMoney());
+         mongoTemplate.updateMulti(query, update);
+          
+   return true;
+    
+  } catch (Exception e) {
+   logger.error("An error has occurred while trying to edit existing user", e);
+   return false;
+  }
+   
+ }
+}
+CODE_END#
+
+The code should should be self-explanatory. Notice how Spring Data has reduced the amount of code. To appreciate this difference, let's do a comparison between using the traditional MongoDB and using Spring Data.
+
+Retrieving all entries
+H4#@old implementation
+CODE_START#
+START_SNIPPET
+public List<person> getAll() {
+  logger.debug("Retrieving all persons");
+    
+  // Retrieve collection
+  DBCollection coll = MongoDBFactory.getCollection("mydb","mycollection");
+  // Retrieve cursor for iterating records
+     DBCursor cur = coll.find();
+     // Create new list
+  List<person> items = new ArrayList<person>();
+  // Iterate cursor
+        while(cur.hasNext()) {
+         // Map DBOject to Person
+         DBObject dbObject = cur.next();
+         Person person = new Person();
+           
+         person.setId(dbObject.get("id").toString());
+         person.setFirstName(dbObject.get("firstName").toString());
+         person.setLastName(dbObject.get("lastName").toString());
+         person.setMoney(Double.valueOf(dbObject.get("money").toString()));
+  
+         // Add to new list
+         items.add(person);
+        }
+          
+        // Return list
+  return items;
+ }
+CODE_END#
+
+H4#@new implementation
+CODE_START#
+START_SNIPPET
+public List<Person> getAll() {
+  logger.debug("Retrieving all persons");
+  
+        Query query = new Query(where("pid").exists(true));
+        List<Person> persons = mongoTemplate.find(query, Person.class);
+         
+  return persons;
+}
+CODE_END#
+
+H4#@Retrieving a single entry
+CODE_START#
+START_SNIPPET
+public Person get( String id ) {
+  logger.debug("Retrieving an existing person");
+   
+  // Find an entry where pid matches the id
+        Query query = new Query(where("pid").is(id));
+        // Execute the query and find one matching entry
+        Person person = mongoTemplate.findOne("mycollection", query, Person.class);
+      
+  return person;
+ }
+CODE_END#
+
+H4#@Adding a new entry
+CODE_START#
+START_SNIPPET
+public Boolean add(Person person) {
+  logger.debug("Adding a new user");
+   
+  try {
+    
+   // Set a new value to the pid property first since it's blank
+   person.setPid(UUID.randomUUID().toString());
+   // Insert to db
+      mongoTemplate.insert("mycollection", person);
+ 
+   return true;
+    
+  } catch (Exception e) {
+   logger.error("An error has occurred while trying to add new user", e);
+   return false;
+  }
+ }
+CODE_END#
+
+H4#@Deleting an entry
+CODE_START#
+START_SNIPPET
+public Boolean delete(String id) {
+  logger.debug("Deleting existing person");
+   
+  try {
+    
+   // Find an entry where pid matches the id
+         Query query = new Query(where("pid").is(id));
+         // Run the query and delete the entry
+         mongoTemplate.remove(query);
+          
+   return true;
+    
+  } catch (Exception e) {
+   logger.error("An error has occurred while trying to delete new user", e);
+   return false;
+  }
+ }
+CODE_END#
+
+H4#@Updating an entry
+CODE_START#
+START_SNIPPET
+public Boolean edit(Person person) {
+  logger.debug("Editing existing person");
+   
+  try {
+    
+   // Find an entry where pid matches the id
+         Query query = new Query(where("pid").is(person.getPid()));
+          
+   // Declare an Update object. 
+         // This matches the update modifiers available in MongoDB
+   Update update = new Update();
+          
+         update.set("firstName", person.getFirstName());
+         mongoTemplate.updateMulti(query, update);
+          
+         update.set("lastName", person.getLastName());
+         mongoTemplate.updateMulti(query, update);
+          
+         update.set("money", person.getMoney());
+         mongoTemplate.updateMulti(query, update);
+          
+   return true;
+    
+  } catch (Exception e) {
+   logger.error("An error has occurred while trying to edit existing user", e);
+   return false;
+  }
+   
+ }
+CODE_END#
+
+H3#@Configuration
+To use Spring's MongoTemplate it needs to be declared via configuration. It also needs a reference to a MongoDB database. Let's declare an XML configuration that satifies these requirements:
+
+H4#@mongo-config.xml
+CODE_START#
+START_SNIPPET
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/data/mongo
+      http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
+  
+ <!-- Default bean name is 'mongo' -->
+ <mongo:mongo host="localhost" port="27017"/>
+  
+ <!-- Offers convenience methods and automatic mapping between MongoDB JSON documents and your domain classes. -->
+   <bean id="mongoTemplate" class="org.springframework.data.document.mongodb.MongoTemplate">
+     <constructor-arg ref="mongo"/>
+     <constructor-arg value="mydb"/>
+     <constructor-arg value="mycollection"/>
+   </bean>
+    
+   <bean id="initService" class="org.krams.tutorial.service.InitService" init-method="init"></bean>
+</beans>
+CODE_END#
+
+Notice we're using the mongo namespace:
+xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+
+We've declared a reference to a MongoDB database by declaring: 
+CODE_START#
+START_SNIPPET
+<mongo:mongo host="localhost" port="27017"/>
+CODE_END#
+
+Then we declared a MongoTemplate that references a MongoDB database (mongo), a database (mydb), and a collection (mycollection):
+CODE_START#
+START_SNIPPET
+<bean id="mongoTemplate" class="org.springframework.data.document.mongodb.MongoTemplate">
+     <constructor-arg ref="mongo"/>
+     <constructor-arg value="mydb"/>
+     <constructor-arg value="mycollection"/>
+</bean>
+CODE_END#
+
+Lastly, we declared an initService
+CODE_START#
+START_SNIPPET
+<bean id="initService" class="org.krams.tutorial.service.InitService" init-method="init"></bean>
+CODE_END#
+
+
+The purpose of the initService is to prepopulate our MongoDB with sample data. 
+
+Here's the class declaration:
+
+H4#@InitService.java
+CODE_START#
+START_SNIPPET
+ 
+import java.util.UUID;
+ 
+import javax.annotation.Resource;
+import org.apache.log4j.Logger;
+import org.krams.tutorial.domain.Person;
+import org.springframework.data.document.mongodb.MongoTemplate;
+import org.springframework.transaction.annotation.Transactional;
+ 
+/**
+ * Service for initializing MongoDB with sample data
+ * <p>
+ * For a complete reference to MongoDB
+ * see http://www.mongodb.org/
+ * <p>
+ * For transactions, see http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/transaction.html
+ * 
+ */
+@Transactional
+public class InitService {
+ 
+ protected static Logger logger = Logger.getLogger("service");
+  
+ @Resource(name="mongoTemplate")
+ private MongoTemplate mongoTemplate;
+ 
+ private void init() {
+  // Populate our MongoDB database
+  logger.debug("Init MongoDB users");
+   
+  // Drop existing collection
+  mongoTemplate.dropCollection("mycollection");
+   
+  // Create new object
+  Person p = new Person ();
+  p.setPid(UUID.randomUUID().toString());
+  p.setFirstName("John");
+  p.setLastName("Smith");
+  p.setMoney(1000.0);
+   
+  // Insert to db
+     mongoTemplate.insert("mycollection", p);
+ 
+     // Create new object
+  p = new Person ();
+  p.setPid(UUID.randomUUID().toString());
+  p.setFirstName("Jane");
+  p.setLastName("Adams");
+  p.setMoney(2000.0);
+   
+  // Insert to db
+     mongoTemplate.insert("mycollection", p);
+         
+     // Create new object
+  p = new Person ();
+  p.setPid(UUID.randomUUID().toString());
+  p.setFirstName("Jeff");
+  p.setLastName("Mayer");
+  p.setMoney(3000.0);
+   
+  // Insert to db
+     mongoTemplate.insert("mycollection", p);
+ }
+}
+CODE_END#
+
+
+H3#@The Controller Layer
+After creating the domain and service classes, we need to declare a controller that will handle the web requests. 
+
+H4#@MainController.java
+CODE_START#
+START_SNIPPET
+import java.util.List;
+import javax.annotation.Resource;
+import org.apache.log4j.Logger;
+import org.krams.tutorial.domain.Person;
+import org.krams.tutorial.service.PersonService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+ 
+ 
+/**
+ * Handles and retrieves person request
+ * 
+ */
+@Controller
+@RequestMapping("/main")
+public class MainController {
+ 
+ protected static Logger logger = Logger.getLogger("controller");
+  
+ @Resource(name="personService")
+ private PersonService personService;
+  
+ /**
+  * Handles and retrieves all persons and show it in a JSP page
+  * 
+  * @return the name of the JSP page
+  */
+    @RequestMapping(value = "/persons", method = RequestMethod.GET)
+    public String getPersons(Model model) {
+      
+     logger.debug("Received request to show all persons");
+      
+     // Retrieve all persons by delegating the call to PersonService
+     List<person> persons = personService.getAll();
+      
+     // Attach persons to the Model
+     model.addAttribute("persons", persons);
+      
+     // This will resolve to /WEB-INF/jsp/personspage.jsp
+     return "personspage";
+ }
+     
+    /**
+     * Retrieves the add page
+     * 
+     * @return the name of the JSP page
+     */
+    @RequestMapping(value = "/persons/add", method = RequestMethod.GET)
+    public String getAdd(Model model) {
+     logger.debug("Received request to show add page");
+     
+     // Create new Person and add to model
+     // This is the formBackingOBject
+     model.addAttribute("personAttribute", new Person());
+ 
+     // This will resolve to /WEB-INF/jsp/addpage.jsp
+     return "addpage";
+ }
+  
+    /**
+     * Adds a new person by delegating the processing to PersonService.
+     * Displays a confirmation JSP page
+     * 
+     * @return  the name of the JSP page
+     */
+    @RequestMapping(value = "/persons/add", method = RequestMethod.POST)
+    public String add(@ModelAttribute("personAttribute") Person person) {
+  logger.debug("Received request to add new person");
+   
+     // The "personAttribute" model has been passed to the controller from the JSP
+     // We use the name "personAttribute" because the JSP uses that name
+   
+  // Call PersonService to do the actual adding
+  personService.add(person);
+ 
+     // This will resolve to /WEB-INF/jsp/addedpage.jsp
+  return "addedpage";
+ }
+     
+    /**
+     * Deletes an existing person by delegating the processing to PersonService.
+     * Displays a confirmation JSP page
+     * 
+     * @return  the name of the JSP page
+     */
+    @RequestMapping(value = "/persons/delete", method = RequestMethod.GET)
+    public String delete(@RequestParam(value="pid", required=true) String id, 
+              Model model) {
+    
+  logger.debug("Received request to delete existing person");
+   
+  // Call PersonService to do the actual deleting
+  personService.delete(id);
+   
+  // Add id reference to Model
+  model.addAttribute("pid", id);
+      
+     // This will resolve to /WEB-INF/jsp/deletedpage.jsp
+  return "deletedpage";
+ }
+     
+    /**
+     * Retrieves the edit page
+     * 
+     * @return the name of the JSP page
+     */
+    @RequestMapping(value = "/persons/edit", method = RequestMethod.GET)
+    public String getEdit(@RequestParam(value="pid", required=true) String id,  
+              Model model) {
+     logger.debug("Received request to show edit page");
+     
+     // Retrieve existing Person and add to model
+     // This is the formBackingOBject
+     model.addAttribute("personAttribute", personService.get(id));
+      
+     // This will resolve to /WEB-INF/jsp/editpage.jsp
+     return "editpage";
+ }
+     
+    /**
+     * Edits an existing person by delegating the processing to PersonService.
+     * Displays a confirmation JSP page
+     * 
+     * @return  the name of the JSP page
+     */
+    @RequestMapping(value = "/persons/edit", method = RequestMethod.POST)
+    public String saveEdit(@ModelAttribute("personAttribute") Person person, 
+                 @RequestParam(value="pid", required=true) String id, 
+                Model model) {
+     logger.debug("Received request to update person");
+     
+     // The "personAttribute" model has been passed to the controller from the JSP
+     // We use the name "personAttribute" because the JSP uses that name
+      
+     // We manually assign the id because we disabled it in the JSP page
+     // When a field is disabled it will not be included in the ModelAttribute
+     person.setPid(id);
+      
+     // Delegate to PersonService for editing
+     personService.edit(person);
+      
+     // Add id reference to Model
+  model.addAttribute("pid", id);
+   
+     // This will resolve to /WEB-INF/jsp/editedpage.jsp
+  return "editedpage";
+ }
+     
+}
+CODE_END#
+
+Our controller is a simple class that delegates actual processing to PersonService. When the service is done processing, the controller forwards the result to a JSP view. 
+
+Other Configurations and Files
+To make the tutorial manageable, I've decided not to post the following configuration files in this tutorial:
+a.	web.xml
+b.	spring-servlet.xml
+c,	applicationContext.xml
+These files are standard Spring MVC related configuration files. You can find them in the downloadable application at the end of this tutorial.
+
+H3#@Run the Application
+To run the application, open your browser and enter the following URL:
+
+http://localhost:8080/spring-data-mongodb/krams/main/persons
+
+You should see the following CRUD view:
+b#@
+
+img#@http://4.bp.blogspot.com/-RXeOTP_moxY/TV-yUXalFzI/AAAAAAAAAmc/_r1WmLw8HAA/s400/crud-view.png
+
+b#@
+
+DOWNLOAD_CODE#@http://spring-mvc-mongodb.googlecode.com/files/spring-data-mongodb.zip#@Download code
+
+b#@
+
+H4#@NOTE
+Spring managed object usually created for service, e.g: repository, service, controller, etc which will be shared among threads. It should be thread-safe. 
+All states should be assigned using injection (constructor or setter injection) or in construction phase (using ApplicationContextAware) and the states will 
+remain until application shutdown. So it will be safe and proper using singleton. In case you need thread specific instance/stateful object like in entity/value object in DDD, 
+don't make it as spring managed or else use prototype scope but the implication is you have to manage its lifecycle (disposing) yourself.
+
+Spring singleton is not same as singleton design pattern. In singleton design pattern we will have one and only one object of a class inside a JVM.
+ But in case of spring singleton, we can have multiple instances of the same class inside a single JVM and single IOC container. This is totally depends on the spring bean configuration. 
+ If we configure same class multiple times, we will get multiple instances, but every instance will independently behave like a singleton object (I will call this Spring singleton). E.g.
+ 
+BOX_START#
+START_BOX_CONTENT
+<bean id="exampleController1" class="com.xyz.ExampleController">
+<property name="formView"><value>hibernatemode</value></property>
+<property name="myAbc"><ref bean="myAbc"/></property> 
+</bean> 
+
+<bean id="exampleController2" class="com.xyz.ExampleController">
+<property name="formView"><value>hibernatemode</value></property>
+<property name="myAbc"><ref bean="myAbc"/></property> 
+</bean> 
+BOX_END#
+
+
+Here in the above example we will have two different object of class “com.xyz.ExampleController” but both the objects independently behave like singleton.
+
+Let’s have another example 
+
+BOX_START#
+START_BOX_CONTENT
+<bean id="example2Controller1" class="com.xyz.ExampleController2">
+<property name="formView"><value>hibernatemode</value></property>
+<property name="myAbc"><ref bean="myAbc"/></property> 
+</bean> 
+
+<bean id="example2Controller2" parent=" example2Controller1">
+<property name="formView"><value>aaa</value></property>
+
+</bean> 
+BOX_END#
+Here again we will have two different object of class “com.xyz.ExampleController” but both the objects independently behave like a singleton. When the container will create object “example2Controller2” it will simple clone “example2Controller1” and create another object. But will have two different objects of same class inside same IOC container.
+
+
