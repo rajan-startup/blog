@@ -1,3 +1,4 @@
+H4#@Hadoop Prerequisite
 I hope you have already configured hadoop as per described into hadoop wiki. We have successfully created and executed one map-reduce sample project in that section.
 
 Now, as you already have hadoop configured, let's make our hands dirtry with HDFS, HIVE, SQOOP, PIG.
@@ -24,7 +25,8 @@ This will show you HDFS root directory content.
 	>hadoop fs -cat /test/ | tail -n 100
 	It prints last 100 lines of part1 of the test.txt
 BOX_END#
-	
+b#@	
+b#@
 	
 H1#@ How to write Hadoop map-reduce JUnit
 
@@ -169,7 +171,8 @@ public class TestWordCount {
 CODE_END#
 
 
-
+b#@
+b#@
 H1#@Sqoop
 Sqoop is a batch data migration tool for transferring data between traditional databases and Hadoop. The first version of Sqoop is a heavy client that drives and oversees data transfer via MapReduce. In Sqoop 2, the majority of the work was moved to a server that a thin client communicates with. Also, any client can communicate with the Sqoop 2 server over its JSON-REST protocol. Sqoop 2 was chosen instead of its predecessors because of its client-server design.
 
@@ -179,6 +182,8 @@ Sqoop imports data from external structured datastores into HDFS or related syst
 Sqoop can also be used to extract data from Hadoop and export it to external structured datastores such as relational databases and enterprise data warehouses. 
 Sqoop works with relational databases such as: Teradata, Netezza, Oracle, MySQL, Postgres, and HSQLDB.
 
+BOX_START#
+START_BOX_CONTENT
 1.	Login to MySQL and move to databaes named: netflix
 >mysql --user=root --password=password netflix
 
@@ -190,11 +195,15 @@ mysql>describe USER
 
 4.	Now, let's quit from mysql.
 mysql>quit
+BOX_END#
 
 H3#@Let's import with Sqoop
 Sqoop provides a pluggable connector mechanism for optimal connectivity to external systems. 
 The Sqoop extension API provides a convenient framework for building new connectors which can be dropped into Sqoop installations to provide connectivity to various systems. 
 Sqoop itself comes bundled with various connectors that can be used for popular database and data warehousing systems.
+
+BOX_START#
+START_BOX_CONTENT
 
 1.	Download and install sqoop and make sure your classpath is confgiured properly.
 2.	Let's verify the installatiion.
@@ -206,8 +215,9 @@ Sqoop itself comes bundled with various connectors that can be used for popular 
 5.	Now, let's verify data into HDFS
 >hadoop fs -ls user
 >hadoop fs -tail user/part-m-00000
-
-
+BOX_END#
+b#@
+b#@
 H1#@HIVE
 
 H4#@Why should I use HIVE?
@@ -215,7 +225,7 @@ H4#@Why should I use HIVE?
 H4#@Reason #1: Apache Hadoop is the future of enterprise data management.
 And Apache Hive is the gateway for business intelligence and visualization tools integrated with Apache Hadoop.
 
-Learning Apache Hive puts developers on the path to innovate on new data architecture projects and new business applications. I think it’s always more exciting to write code for something that’s ramping up, rather than for maintaining mature systems.
+Learning Apache Hive puts developers on the path to innovate on new data architecture projects and new business applications. I think it's always more exciting to write code for something that's ramping up, rather than for maintaining mature systems.
 
 H4#@Reason #2: Learning Hive is easy for those who already know SQL.
 Facebook originally created Hive because they had a pressing need to analyze their petabytes of data at Internet scale. But they did not have enough time to teach all of their data analysts to write Java programs that would kick off MapReduce jobs.
@@ -223,7 +233,7 @@ Facebook originally created Hive because they had a pressing need to analyze the
 Their analysts already knew how to write SQL queries, so Facebook created Hive as a tool those analysts could use with their existing SQL skills. After Facebook contributed their code to the Apache Foundation, the open community continued developing Hive along these same lines. So the same is true today as it was in the beginning: developers already familiar with SQL can learn Hive quickly and then take part in all of the new opportunities promised by Hadoop v2.0.
 
 H4#@Reason #3: Hive is about to get a lot faster (thanks to the Stinger Initiative and Apache Tez)
-Apache Tez generalizes the MapReduce framework so that Apache Pig and Hive can meet demands for faster response times. At Hortonworks, we launched the Stinger Initiative to improve Hive performance by 100x and to make Hive SQL-compatible.
+Apache Tez generalizes the MapReduce framework so that Apache Pig and Hive can meet demands for faster response times. 
 
 We have completed Phase 1 of Stinger with impressive results. Phase 2 of Stinger is underway, and we expect to push performance on several types of Hive queries across the 100x threshold.
 
@@ -302,9 +312,10 @@ select * from accounts
 BOX_END#
 
 a#@http://hortonworks.com/wp-content/uploads/2012/03/Hortonworks_Tutorial_Hive_5.22.pdf#@Please visit for more information.
-
+b#@
+b#@
 H1#@PIG
-Pig is a high level scripting language that is used with Apache Hadoop. Pig enables data workers to write complex data transformations without knowing Java. Pig’s simple SQL-like scripting language is called Pig Latin, and appeals to developers already familiar with scripting languages and SQL.
+Pig is a high level scripting language that is used with Apache Hadoop. Pig enables data workers to write complex data transformations without knowing Java. Pig's simple SQL-like scripting language is called Pig Latin, and appeals to developers already familiar with scripting languages and SQL.
 
 Pig is complete, so you can do all required data manipulations in Apache Hadoop with Pig. Through the User Defined Functions(UDF) facility in Pig, Pig can invoke code in many languages like JRuby, Jython and Java. You can also embed Pig scripts in other languages. The result is that you can use Pig as a component to build larger and more complex applications that tackle real business problems.
 

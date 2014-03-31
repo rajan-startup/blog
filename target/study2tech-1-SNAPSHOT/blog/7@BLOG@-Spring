@@ -11,6 +11,14 @@ Examples of how you, as an application developer, can use the Spring platform ad
 3.	Make a local Java method a management operation without having to deal with JMX APIs.
 4.	Make a local Java method a message handler without having to deal with JMS APIs.
 
+H3#@What is Inversion of Control in spring ?
+IOC means inverting the control of creating the object from our own using new operator to Spring container.
+Inversion of Control (also known as dependency injection) says you are not supposed to create application objects but describe how they should be created in a configuration file. 
+To connect components with services just describe which service is needed by which component rather than directly connecting them.
+
+Inversion of Control (IOC) and Dependency Injection are used interchangeably. IOC is achieved through DI. DI is the process of providing the dependencies of an object and IOC is the end result of DI. 
+By DI the responsibility of creating objects is shifted from our application code to Spring container hence the phenomenon is called Inversion of Control (IOC).
+
 H3#@Spring Modules:
 
 img#@http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/images/spring-overview.png
@@ -756,4 +764,43 @@ START_BOX_CONTENT
 BOX_END#
 Here again we will have two different object of class “com.xyz.ExampleController” but both the objects independently behave like a singleton. When the container will create object “example2Controller2” it will simple clone “example2Controller1” and create another object. But will have two different objects of same class inside same IOC container.
 
+b#@
+H1#@FAQ
+b#@
+H3#@1.	Describe layered architecture of Spring Framework ?
+Spring comprises of the following modules.
+H4#@Core container : 
+Basic functionality of Spring is provided by the core container. BeanFactory is the primary component of core container, an implementation of the Factory design pattern. The BeanFactory applies the Inversion of Control (IOC) pattern so that application’s configuration and dependency specification can be separated from the actual application code.
 
+H4#@Spring context : 
+Context module is built on the base core container. The Context module inherits features of Beans module. It has support for internationalization , event-propagation, resource-loading. It also supports Java EE features such as EJB, JMX and basic remoting.
+
+H4#@Spring AOP : 
+The Spring AOP module provides aspect-oriented programming functionality into the Spring framework. We can apply AOP to any object managed by the Spring framework. Declarative transaction management can be applied into your application by using Spring AOP.
+
+H4#@Spring DAO : 
+The Spring DAO makes it easy to work with different database techniques like JDBC, ORM, OXM etc. It provides meaningful exception hierarchy for managing the exceptions and error messages thrown by vendor specific database.
+
+H4#@Spring ORM : 
+The Spring ORM module supports different ORM tools like JPA, JDO, Hibernate, and iBatis. We can use all of these O/R-mapping frameworks in combination with other features offered by Spring.
+
+H4#@Spring Web module : 
+Spring’s Web package provides basic web-oriented integration features, such as multipart file-upload functionality, the initialization of the IoC container using servlet listeners and a web-oriented application context. When using Spring together with WebWork or Struts, this is the package to integrate with.
+
+H4#@Spring MVC framework : 
+Spring MVC module provides a full-featured MVC implementation for building Web applications.
+
+H3#@2.	Advantages of Spring Framework ?
+- Spring is relatively light weight container in comparison to other J2EE containers. It -does not use much memory and CPU cycles for loading beans, providing services like transaction control , AOP management, JDBC interaction.
+- Spring makes it easy to develop J2EE application as it has built-in support for WEB MVC framework.
+- Spring helps creating loosely coupled applications by DI.
+- Spring has no dependency on any application servers.
+- Spring creates objects lazily which helps in developing light weight applications.
+- Spring supports aspect oriented programming to manage logging, transaction, security etc.
+- Spring makes Database interaction (operations) easier as it has support for data access techniques such as DAO, JDBC, Hibernate, IBATIS, JDO etc.
+With the help of spring application code can be unit tested easily as Spring provides unit testing support classes.
+- Spring does not need unique deployment steps.
+- Spring configuration is done in standard XML format which easy to write and understand.
+
+H3#@3.	More Spring FAQ
+a#@https://docs.google.com/file/d/0B7JfefAzny-CYWUyNjdjZjgtMDQzMi00Yjg1LTkzYmMtNGViNWZmOGVjMTgx/edit?pli=1#@Click Here
