@@ -377,7 +377,12 @@ warSrcDirIsOutput=true]]>
 	</pluginRepositories>
 
 	<dependencies>
-	    
+	    	<!--	web-client CXF -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.1.1</version>
+		</dependency>
 		<!-- Spring Framework -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -590,5 +595,6 @@ warSrcDirIsOutput=true]]>
 		<jdo.version>2.3-eb</jdo.version>
 		<slf4j.version>1.6.2</slf4j.version>
 		<logback.version>0.9.29</logback.version>
+		<cxf.version>2.7.6</cxf.version>
 	</properties>
 </project>

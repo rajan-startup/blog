@@ -1,2 +1,0 @@
-1@BLOG@-Git:git;commit;rebase;merge;branch
-2@BLOG@-Hadoop:hadoop;map-reduce;mapreduce;hive;pig;namenode;tasknode;job-tracker;jobtracker;data;big;bigdata;cluster
