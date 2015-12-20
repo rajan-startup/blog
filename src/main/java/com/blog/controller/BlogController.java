@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,10 +36,11 @@ import com.google.appengine.api.datastore.Text;
 @Controller
 public class BlogController {
 	private final BlogDao BlogDao;
-	private static boolean inIt = false;
+	public static boolean inIt = false;
 	private static final String metaFileName = "meta/blogMeta.txt";
 	private static SearchResult searchResult;
 	private static Set<String> noiseTokens = getNoiseTokens();
+	
 	
 	
 	@Autowired
@@ -61,11 +64,6 @@ public class BlogController {
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String read(Model model) {
 		
-		if(!inIt){
-			BlogRequestHandler.getInstance().initBlog(BlogDao,BlogConstants.BLOG);
-			inIt = true;
-		}
-		
 		Index index = FileHandler.getInstance().getIndex(BlogConstants.BLOG,BlogConstants.BLOG);
 		model.addAttribute("index", index);
 		model.addAttribute("type", BlogConstants.BLOG);
@@ -76,6 +74,7 @@ public class BlogController {
 
 	@RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
 	public String read(Model model,@PathVariable final String id) {
+		BlogRequestHandler.getInstance().initBlog(BlogDao,BlogConstants.BLOG,id);
 		List<Topic> topics = BlogDao.getTopic(id);
 		model.addAttribute("topics", topics);
 		model.addAttribute("type", BlogConstants.BLOG);
@@ -205,7 +204,9 @@ public class BlogController {
 		
 		return searchResult;
 		
-		
 	}
+	
+	
+	
 	
 }

@@ -15,22 +15,18 @@ public class BlogRequestHandler {
 	}
 	
 	
-	public void initBlog(BlogDao dao,String directory) {
+	public void initBlog(BlogDao dao,String directory,String id) {
 		
-		List<Topic> topics = FileHandler.getInstance().getAllTopics(directory);
+		List<Topic> existTopics = dao.getTopic(id);
 		
-		if(topics!=null && !topics.isEmpty()){
-			for(Topic topic : topics){
-				
-				List<Topic> existTopics = dao.getTopic(topic.getId());
-				
-				if(existTopics!=null && !existTopics.isEmpty()){
-					//TODO: Log already exist
-				}else{
+		if(existTopics!=null && !existTopics.isEmpty()){
+			//TODO: Log already exist
+		}else{
+			List<Topic> topics = FileHandler.getInstance().getAllTopics(directory,id);
+			if(topics!=null && !topics.isEmpty()){
+				for(Topic topic : topics){
 					dao.store(topic);
 				}
-				
-				
 			}
 		}
 		
