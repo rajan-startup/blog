@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.datanucleus.util.StringUtils;
 import org.springframework.core.io.FileSystemResource;
 
 import com.blog.constant.BlogConstants;
@@ -36,26 +37,59 @@ public class FileHandler {
 			List<Topic> topics = new ArrayList<Topic>();
 			
 			for(String fileName : fileNames){
-				File file = new File(fileName);
-				String[] idStr = file.getName().split("-");
-				String content = readFileText(fileName);
-				
-				Text text = new Text(content);
-				
-				try{
-					Topic topic = new Topic(idStr[0].trim(),idStr[1].trim(),text);
-					topics.add(topic);
-				}catch(NumberFormatException e){
-					e.printStackTrace();
-				}
-				
-				
+				updateTopics(fileName,topics,false);
 			}
 			
 			return topics;
 		}
 		
 		return null;
+	}
+
+	
+	public List<Topic> getAllTopics(String directory,String id) {
+		
+		List<String> fileNames = getFileNameList(directory);
+		
+		List<Topic> topics = new ArrayList<Topic>();
+		
+		if(fileNames!=null){
+			for(String fileName : fileNames){
+				if(fileName.contains(id)){
+					updateTopics(fileName,topics,true);
+				}
+			}
+		}
+		
+		return topics;
+		
+		
+	}
+	
+	private void updateTopics(String fileName, List<Topic> topics,boolean readContent) {
+		
+		if(!StringUtils.isEmpty(fileName) && topics!=null){
+
+			File file = new File(fileName);
+			String[] idStr = file.getName().split("-");
+			String content = null;
+			if(readContent){
+				content = readFileText(fileName);
+			}
+			 
+			Text text = new Text(content);
+			
+			try{
+				Topic topic = new Topic(idStr[0].trim(),idStr[1].trim(),text);
+				topics.add(topic);
+			}catch(NumberFormatException e){
+				e.printStackTrace();
+			}
+			
+			
+		
+		}
+		
 	}
 
 	private List<String> getFileNameList(String directory) {

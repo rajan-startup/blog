@@ -33,3 +33,25 @@ b. Google App Engine > ORM > give exact path of entity class and class package -
 
 make sure to run env.bat fro java7
 C:\XXXXX\maven.repo\XXXXX\gae\com\google\appengine\appengine-java-sdk\1.8.9\appengine-java-sdk-1.8.9\bin\appcfg.cmd --enable_jar_splitting update target\study2tech-1-SNAPSHOT\
+
+
+(1)set PATH=C:\Java\java7\jdk1.7.0_60\bin;%PATH%
+(2)mvn install -settings C:\rd\prjcts\gae\settings.xml
+(3)mvn gae:debug -settings C:\rd\prjcts\gae\settings.xml
+(4)C:\rd\prjcts\gae\appengine-java-sdk-1.8.9\bin\appcfg.cmd --enable_jar_splitting update target\study2tech-1-SNAPSHOT\
+
+If project already has Target folder then just make changes into Target/files only and run step: 4
+
+
+Kill port:
+1. netstat -a -o -n > log.txt
+2. search for 8080 PID
+3. taskkill /F /PID [PID]
+
+(*) If you have stable project with target folder created then:
+1. just add content-files under target directory
+2. run step (4) deploy it to remote server
+3. Pre-req:
+a. setup java7
+b. setup gae engine 
+

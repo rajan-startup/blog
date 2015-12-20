@@ -3,6 +3,8 @@ package com.blog.controller;
 
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,7 @@ import com.blog.entity.BlogDao;
 import com.blog.entity.Topic;
 import com.blog.model.Index;
 import com.google.appengine.api.datastore.Text;
+import com.google.appengine.api.ThreadManager;
 
 
 @RequestMapping("/book")
@@ -26,6 +29,7 @@ import com.google.appengine.api.datastore.Text;
 public class BookController {
 	private final BlogDao BlogDao;
 	private static boolean inIt = false;
+	private ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 	
 	
 
@@ -37,11 +41,6 @@ public class BookController {
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String read(Model model) {
 		
-		if(!inIt){
-			BlogRequestHandler.getInstance().initBlog(BlogDao,BlogConstants.BOOK);
-			inIt = true;
-		}
-		
 		Index index = FileHandler.getInstance().getIndex(BlogConstants.BOOK,BlogConstants.BOOK);
 		model.addAttribute("index", index);
 		model.addAttribute("type", "book");
@@ -52,12 +51,12 @@ public class BookController {
 
 	@RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
 	public String read(Model model,@PathVariable final String id) {
+		BlogRequestHandler.getInstance().initBlog(BlogDao,BlogConstants.BOOK,id);
 		List<Topic> topics = BlogDao.getTopic(id);
 		model.addAttribute("topics", topics);
 		model.addAttribute("type", "book");
 		return "blog";
 	}
-	
 	
 	
 }

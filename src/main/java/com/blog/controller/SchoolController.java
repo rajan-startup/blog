@@ -47,11 +47,6 @@ public class SchoolController {
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String read(Model model) {
 		
-		if(!inIt){
-			BlogRequestHandler.getInstance().initBlog(BlogDao,BlogConstants.BLOG);
-			inIt = true;
-		}
-		
 		Index index = FileHandler.getInstance().getIndex(BlogConstants.SCHOOL,BlogConstants.SCHOOL);
 		model.addAttribute("index", index);
 		model.addAttribute("type", "school");
@@ -62,6 +57,7 @@ public class SchoolController {
 
 	@RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
 	public String read(Model model,@PathVariable final String id) {
+		BlogRequestHandler.getInstance().initBlog(BlogDao,BlogConstants.BLOG,id);
 		List<Topic> topics = BlogDao.getTopic(id);
 		model.addAttribute("topics", topics);
 		model.addAttribute("type", "school");
