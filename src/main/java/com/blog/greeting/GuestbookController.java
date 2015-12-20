@@ -24,7 +24,6 @@ public class GuestbookController {
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String read(Model model) {
 		System.out.println("I am in get method");
-		List<Greeting> greetings = guestbookDao.getAll();
 //		model.addAttribute("greetings", greetings);
 		return "index";
 	}

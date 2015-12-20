@@ -40,8 +40,7 @@ public class BookController {
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String read(Model model) {
-		
-		Index index = FileHandler.getInstance().getIndex(BlogConstants.BOOK,BlogConstants.BOOK);
+		Index index = FileHandler2.getInstance().getIndex(BlogConstants.BOOK,BlogConstants.BOOK);
 		model.addAttribute("index", index);
 		model.addAttribute("type", "book");
 		return "blog";
@@ -51,8 +50,7 @@ public class BookController {
 
 	@RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
 	public String read(Model model,@PathVariable final String id) {
-		BlogRequestHandler.getInstance().initBlog(BlogDao,BlogConstants.BOOK,id);
-		List<Topic> topics = BlogDao.getTopic(id);
+		List<Topic> topics = BlogWebDao.getTopic(BlogConstants.BOOK,id);
 		model.addAttribute("topics", topics);
 		model.addAttribute("type", "book");
 		return "blog";

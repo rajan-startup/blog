@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.datanucleus.util.StringUtils;
 import org.springframework.core.io.FileSystemResource;
@@ -21,11 +22,12 @@ import com.blog.model.Bullet;
 import com.blog.model.Index;
 import com.google.appengine.api.datastore.Text;
 
-public class FileHandler {
+public class FileHandler2 {
 
-	private static FileHandler handler = new FileHandler();
+	private static FileHandler2 handler = new FileHandler2();
+	static final Map<String,List<String>> fileMap = new ConcurrentHashMap<String,List<String>>();
 	
-	public static FileHandler getInstance() {
+	public static FileHandler2 getInstance() {
 		return handler;
 	}
 
@@ -38,7 +40,7 @@ public class FileHandler {
 			List<Topic> topics = new ArrayList<Topic>();
 			
 			for(String fileName : fileNames){
-				updateTopics(fileName,topics,false);
+				updateTopics(directory, fileName,topics,false);
 			}
 			
 			return topics;
@@ -48,7 +50,7 @@ public class FileHandler {
 	}
 
 	
-	public List<Topic> getAllTopics(String directory,String id) {
+	public static List<Topic> getAllTopics(String directory,String id) {
 		
 		List<String> fileNames = getFileNameList(directory);
 		
@@ -57,7 +59,7 @@ public class FileHandler {
 		if(fileNames!=null){
 			for(String fileName : fileNames){
 				if(fileName.contains(id)){
-					updateTopics(fileName,topics,true);
+					updateTopics(directory, fileName,topics,true);
 				}
 			}
 		}
@@ -67,7 +69,7 @@ public class FileHandler {
 		
 	}
 	
-	private void updateTopics(String fileName, List<Topic> topics,boolean readContent) {
+	private static void updateTopics(String dir, String fileName, List<Topic> topics,boolean readContent) {
 		
 		if(!StringUtils.isEmpty(fileName) && topics!=null){
 
@@ -75,7 +77,7 @@ public class FileHandler {
 			String[] idStr = file.getName().split("-");
 			String content = null;
 			if(readContent){
-				content = readFileText(fileName);
+				content = readFileText(dir, fileName);
 			}
 			 
 			Text text = new Text(content);
@@ -91,60 +93,13 @@ public class FileHandler {
 		
 	}
 
-	private List<String> getFileNameList(String directory) {
+	private static List<String> getFileNameList(String directory) {
 		
-		FileSystemResource resource = new FileSystemResource(directory);
-		
-		File dir = resource.getFile();
-		
-		if(dir!=null && dir.isDirectory()){
-			File[] files = dir.listFiles();
-			if(files!=null){
-				
-				List<String> fileNameList = new ArrayList<String>();
-				
-				for(File file: files){
-					System.out.println(file.getName());
-					if(file.isFile()){
-						fileNameList.add(file.getAbsolutePath());
-					}
-				}
-				return fileNameList;
-			}
-		}
-		
-		return null;
+		return fileMap.get(directory);
 	}
 
-	private String readFileText(String fileName) {
-		
-		FileSystemResource resource = new FileSystemResource(fileName);
-		
-		InputStream in = null;
-		try {
-			 in = resource.getInputStream();
-			
-			int content;
-			StringBuilder str = new StringBuilder();
-			while ((content = in.read()) != -1) {
-				// convert to char and display it
-				str.append((char)content);
-			}
- 
-			return str.toString();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (in != null)
-					in.close();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
-		
-		return null;
+	private static String readFileText(String dir, String fileName) {
+		return WebClientHandler.getData(dir+"/"+fileName);
 	}
 
 
@@ -152,6 +107,7 @@ public class FileHandler {
 	public Index getIndex(String type,String topicDir) {
 		
 		List<String> fileNames = getFileNameListFromUrl(topicDir);
+		fileMap.put(topicDir, fileNames);
 		
 		if(fileNames!=null && !fileNames.isEmpty()){
 			
@@ -210,53 +166,12 @@ public class FileHandler {
 	}
 	
 	
-	public Map<String,Set<String>> getMeta(String fileName) {
-		
-		Map<String,Set<String>> metaMap = new HashMap<String,Set<String>>();
-		String content = readFileText(fileName);
-		
-		if(content!=null){
-			
-			String[] metas = content.split(BlogConstants.LINE_DELIMITER);
-			
-			if(metas!=null){
-				
-				for(String meta : metas){
-					
-					String[] topicMeta = meta.split(":");
-					
-					if(topicMeta!=null && topicMeta.length==2){
-						
-						StringTokenizer st = new StringTokenizer(topicMeta[1],";");
-						
-						Set<String> metaTagSet = new HashSet<String>();
-						metaMap.put(topicMeta[0], metaTagSet);
-						
-						while(st.hasMoreElements()){
-							metaTagSet.add(st.nextToken().trim());
-						}
-						
-					}
-					
-				}
-			}
-		}
-		
-		return metaMap;
-	}
-
-	
-	
-	
-	
-	
-	
 	
 	/************************** Helper method **************/
 	
 	public static void main(String[] args){
 		
-		FileHandler handler = new FileHandler();
+		FileHandler2 handler = new FileHandler2();
 //		handler.testBlogFiles();
 //		handler.getMeta("C:/startup/code/2_9/blog/src/main/webapp/meta/meta.txt");
 		String  str = "\trajan\t\n";
@@ -265,25 +180,6 @@ public class FileHandler {
 		
 	}
 	
-	private void testBlogFiles() {
-		
-		FileHandler handler = new FileHandler();
-		String dir = "src/main/webapp/doc/";
-//		handler.getAllTopics(dir);
-		
-		String str = handler.readFileText(dir+"1-git.txt");
-		
-		String[] strs = str.split(BlogConstants.TOPIC_DELIMITER);
-		for(String tag: strs){
-			
-			String[] tokens = tag.split("#@");
-			System.out.println(tokens.length);
-			
-			
-		}
-		System.out.println(strs.length);
-		
-	}
 	
 	
 }

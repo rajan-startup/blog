@@ -35,7 +35,6 @@ import com.google.appengine.api.datastore.Text;
 @RequestMapping("/blog")
 @Controller
 public class BlogController {
-	private final BlogDao BlogDao;
 	public static boolean inIt = false;
 	private static final String metaFileName = "meta/blogMeta.txt";
 	private static SearchResult searchResult;
@@ -45,7 +44,6 @@ public class BlogController {
 	
 	@Autowired
 	public BlogController(final BlogDao BlogDao) {
-		this.BlogDao = BlogDao;
 	}
 
 	private static Set<String> getNoiseTokens() {
@@ -63,8 +61,7 @@ public class BlogController {
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String read(Model model) {
-		
-		Index index = FileHandler.getInstance().getIndex(BlogConstants.BLOG,BlogConstants.BLOG);
+		Index index = FileHandler2.getInstance().getIndex(BlogConstants.BLOG,BlogConstants.BLOG);
 		model.addAttribute("index", index);
 		model.addAttribute("type", BlogConstants.BLOG);
 		return "blog";
@@ -74,8 +71,7 @@ public class BlogController {
 
 	@RequestMapping(value = "/id/{id}", method = RequestMethod.GET)
 	public String read(Model model,@PathVariable final String id) {
-		BlogRequestHandler.getInstance().initBlog(BlogDao,BlogConstants.BLOG,id);
-		List<Topic> topics = BlogDao.getTopic(id);
+		List<Topic> topics = BlogWebDao.getTopic(BlogConstants.BLOG,id);
 		model.addAttribute("topics", topics);
 		model.addAttribute("type", BlogConstants.BLOG);
 		return "blog";
@@ -176,7 +172,6 @@ public class BlogController {
 	public View sign(@RequestParam("content") final String content,@RequestParam("id") final String id,@RequestParam("title") final String title) {
 		StringTokenizer st = new StringTokenizer(content, BlogConstants.DELIMITER);
 		Topic topic = new Topic(id,title,new Text(content));
-		BlogDao.store(topic);
 		return new RedirectView("/blog/", true, true, false);
 	}
 	
@@ -188,7 +183,6 @@ public class BlogController {
 		
 		if(topics!=null && !topics.isEmpty()){
 			for(Topic topic : topics){
-				BlogDao.store(topic);
 			}
 		}
 		
