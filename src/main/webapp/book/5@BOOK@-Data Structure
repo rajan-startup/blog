@@ -3216,7 +3216,7 @@ public int removeElement(int[] A, int elem) {
 }
 CODE_END#
 
-H3#@81. Longest Common Prefix 
+H3#@81. Find longest Common Prefix 
 Write a function to find the longest common prefix string amongst an array of strings.
 ["raj","raju","rajan"] => raj
 
@@ -4869,4 +4869,4 @@ public int swapBits(int n, int i, int j) {
 }
 CODE_END#
 
-H3#@121.  s
+
