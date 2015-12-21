@@ -1,5 +1,4872 @@
-<<<<<<< HEAD
-H3#@1.	You are given 2 documents. We want to know how similar they are through N-Grams. e:Given an input n (n = number of word in the Ngram) and two documents(strings) find the intersection of the NGrams of two document. E.g doc1 = 'This is a dog' doc2 = 'This is a cat' n = 3 Ngrams for doc1 = 'This is a', 'is a dog' Ngrams for doc2 = 'This is a', 'is a cat' Output 'This is a' Find a efficient way and give its complexity.a#@http://stackoverflow.com/questions/1032288/n-grams-explanation-2-applications?rq=1#@Explaination: CODE_START#START_SNIPPETpublic class Interview {	private void process(String file, HashMap<String, Boolean> cmap, int n){		String[] words = file.split(“ “);		if (words.length < n)			return;		for (int i = 0; i<words.length-n; i++){			StringBuilder sb = new StringBuilder();			for (int j = i; j<n+i; j++)				sb.append(words[j] + “ “);			String key = sb.toString();			if (cmap.containsKey(key))				cmap.put(key, Boolean.True);			else				cmap.put(key, Boolean.False);					}	}	public List<String> intersectionNGram(String file1, String file2, int n){		List<String> result = new ArrayList();		HashMap<String, Boolean> cmap = new HashMap();		process(file1, cmap, n);		if (cmap.size()==0)			return result;		process(file2, cmap, n);		for (String key : cmap.keySet()){			if (cmap.get(key))				result.add(key);		}		return result;	}}CODE_END#H3#@2. You are given an array representing integer. Write a function which increments this integer. Example: input [1,2,3] (represents 123) -> output [1,2,4]CODE_START#START_SNIPPETprivate ArrayList<Integer> increment(ArrayList<Integer> number) {	int carry = 1;	for(int i=number.size()-1;i>=0 && carry!=0;i--) {  //Make sure to stop this loop once carry =0		carry = number.get(i) + carry;		number.set(i, carry%10);		carry = carry/10;	}	if(carry>;0) {		number.add(0, carry);	}	return number;}CODE_END#H3#@3. Given an unbalanced binary tree, write code to select a node at random (each node has an equal probability of being selected).CODE_START#START_SNIPPETYou can do it with a single pass of the tree. The algorithm is the same as with a list.When you see the first item in the tree, you set it as the selected item.When you see the second item, you pick a random number in the range (0,2]. If it's 1, then the new item becomes the selected item. Otherwise you skip that item.For each node you see, you increase the count, and with probability 1/count, you select it. So at the 101st node, you pick a random number in the range (0,101]. If it's 100, that node is the new selected node.When you're done traversing the tree, return the selected node. The operation is O(n) in time, with n being the number of nodes in the tree, and O(1) in space. No preprocessing required.Explaination;For example with 2 nodes you select the first item. Then when you see the second item you replace the first item with probability 1/2. When you see the third item, you replace the selected item with probability 1/3. Every item has equal probability of being the selected item.-> you have 5 nodes:(1) check 2nd node: (0,1)=>1 => current=2(2) check 3 node: (0,2)=>1 => current=2(3) check 4 node: (0,3)=>3 => current=4(4) check 5 node: (0,4)=>2 => current=4Answer: 4CODE_END#H3#@4. what is the use of XOR in math problem.H3#@5. ComparatorCODE_START#START_SNIPPETTreeSet<TimeWindow> set = new TreeSet<TimeWindow>(new TimeWindowComparator());public static class TimeWindowComparator implements Comparator<TimeWindow>{	    @Override	    public int compare(TimeWindow t1, TimeWindow t2) {	        return t1.getStartTime().after(t2) ? -1 : 1;	    }}CODE_END#H3#@6. TreeSet vs HashSetHashSet is much faster than TreeSet (constant-time versus log-time for most operations like add, remove and contains) but offers no ordering guarantees like TreeSet.HashSetclass offers constant time performance for the basic operations (add, remove, contains and size).it does not guarantee that the order of elements will remain constant over timeiteration performance depends on the initial capacity and the load factor of the HashSet.It's quite safe to accept default load factor but you may want to specify an initial capacity that's about twice the size to which you expect the set to grow.TreeSetguarantees log(n) time cost for the basic operations (add, remove and contains)guarantees that elements of set will be sorted (ascending, natural, or the one specified by you via its constructor) (implements SortedSet)doesn't offer any tuning parameters for iteration performanceoffers a few handy methods to deal with the ordered set like first(), last(), headSet(), and tailSet() etcImportant points:Both guarantee duplicate-free collection of elementsIt is generally faster to add elements to the HashSet and then convert the collection to a TreeSet for a duplicate-free sorted traversal.None of these implementation are synchronized. That is if multiple threads access a set concurrently, and at least one of the threads modifies the set, it must be synchronized externally.LinkedHashSet is in some sense intermediate between HashSet and TreeSet. Implemented as a hash table with a linked list running through it, however it provides insertion-ordered iteration which is not same as sorted traversal guaranteed by TreeSet.So choice of usage depends entirely on your needs but I feel that even if you need an ordered collection then you should still prefer HashSet to create the Set and then convert it into TreeSet.e.g. SortedSet<String> s = new TreeSet<String>(hashSet);H3#@7. You are given two 32-bit numbers, N and M, and two bit positions, i and j. Write a method to set all bits between i and j in N equal to M (e.g., M becomes a substring of N located at i and starting at j).EXAMPLE:Input: N = 10000000000, M = 10101, i = 2, j = 6Output: N = 10001010100CODE_START#START_SNIPPET public static int updateBits(int n, int m, int i, int j) { int max = ~0; /* All 1’s */ // 1’s through position j, then 0’s : If you subtract 100000 - 1 = 011110 (first and last bit=0 and rest of them 1's) int left = max - ((1 << j) - 1); // 1’s after position i int right = ((1 << i) - 1); // 1’s, with 0s between i and j int mask = left | right; // Clear i through j, then put m in there return (n & mask) | (m << i);}CODE_END#H3#@8. How to find if number if power of 2.Ans: if (n & (n-1)) = 0What does it mean if A & B == 0?It means that A and B never have a 1 bit in the same place. So if n & (n-1) == 0, then n andn-1 never share a 1.What does n-1 look like (as compared with n)?Try doing subtraction by hand (in base 2 or 10). What happens? 1101011000 [base 2]- 1= 1101010111 [base 2] 593100 [base 10]- 1= 593099 [base 10]When you subtract 1 from a number, you look at the least significant bit. If it’s a 1 you changeit to zero and you are done. If it’s a zero, you must “borrow” from a larger bit. So, you go toincreasingly larger bits, changing each bit from a 0 to a 1, until you find a 1. You flip that oneto a 0 and you are done.Thus, n-1 will look like n, except that n’s initial 0s will be 1’s in n-1, and n’s least significant 1will be a 0 in (n-1). That is:if n = abcde1000then n-1 = abcde0111So what does n & (n-1) == 0 indicate?n and (n-1) must have no 1s in common. Given that they look like this:if n = abcde1000then n-1 = abcde0111abcde must be all 0s, which means that n must look like this: 00001000. n is therefore apower of two.So, we have our answer: ((n & (n-1)) == 0) checks if n is a power of 2 (or 0)H3#@9. Write a function to determine the number of bits required to convert integer A to integer B.Input: 31, 14 :    11111 , 01110Output: 2Ans: if you XOR : 1^0 = 1C= A^Bwhile(C>0){count+=c>>1;}H3#@10. Write a program to swap odd and even bits in an integer with as few instructions as possible (e.g., bit 0 and bit 1 are swapped, bit 2 and bit 3 are swapped, etc).Mask all odd bits with 10101010 in binary (which is 0xAA), then shift them left to put them inthe even bits. Then, perform a similar operation for even bits. This takes a total 5 instructions.1 public static int swapOddEvenBits(int x) {2 return ( ((x & 0xaaaaaaaa) >> 1) | ((x & 0x55555555) << 1) );3 } H3#@11. Place for good Distributed design question answer:H3#@12. Why and what is Consistent Distributed hashing.a#@http://n00tc0d3r.blogspot.com/2013/09/big-data-consistent-hashing.html#@Click here.H3#@13. Tiny Urla#@http://n00tc0d3r.blogspot.com/#@Click here.Short url = 6 letters. [0-9a-zA-Z] => [26+26+9=62 => 62^6 = 56.8 billion-> Create distributed hashmap/ Sharded database to generate unique number:ie:e.g. 0-0, ..., 9-9, 10-a, 11-b, ..., 35-z, 36-A, ..., 61-Z.CODE_START#START_SNIPPETpublic String shorturl(int id, int base, HashMap map) {  StringBuilder res = new StringBuilder();  while (id > 0) {    int digit = id % base;    res.append(map.get(digit));    id /= base;  }  while (res.length() < 6)  res.append('0');  return res.reverse().toString();}CODE_END#H3#@14. Clone graphCODE_START#START_SNIPPETprivate UndirectedGraphNode cloneDFS(UndirectedGraphNode root, HashMap<UndirectedGraphNode, UndirectedGraphNode> visited) {       if (root == null) return root;       UndirectedGraphNode node = new UndirectedGraphNode(root.label);       visited.put(root, node);          // DFS       for (UndirectedGraphNode nb : root.neighbors) {         if (visited.containsKey(nb)) {           node.neighbors.add(visited.get(nb));         } else {           node.neighbors.add(cloneDFS(nb, visited));         }       }          return node;     }     public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {       return cloneDFS(node, new HashMap<UndirectedGraphNode, UndirectedGraphNode>());     }  CODE_END#H3#@15. Inorder Binary Tree Traversal with Constant SpaceIt first modify the tree to a partial Threaded Binary Tree where all right child pointers that were null in the original tree are pointed to their inorder successor.With that information in hand, it is much easier to conduct an inorder traversal: Go to the left most node, and follow right pointers to complete the traversal.During the traversal, Morris algorithm then fix the modified right pointers and set them back to null.An inorder traversal can be implemented using recursion or stack (see previous post). But both methods requires O(h) space, where h is the height of the tree. That said, the worst case space complexity can be O(n).CODE_START#START_SNIPPET			16		12	11      14	      13   1511->12->13->14->15->16 (It means you (16) will come after your child's(12) right most leaf node(15))		  //(1) It means 15.right = 16//(2) Go to your left node(12) and then right most leaf node(15) and then link it's right to you(16)pre = cur.leftpre=pre->.....right till right==nullpre.right=cur//(3) then move to left node : 12 and again do the same as (1)//(4) if pre.right!=null it means it's loop : we need to break it so, cur = cur.right (here you will move to your immediate right node for further traversing)pre.right = nullprivate void inorderMorris(TreeNode root, ArrayList<Integer> values) {     TreeNode cur = root;        while (cur != null) {       if (cur.left != null) {         TreeNode pre = cur.left;         while (pre.right != null && pre.right != cur) {           pre = pre.right;  //Move to child's Right most and move it's link to this.curr node       }         if (pre.right == null) { // set right to successor           pre.right = cur;           cur = cur.left;         } else { // visit and revert the change           pre.right = null;           values.add(cur.val);           cur = cur.right;      //This is important: that's where we move to Right Child of any node       }       } else { // visit and move to successor        values.add(cur.val);         cur = cur.right;       }     }   }  CODE_END#H3#@16. Design LRU cache.This algorithm touches each node at most three times: find successor, visit, fix right pointer of pre node. So, it runs in time O(n) and uses O(1) space!We need a data structure to check whether a page number is in cache in constant time. HashMap with each page number as a key can make it.We also need a data structure to maintain page numbers in cache in the order of their access time. One way to do that is to keep a timestamp field for each record, but we still need to sort them which cannot be done in O(1) time. Alternatively, we can use a linked list to keep all records, and move the newly visited one to the head of the list. To get O(1) time complexity for updating such a linked list, we need a doubly linked list.Each time when a new page number comes in,- If it is already in the cache, move the node to the head of the linked list;- If it is not in the cache, insert it to the head of the linked list and update the current capacity of the cache. If the cache is full, remove the last node of the linked list. (So, we also need a tail pointer. :)CODE_START#START_SNIPPETpublic class PostOrderBinaryTreeIteratorImpl implements PostOrderBinaryTreeIterator {     Stack<TreeNode> stack = new Stack<TreeNode>();        /** find the first leaf in a tree rooted at cur and store intermediate nodes */     private void findNextLeaf(TreeNode cur) {       while (cur != null) {         stack.push(cur);         if (cur.left != null) {           cur = cur.left;         } else {           cur = cur.right;         }       }     }        /** Constructor */     public PostOrderBinaryTreeIterator(TreeNode root) {       findNextLeaf(root);     }        /** {@inheritDoc} */     @Override     public boolean hasNext() {       return !stack.isEmpty();     }        /** {@inheritDoc} */     @Override     public Integer next() {       if (!hasNext()) {         throw new NoSuchElementException("All nodes have been visited!");       }          TreeNode res = stack.pop();       if (!stack.isEmpty()) {         TreeNode top = stack.peek();         if (res == top.left) {           findNextLeaf(top.right); // find next leaf in right sub-tree        }       }          return res.val;     }        @Override     public void remove() {       throw new UnsupportedOperationException("remove() is not supported.");     }   }  CODE_END#H3#@17. Maximal Surpasser Count Problem (Binary Search Tree Solution)ou have an array of integers and for every element of the array you count the number of elements to the right that are strictly greater than that element. For example, the array may be:82    74    17    93    96    20    25    55    15    24    25    56and the resultant surpasser count array is:2    2    8    1    0    5    2    1    3    2    1    0and the maximal surpasser count is 8. Note, the problem asks to find 8, not to construct the array in full but we’ll do that anyway.The idea is simple. Every node in the tree is to have three fields – the key, i.e. number in the array that the node corresponds to, number of nodes inserted to the right (A) and the maximal surpasser count so far (B). There is one node for every distinct element of the array. We start reading the array from the right to the left. The first node gets a key of 56 and both fields are set to 0. Next number is 25, which gets inserted as a left child of 56. Because we made a move to the left, the new node will have to add 1 to its count of surpassers. Next one is 24, and, since it requires two moves to the left, it gets to have 2 as its count of surpassers Skipping 15, when we get to 55, we make one move to the left but then to the right. So node 55 will have surpasser count as 1 (correct) but what about node 25? Remember, 55 gets to be inserted to the right of 25. Node 25 will have its B incremented, and next node inserted after 25 will have to pickup the B.CODE_START#START_SNIPPET#include <iostream>#include <vector>#include <algorithm>using namespace std; class Node;vector vc;class Node {  public:    Node * left;    Node * right;     int k;     // key    int c;    // count of duplicate nodes    int surpasserCount, largerThanCount;     Node(){          right = left = NULL;      surpasserCount = largerThanCount = k = c= 0 ;    }};void insert(const int k, Node * r, int m){  if (k == r->k){    r->surpasserCount = r->largerThanCount + m ;         r->c++;    vc.push_back(r->surpasserCount);  } else if (k k) {    if (r->left){      insert (k, r->left, m+1 + r->largerThanCount+r->c);    } else {      r->left = new Node;       r->left->k = k;             r->left->surpasserCount =  m+1 + r->largerThanCount + r->c;      vc.push_back(r->left->surpasserCount);    }  } else {    r->largerThanCount ++;     if (r->right){      insert (k , r->right, m);     } else {      r->right = new Node;       r->right->k = k;             r->right->surpasserCount = m + r->c;      vc.push_back(r->right->surpasserCount);    }    }}int main(int argc, char ** argv) {  int k[] = {82, 74, 17, 93, 96, 20, 25, 55, 15, 24, 25, 56};  int l = 12;   Node * r = new Node;  r->k = k[l-1];   vc.push_back(0);  for (int i = l-2; i >= 0; i--){    insert (k[i], r, 0);  }   for (int i = vc.size()-1; i>=0;i--){    cout << vc[i] << " ";  }  cout << endl;  cout << "Maximal surpasser count is: " << * max_element(vc.begin(), vc.end()) << endl;  return(0); }CODE_END#H3#@18. 
-=======
-H3#@1.	You are given 2 documents. We want to know how similar they are through N-Grams. e:Given an input n (n = number of word in the Ngram) and two documents(strings) find the intersection of the NGrams of two document. E.g doc1 = 'This is a dog' doc2 = 'This is a cat' n = 3 Ngrams for doc1 = 'This is a', 'is a dog' Ngrams for doc2 = 'This is a', 'is a cat' Output 'This is a' Find a efficient way and give its complexity.a#@http://stackoverflow.com/questions/1032288/n-grams-explanation-2-applications?rq=1#@Explaination: CODE_START#START_SNIPPETpublic class Interview {	private void process(String file, HashMap<String, Boolean> cmap, int n){		String[] words = file.split(“ “);		if (words.length < n)			return;		for (int i = 0; i<words.length-n; i++){			StringBuilder sb = new StringBuilder();			for (int j = i; j<n+i; j++)				sb.append(words[j] + “ “);			String key = sb.toString();			if (cmap.containsKey(key))				cmap.put(key, Boolean.True);			else				cmap.put(key, Boolean.False);					}	}	public List<String> intersectionNGram(String file1, String file2, int n){		List<String> result = new ArrayList();		HashMap<String, Boolean> cmap = new HashMap();		process(file1, cmap, n);		if (cmap.size()==0)			return result;		process(file2, cmap, n);		for (String key : cmap.keySet()){			if (cmap.get(key))				result.add(key);		}		return result;	}}CODE_END#H3#@2. You are given an array representing integer. Write a function which increments this integer. Example: input [1,2,3] (represents 123) -> output [1,2,4]CODE_START#START_SNIPPETprivate ArrayList<Integer> increment(ArrayList<Integer> number) {	int carry = 1;	for(int i=number.size()-1;i>=0 && carry!=0;i--) {  //Make sure to stop this loop once carry =0		carry = number.get(i) + carry;		number.set(i, carry%10);		carry = carry/10;	}	if(carry>;0) {		number.add(0, carry);	}	return number;}CODE_END#H3#@3. Given an unbalanced binary tree, write code to select a node at random (each node has an equal probability of being selected).CODE_START#START_SNIPPETYou can do it with a single pass of the tree. The algorithm is the same as with a list.When you see the first item in the tree, you set it as the selected item.When you see the second item, you pick a random number in the range (0,2]. If it's 1, then the new item becomes the selected item. Otherwise you skip that item.For each node you see, you increase the count, and with probability 1/count, you select it. So at the 101st node, you pick a random number in the range (0,101]. If it's 100, that node is the new selected node.When you're done traversing the tree, return the selected node. The operation is O(n) in time, with n being the number of nodes in the tree, and O(1) in space. No preprocessing required.Explaination;For example with 2 nodes you select the first item. Then when you see the second item you replace the first item with probability 1/2. When you see the third item, you replace the selected item with probability 1/3. Every item has equal probability of being the selected item.-> you have 5 nodes:(1) check 2nd node: (0,1)=>1 => current=2(2) check 3 node: (0,2)=>1 => current=2(3) check 4 node: (0,3)=>3 => current=4(4) check 5 node: (0,4)=>2 => current=4Answer: 4CODE_END#H3#@4. what is the use of XOR in math problem.H3#@5. ComparatorCODE_START#START_SNIPPETTreeSet<TimeWindow> set = new TreeSet<TimeWindow>(new TimeWindowComparator());public static class TimeWindowComparator implements Comparator<TimeWindow>{	    @Override	    public int compare(TimeWindow t1, TimeWindow t2) {	        return t1.getStartTime().after(t2) ? -1 : 1;	    }}CODE_END#H3#@6. TreeSet vs HashSetHashSet is much faster than TreeSet (constant-time versus log-time for most operations like add, remove and contains) but offers no ordering guarantees like TreeSet.HashSetclass offers constant time performance for the basic operations (add, remove, contains and size).it does not guarantee that the order of elements will remain constant over timeiteration performance depends on the initial capacity and the load factor of the HashSet.It's quite safe to accept default load factor but you may want to specify an initial capacity that's about twice the size to which you expect the set to grow.TreeSetguarantees log(n) time cost for the basic operations (add, remove and contains)guarantees that elements of set will be sorted (ascending, natural, or the one specified by you via its constructor) (implements SortedSet)doesn't offer any tuning parameters for iteration performanceoffers a few handy methods to deal with the ordered set like first(), last(), headSet(), and tailSet() etcImportant points:Both guarantee duplicate-free collection of elementsIt is generally faster to add elements to the HashSet and then convert the collection to a TreeSet for a duplicate-free sorted traversal.None of these implementation are synchronized. That is if multiple threads access a set concurrently, and at least one of the threads modifies the set, it must be synchronized externally.LinkedHashSet is in some sense intermediate between HashSet and TreeSet. Implemented as a hash table with a linked list running through it, however it provides insertion-ordered iteration which is not same as sorted traversal guaranteed by TreeSet.So choice of usage depends entirely on your needs but I feel that even if you need an ordered collection then you should still prefer HashSet to create the Set and then convert it into TreeSet.e.g. SortedSet<String> s = new TreeSet<String>(hashSet);H3#@7. You are given two 32-bit numbers, N and M, and two bit positions, i and j. Write a method to set all bits between i and j in N equal to M (e.g., M becomes a substring of N located at i and starting at j).EXAMPLE:Input: N = 10000000000, M = 10101, i = 2, j = 6Output: N = 10001010100CODE_START#START_SNIPPET public static int updateBits(int n, int m, int i, int j) { int max = ~0; /* All 1’s */ // 1’s through position j, then 0’s : If you subtract 100000 - 1 = 011110 (first and last bit=0 and rest of them 1's) int left = max - ((1 << j) - 1); // 1’s after position i int right = ((1 << i) - 1); // 1’s, with 0s between i and j int mask = left | right; // Clear i through j, then put m in there return (n & mask) | (m << i);}CODE_END#H3#@8. How to find if number if power of 2.Ans: if (n & (n-1)) = 0What does it mean if A & B == 0?It means that A and B never have a 1 bit in the same place. So if n & (n-1) == 0, then n andn-1 never share a 1.What does n-1 look like (as compared with n)?Try doing subtraction by hand (in base 2 or 10). What happens? 1101011000 [base 2]- 1= 1101010111 [base 2] 593100 [base 10]- 1= 593099 [base 10]When you subtract 1 from a number, you look at the least significant bit. If it’s a 1 you changeit to zero and you are done. If it’s a zero, you must “borrow” from a larger bit. So, you go toincreasingly larger bits, changing each bit from a 0 to a 1, until you find a 1. You flip that oneto a 0 and you are done.Thus, n-1 will look like n, except that n’s initial 0s will be 1’s in n-1, and n’s least significant 1will be a 0 in (n-1). That is:if n = abcde1000then n-1 = abcde0111So what does n & (n-1) == 0 indicate?n and (n-1) must have no 1s in common. Given that they look like this:if n = abcde1000then n-1 = abcde0111abcde must be all 0s, which means that n must look like this: 00001000. n is therefore apower of two.So, we have our answer: ((n & (n-1)) == 0) checks if n is a power of 2 (or 0)H3#@9. Write a function to determine the number of bits required to convert integer A to integer B.Input: 31, 14 :    11111 , 01110Output: 2Ans: if you XOR : 1^0 = 1C= A^Bwhile(C>0){count+=c>>1;}H3#@10. Write a program to swap odd and even bits in an integer with as few instructions as possible (e.g., bit 0 and bit 1 are swapped, bit 2 and bit 3 are swapped, etc).Mask all odd bits with 10101010 in binary (which is 0xAA), then shift them left to put them inthe even bits. Then, perform a similar operation for even bits. This takes a total 5 instructions.1 public static int swapOddEvenBits(int x) {2 return ( ((x & 0xaaaaaaaa) >> 1) | ((x & 0x55555555) << 1) );3 } H3#@11. Place for good Distributed design question answer:H3#@12. Why and what is Consistent Distributed hashing.a#@http://n00tc0d3r.blogspot.com/2013/09/big-data-consistent-hashing.html#@Click here.H3#@13. Tiny Urla#@http://n00tc0d3r.blogspot.com/#@Click here.Short url = 6 letters. [0-9a-zA-Z] => [26+26+9=62 => 62^6 = 56.8 billion-> Create distributed hashmap/ Sharded database to generate unique number:ie:e.g. 0-0, ..., 9-9, 10-a, 11-b, ..., 35-z, 36-A, ..., 61-Z.CODE_START#START_SNIPPETpublic String shorturl(int id, int base, HashMap map) {  StringBuilder res = new StringBuilder();  while (id > 0) {    int digit = id % base;    res.append(map.get(digit));    id /= base;  }  while (res.length() < 6)  res.append('0');  return res.reverse().toString();}CODE_END#H3#@14. Clone graphCODE_START#START_SNIPPETprivate UndirectedGraphNode cloneDFS(UndirectedGraphNode root, HashMap<UndirectedGraphNode, UndirectedGraphNode> visited) {       if (root == null) return root;       UndirectedGraphNode node = new UndirectedGraphNode(root.label);       visited.put(root, node);          // DFS       for (UndirectedGraphNode nb : root.neighbors) {         if (visited.containsKey(nb)) {           node.neighbors.add(visited.get(nb));         } else {           node.neighbors.add(cloneDFS(nb, visited));         }       }          return node;     }     public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {       return cloneDFS(node, new HashMap<UndirectedGraphNode, UndirectedGraphNode>());     }  CODE_END#H3#@15. Inorder Binary Tree Traversal with Constant SpaceIt first modify the tree to a partial Threaded Binary Tree where all right child pointers that were null in the original tree are pointed to their inorder successor.With that information in hand, it is much easier to conduct an inorder traversal: Go to the left most node, and follow right pointers to complete the traversal.During the traversal, Morris algorithm then fix the modified right pointers and set them back to null.An inorder traversal can be implemented using recursion or stack (see previous post). But both methods requires O(h) space, where h is the height of the tree. That said, the worst case space complexity can be O(n).CODE_START#START_SNIPPET			16		12	11      14	      13   1511->12->13->14->15->16 (It means you (16) will come after your child's(12) right most leaf node(15))		  //(1) It means 15.right = 16//(2) Go to your left node(12) and then right most leaf node(15) and then link it's right to you(16)pre = cur.leftpre=pre->.....right till right==nullpre.right=cur//(3) then move to left node : 12 and again do the same as (1)//(4) if pre.right!=null it means it's loop : we need to break it so, cur = cur.right (here you will move to your immediate right node for further traversing)pre.right = nullprivate void inorderMorris(TreeNode root, ArrayList<Integer> values) {     TreeNode cur = root;        while (cur != null) {       if (cur.left != null) {         TreeNode pre = cur.left;         while (pre.right != null && pre.right != cur) {           pre = pre.right;  //Move to child's Right most and move it's link to this.curr node       }         if (pre.right == null) { // set right to successor           pre.right = cur;           cur = cur.left;         } else { // visit and revert the change           pre.right = null;           values.add(cur.val);           cur = cur.right;      //This is important: that's where we move to Right Child of any node       }       } else { // visit and move to successor        values.add(cur.val);         cur = cur.right;       }     }   }  CODE_END#H3#@16. Design LRU cache.This algorithm touches each node at most three times: find successor, visit, fix right pointer of pre node. So, it runs in time O(n) and uses O(1) space!We need a data structure to check whether a page number is in cache in constant time. HashMap with each page number as a key can make it.We also need a data structure to maintain page numbers in cache in the order of their access time. One way to do that is to keep a timestamp field for each record, but we still need to sort them which cannot be done in O(1) time. Alternatively, we can use a linked list to keep all records, and move the newly visited one to the head of the list. To get O(1) time complexity for updating such a linked list, we need a doubly linked list.Each time when a new page number comes in,- If it is already in the cache, move the node to the head of the linked list;- If it is not in the cache, insert it to the head of the linked list and update the current capacity of the cache. If the cache is full, remove the last node of the linked list. (So, we also need a tail pointer. :)CODE_START#START_SNIPPETpublic class PostOrderBinaryTreeIteratorImpl implements PostOrderBinaryTreeIterator {     Stack<TreeNode> stack = new Stack<TreeNode>();        /** find the first leaf in a tree rooted at cur and store intermediate nodes */     private void findNextLeaf(TreeNode cur) {       while (cur != null) {         stack.push(cur);         if (cur.left != null) {           cur = cur.left;         } else {           cur = cur.right;         }       }     }        /** Constructor */     public PostOrderBinaryTreeIterator(TreeNode root) {       findNextLeaf(root);     }        /** {@inheritDoc} */     @Override     public boolean hasNext() {       return !stack.isEmpty();     }        /** {@inheritDoc} */     @Override     public Integer next() {       if (!hasNext()) {         throw new NoSuchElementException("All nodes have been visited!");       }          TreeNode res = stack.pop();       if (!stack.isEmpty()) {         TreeNode top = stack.peek();         if (res == top.left) {           findNextLeaf(top.right); // find next leaf in right sub-tree        }       }          return res.val;     }        @Override     public void remove() {       throw new UnsupportedOperationException("remove() is not supported.");     }   }  CODE_END#H3#@17. 
->>>>>>> 0bde937774923e9350ef74abab61535601e107d5
+H3#@1.You are given 2 documents. We want to know how similar they are through N-Grams. 
+ie:
+Given an input n (n = number of word in the Ngram) and two documents(strings) find the intersection of the NGrams of two document. 
+
+E.g doc1 = 'This is a dog' 
+doc2 = 'This is a cat' 
+n = 3 
+Ngrams for doc1 = 'This is a', 'is a dog' 
+Ngrams for doc2 = 'This is a', 'is a cat' 
+Output 'This is a' 
+Find a efficient way and give its complexity.
+
+a#@http://stackoverflow.com/questions/1032288/n-grams-explanation-2-applications?rq=1#@Explaination: 
+
+CODE_START#
+START_SNIPPET
+public class Interview {
+  private void process(String file, HashMap< String, Boolean> cmap, int n){
+    String[] words = file.split(â â);
+    if (words.length <  n)
+      return;
+    for (int i = 0; i< words.length-n; i++){
+      StringBuilder sb = new StringBuilder();
+      for (int j = i; j< n+i; j++)
+        sb.append(words[j] + â â);
+      String key = sb.toString();
+      if (cmap.containsKey(key))
+        cmap.put(key, Boolean.True);
+      else
+        cmap.put(key, Boolean.False);     
+    }
+  }
+
+  public List< String> intersectionNGram(String file1, String file2, int n){
+    List< String> result = new ArrayList();
+    HashMap< String, Boolean> cmap = new HashMap();
+    process(file1, cmap, n);
+    if (cmap.size()==0)
+      return result;
+
+    process(file2, cmap, n);
+    for (String key : cmap.keySet()){
+      if (cmap.get(key))
+        result.add(key);
+    }
+    return result;
+  }
+}
+CODE_END#
+
+
+H3#@2. You are given an array representing integer. Write a function which increments this integer. 
+Example: input [1,2,3] (represents 123) -> output [1,2,4]
+
+CODE_START#
+START_SNIPPET
+private ArrayList< Integer> increment(ArrayList< Integer> number) {
+  int carry = 1;
+  for(int i=number.size()-1;i>=0 && carry!=0;i--) {  //Make sure to stop this loop once carry =0
+    carry = number.get(i) + carry;
+    number.set(i, carry%10);
+    carry = carry/10;
+  }
+  if(carry>;0) {
+    number.add(0, carry);
+  }
+  return number;
+}
+CODE_END#
+
+H3#@3. Given an unbalanced binary tree, write code to select a node at random (each node has an equal probability of being selected).
+CODE_START#
+START_SNIPPET
+You can do it with a single pass of the tree. The algorithm is the same as with a list.
+
+When you see the first item in the tree, you set it as the selected item.
+
+When you see the second item, you pick a random number in the range (0,2]. If it's 1, then the new item becomes the selected item. Otherwise you skip that item.
+
+For each node you see, you increase the count, and with probability 1/count, you select it. So at the 101st node, you pick a random number in the range (0,101]. If it's 100, that node is the new selected node.
+
+When you're done traversing the tree, return the selected node. The operation is O(n) in time, with n being the number of nodes in the tree, and O(1) in space. No preprocessing required.
+
+Explaination;
+For example with 2 nodes you select the first item. Then when you see the second item you replace the first item with probability 1/2. When you see the third item, you replace the selected item with probability 1/3. Every item has equal probability of being the selected item.
+-> you have 5 nodes:
+(1) check 2nd node: (0,1)=>1 => current=2
+(2) check 3 node: (0,2)=>1 => current=2
+(3) check 4 node: (0,3)=>3 => current=4
+(4) check 5 node: (0,4)=>2 => current=4
+Answer: 4
+
+CODE_END#
+
+H3#@4. what is the use of XOR in math problem.
+
+H3#@5. Comparator
+
+CODE_START#
+START_SNIPPET
+TreeSet< TimeWindow> set = new TreeSet< TimeWindow>(new TimeWindowComparator());
+
+public static class TimeWindowComparator implements Comparator< TimeWindow>{
+      @Override
+      public int compare(TimeWindow t1, TimeWindow t2) {
+          return t1.getStartTime().after(t2) ? -1 : 1;
+      }
+}
+
+CODE_END#
+
+
+H3#@6. TreeSet vs HashSet
+HashSet is much faster than TreeSet (constant-time versus log-time for most operations like add, remove and contains) but offers no ordering guarantees like TreeSet.
+
+HashSet
+
+class offers constant time performance for the basic operations (add, remove, contains and size).
+it does not guarantee that the order of elements will remain constant over time
+iteration performance depends on the initial capacity and the load factor of the HashSet.
+It's quite safe to accept default load factor but you may want to specify an initial capacity that's about twice the size to which you expect the set to grow.
+TreeSet
+
+guarantees log(n) time cost for the basic operations (add, remove and contains)
+guarantees that elements of set will be sorted (ascending, natural, or the one specified by you via its constructor) (implements SortedSet)
+doesn't offer any tuning parameters for iteration performance
+offers a few handy methods to deal with the ordered set like first(), last(), headSet(), and tailSet() etc
+Important points:
+
+Both guarantee duplicate-free collection of elements
+It is generally faster to add elements to the HashSet and then convert the collection to a TreeSet for a duplicate-free sorted traversal.
+None of these implementation are synchronized. That is if multiple threads access a set concurrently, and at least one of the threads modifies the set, it must be synchronized externally.
+LinkedHashSet is in some sense intermediate between HashSet and TreeSet. Implemented as a hash table with a linked list running through it, however it provides insertion-ordered iteration which is not same as sorted traversal guaranteed by TreeSet.
+So choice of usage depends entirely on your needs but I feel that even if you need an ordered collection then you should still prefer HashSet to create the Set and then convert it into TreeSet.
+
+e.g. SortedSet< String> s = new TreeSet< String>(hashSet);
+
+H3#@7. You are given two 32-bit numbers, N and M, and two bit positions, i and j. 
+Write a method to set all bits between i and j in N equal to M (e.g., M becomes a substring of N located at i and starting at j).
+EXAMPLE:
+Input: N = 10000000000, M = 10101, i = 2, j = 6
+Output: N = 10001010100
+
+CODE_START#
+START_SNIPPET
+ public static int updateBits(int n, int m, int i, int j) {
+ int max = ~0; /* All 1âs */
+
+ // 1âs through position j, then 0âs : If you subtract 100000 - 1 = 011110 (first and last bit=0 and rest of them 1's)
+ int left = max - ((1 < <  j) - 1);
+
+ // 1âs after position i
+ int right = ((1 < <  i) - 1);
+
+ // 1âs, with 0s between i and j
+ int mask = left | right;
+
+ // Clear i through j, then put m in there
+ return (n & mask) | (m < <  i);
+}
+
+CODE_END#
+
+H3#@8. How to find if number if power of 2.
+
+Ans: if (n & (n-1)) = 0
+
+What does it mean if A & B == 0?
+It means that A and B never have a 1 bit in the same place. So if n & (n-1) == 0, then n and
+n-1 never share a 1.
+What does n-1 look like (as compared with n)?
+Try doing subtraction by hand (in base 2 or 10). What happens?
+ 1101011000 [base 2]
+- 1
+= 1101010111 [base 2]
+ 593100 [base 10]
+- 1
+= 593099 [base 10]
+When you subtract 1 from a number, you look at the least significant bit. If itâs a 1 you change
+it to zero and you are done. If itâs a zero, you must âborrowâ from a larger bit. So, you go to
+increasingly larger bits, changing each bit from a 0 to a 1, until you find a 1. You flip that one
+to a 0 and you are done.
+Thus, n-1 will look like n, except that nâs initial 0s will be 1âs in n-1, and nâs least significant 1
+will be a 0 in (n-1). That is:
+if n = abcde1000
+then n-1 = abcde0111
+So what does n & (n-1) == 0 indicate?
+n and (n-1) must have no 1s in common. Given that they look like this:
+if n = abcde1000
+then n-1 = abcde0111
+abcde must be all 0s, which means that n must look like this: 00001000. n is therefore a
+power of two.
+So, we have our answer: ((n & (n-1)) == 0) checks if n is a power of 2 (or 0)
+
+H3#@9. Write a function to determine the number of bits required to convert integer A to integer B.
+Input: 31, 14 :    11111 , 01110
+Output: 2
+Ans: if you XOR : 1^0 = 1
+C= A^B
+while(C>0){
+count+=c>>1;
+}
+
+H3#@10. Write a program to swap odd and even bits in an integer with as few instructions as possible (e.g., bit 0 and bit 1 are swapped, bit 2 and bit 3 are swapped, etc).
+
+Mask all odd bits with 10101010 in binary (which is 0xAA), then shift them left to put them in
+the even bits. Then, perform a similar operation for even bits. This takes a total 5 instructions.
+1 public static int swapOddEvenBits(int x) {
+2 return ( ((x & 0xaaaaaaaa) >> 1) | ((x & 0x55555555) < <  1) );
+3 } 
+
+H3#@11. Place for good Distributed design question answer:
+
+H3#@12. Why and what is Consistent Distributed hashing.
+a#@http://n00tc0d3r.blogspot.com/2013/09/big-data-consistent-hashing.html#@Click here.
+
+H3#@13. Tiny Url
+a#@http://n00tc0d3r.blogspot.com/#@Click here.
+Short url = 6 letters. [0-9a-zA-Z] => [26+26+9=62 => 62^6 = 56.8 billion
+-> Create distributed hashmap/ Sharded database to generate unique number:
+ie:
+e.g. 0-0, ..., 9-9, 10-a, 11-b, ..., 35-z, 36-A, ..., 61-Z.
+CODE_START#
+START_SNIPPET
+public String shorturl(int id, int base, HashMap map) {
+  StringBuilder res = new StringBuilder();
+  while (id > 0) {
+    int digit = id % base;
+    res.append(map.get(digit));
+    id /= base;
+  }
+  while (res.length() <  6)  res.append('0');
+  return res.reverse().toString();
+}
+CODE_END#
+
+H3#@14. Clone graph
+CODE_START#
+START_SNIPPET
+private UndirectedGraphNode cloneDFS(UndirectedGraphNode root, HashMap< UndirectedGraphNode, UndirectedGraphNode> visited) {  
+     if (root == null) return root;  
+     UndirectedGraphNode node = new UndirectedGraphNode(root.label);  
+     visited.put(root, node);  
+   
+     // DFS  
+     for (UndirectedGraphNode nb : root.neighbors) {  
+       if (visited.containsKey(nb)) {  
+         node.neighbors.add(visited.get(nb));  
+       } else {  
+         node.neighbors.add(cloneDFS(nb, visited));  
+       }  
+     }  
+   
+     return node;  
+   }  
+
+   public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {  
+     return cloneDFS(node, new HashMap< UndirectedGraphNode, UndirectedGraphNode>());  
+   }  
+CODE_END#
+
+H3#@15. Inorder Binary Tree Traversal with Constant Space
+It first modify the tree to a partial Threaded Binary Tree where all right child pointers that were null in the original tree are pointed to their inorder successor.
+With that information in hand, it is much easier to conduct an inorder traversal: Go to the left most node, and follow right pointers to complete the traversal.
+During the traversal, Morris algorithm then fix the modified right pointers and set them back to null.
+
+An inorder traversal can be implemented using recursion or stack (see previous post). But both methods requires O(h) space, where h is the height of the tree. That said, the worst case space complexity can be O(n).
+
+
+CODE_START#
+START_SNIPPET
+      16
+    12
+  11      14
+        13   15
+
+11->12->13->14->15->16 
+(It means you (16) will come after your child's(12) right most leaf node(15))
+      
+//(1) It means 15.right = 16
+//(2) Go to your left node(12) and then right most leaf node(15) and then link it's right to you(16)
+pre = cur.left
+pre=pre->.....right till right==null
+pre.right=cur
+//(3) then move to left node : 12 and again do the same as (1)
+//(4) if pre.right!=null it means it's loop : we need to break it 
+so, cur = cur.right (here you will move to your immediate right node for further traversing)
+pre.right = null
+
+private void inorderMorris(TreeNode root, ArrayList< Integer> values) {  
+   TreeNode cur = root;  
+   
+   while (cur != null) {  
+     if (cur.left != null) {  
+       TreeNode pre = cur.left;  
+       while (pre.right != null && pre.right != cur) {  
+         pre = pre.right;  //Move to child's Right most and move it's link to this.curr node
+       }  
+       if (pre.right == null) { // set right to successor  
+         pre.right = cur;  
+         cur = cur.left;  
+       } else { // visit and revert the change  
+         pre.right = null;  
+         values.add(cur.val);  
+         cur = cur.right;      //This is important: that's where we move to Right Child of any node
+       }  
+     } else { // visit and move to successor 
+       values.add(cur.val);  
+       cur = cur.right;  
+     }  
+   }  
+ }  
+CODE_END#
+
+
+H3#@16. Design LRU cache.
+
+This algorithm touches each node at most three times: find successor, visit, fix right pointer of pre node. So, it runs in time O(n) and uses O(1) space!
+We need a data structure to check whether a page number is in cache in constant time. HashMap with each page number as a key can make it.
+
+We also need a data structure to maintain page numbers in cache in the order of their access time. One way to do that is to keep a timestamp field for each record, but we still need to sort them which cannot be done in O(1) time. Alternatively, we can use a linked list to keep all records, and move the newly visited one to the head of the list. To get O(1) time complexity for updating such a linked list, we need a doubly linked list.
+
+Each time when a new page number comes in,
+- If it is already in the cache, move the node to the head of the linked list;
+- If it is not in the cache, insert it to the head of the linked list and update the current capacity of the cache. If the cache is full, remove the last node of the linked list. (So, we also need a tail pointer. :)
+
+CODE_START#
+START_SNIPPET
+public class PostOrderBinaryTreeIteratorImpl implements PostOrderBinaryTreeIterator {  
+   Stack< TreeNode> stack = new Stack< TreeNode>();  
+   
+   /** find the first leaf in a tree rooted at cur and store intermediate nodes */  
+   private void findNextLeaf(TreeNode cur) {  
+     while (cur != null) {  
+       stack.push(cur);  
+       if (cur.left != null) {  
+         cur = cur.left;  
+       } else {  
+         cur = cur.right;  
+       }  
+     }  
+   }  
+   
+   /** Constructor */  
+   public PostOrderBinaryTreeIterator(TreeNode root) {  
+     findNextLeaf(root);  
+   }  
+   
+   /** {@inheritDoc} */  
+   @Override  
+   public boolean hasNext() {  
+     return !stack.isEmpty();  
+   }  
+   
+   /** {@inheritDoc} */  
+   @Override  
+   public Integer next() {  
+     if (!hasNext()) {  
+       throw new NoSuchElementException("All nodes have been visited!");  
+     }  
+   
+     TreeNode res = stack.pop();  
+     if (!stack.isEmpty()) {  
+       TreeNode top = stack.peek();  
+       if (res == top.left) {  
+         findNextLeaf(top.right); // find next leaf in right sub-tree 
+       }  
+     }  
+   
+     return res.val;  
+   }  
+   
+   @Override  
+   public void remove() {  
+     throw new UnsupportedOperationException("remove() is not supported.");  
+   }  
+ }  
+
+CODE_END#
+
+
+H3#@17. Random Sampling in Linked List
+
+CODE_START#
+START_SNIPPET
+ public class ListNode {  
+   public int val;  
+   public ListNode next;  
+   ListNode(int val) {  
+     this.val = val; this.next = null;  
+   }  
+ }  
+   
+ public ListNode selectASamples(ListNode head) {  
+   ListNode sample = null;  
+   for (int count=1; head!=null; head = head.next, ++count) {  
+     // generate a randome number of [0, count-1]  
+     if (count == 1 || (int)(Math.random() * count) == count - 1) {  
+       sample = head;  
+     }  
+   }  
+   
+   return sample;  
+ }  
+CODE_END#
+
+
+H3#@18. A majority element in an array A[] of size n is an element that appears more than n/2 times (and hence there is at most one such element).
+
+Write a function which takes an array and returns the majority element (if it exists), otherwise returns null.
+For example:
+Given an array of [3, 3, 4, 2, 4, 4, 2, 4, 4], return 4;
+Given an array of [3, 3, 4, 2, 4, 4, 2, 4], return null.
+
+Essentially, if we are finding element is more than n/2 => it means it must be appearing consecutively. 
+So, we should compare with previous element and move forward. and 
+1. we can also maintain the counter
+a. if consecutive matches then store that value in temp and increment
+b. if not match then reduce counter and once counter reaches again to =0; again store the value in temp
+
+BOX_START#
+START_BOX_CONTENT
+ public static Integer findMajority(int[] data) {  
+   int major = 0, count = 1, n = data.length;  
+   for (int i=1; i< n; ++n) {  
+     if (count == 0) { // all previous ones have been cancelled, start over  
+       major = i;  
+       count = 1;  
+     } else if (data[i] == data[major]) {  
+       ++count;  
+     } else {  
+       --count;  
+     }  
+   }  
+   
+   // verify if it is majority  
+   count = 0;  
+   for (int i=0; i< n; ++i) {  
+     if (data[i] == data[major]) ++count;  
+     if (n - count <  count) return data[major];  
+   }  
+   return null;  
+ }  
+BOX_END#
+
+
+H3#@19. Only one letter can be changed and it should be part of dictionary: from array of strings
+
+1. Only one letter can be changed at a time
+2. Each intermediate word must exist in the dictionary
+Return 0 if there is no such transformation sequence.
+Assume that all words have the same length and contain only lowercase alphabetic characters.
+
+For example, given start = "hit", end = "cog", dict = ["hot","dot","dog","lot","log"], return
+[
+    ["hit","hot","dot","dog","cog"],
+    ["hit","hot","lot","log","cog"]
+]
+
+b#@Solution: Keep things in mind
+1. Node(Depth,Parent)->hit(1,null)->hot(2,hit)/sit(2,hit)->findChildOf(hit and sit with incremented depth)
+2. To avoid: while loop make sure:
+ie: lot(1,null)->log(2,lot)
+  got(1,null)->lot(2,got)->log(3,lot) => we are going to repeat the sequence lot->log 
+  to prevent it: check : parent must be different
+ a. keep each node into HashMap< String,Node>
+ b. each time find Node and check if current-node.parent != Map.Node.parent
+ 
+3. to traverse in step1: use Queue and do BFS
+4. Finally, for all depth-2 : traverse all nodes and build path
+
+
+
+CODE_START#
+START_SNIPPET
+public ArrayList< ArrayList< String>> findLadders(String start, String end, HashSet< String> dict) {  
+   ArrayList< ArrayList< String>> paths = new ArrayList< ArrayList< String>>();  
+   if (start == null || end == null || start.length() == 0) return paths;  
+   
+   // maintain a hashmap for visited words  
+   Map< String, ArrayList< Node>> visited = new HashMap< String, ArrayList< Node>>();  
+   
+   // BFS to find the minimum sequence length  
+   getMinLength(start, end, dict, visited);  
+   
+   // DFS to back trace paths from end to start  
+   buildPaths(end, start, visited, new LinkedList< String>(), paths);  
+   
+   return paths;  
+ }  
+   
+ /* Use BFS to find the minimum transformation sequences length from start to end.  
+   Also store parent nodes from previous level for each visited valid word. */  
+ private void getMinLength(String start, String end, HashSet< String> dict,  
+     Map< String, ArrayList< Node>> visited) {  
+   // maintain a queue for words, depth and previous word during BSF  
+   Queue< Node> queue = new LinkedList< Node>();  
+   queue.add(new Node(start, 1));  
+   // BFS  
+   dict.add(end);  
+   int lastLevel = 0;  
+   while (!queue.isEmpty()) {  
+     Node node = queue.poll();  
+     if (lastLevel > 0 && node.depth >= lastLevel) break;  
+     // find transformable words in next level  
+     for (int i=0; i< node.word.length(); ++i) {  
+       StringBuilder sb = new StringBuilder(node.word);  
+       char original = sb.charAt(i);  
+       for (char c='a'; c< ='z'; ++c) {  
+         if (c == original) continue;  
+         sb.setCharAt(i, c);  
+         String s = sb.toString();  
+         // if hits end, mark the current depth as the last level  
+         if (s.equals(end)) {  
+           if (lastLevel == 0) lastLevel = node.depth + 1;  
+         }  
+         if (dict.contains(s) && !s.equals(start)) {  
+           ArrayList< Node> pres = visited.get(s);  
+           if (pres == null) {  
+             // enqueue unvisited word  
+             queue.add(new Node(s, node.depth+1));  
+             pres = new ArrayList< Node>();  
+             visited.put(s, pres);  
+             pres.add(node);  
+           } else if (pres.get(0).depth == node.depth) {  
+             // parent nodes should be in the same level - to avoid circle in graph  
+             pres.add(node);  
+           }  
+         }  
+       }  
+     }  
+   }  
+   return lastLevel;  
+ }  
+   
+ /* Use DFS to back trace all paths from end to start. */  
+ private void buildPaths(String s, String start, Map< String, ArrayList< Node>> visited,  
+     LinkedList< String> path, ArrayList< ArrayList< String>> paths) {  
+   if (s == null || visited == null || path == null || paths == null) return;  
+   
+   path.add(0, s);  
+   if (s.equals(start)) {  
+     ArrayList< String> p = new ArrayList< String>(path);  
+     paths.add(p);  
+   } else {  
+     ArrayList< Node> pres = visited.get(s);  
+     if (pres != null) {  
+       for (Node pre : pres) {  
+         buildPaths(pre.word, start, visited, path, paths);  
+       }  
+     }  
+   }  
+   path.remove(0);  
+ }  
+   
+ private class Node {  
+   String word;  
+   int depth;  
+   public Node(String w, int d) {  
+     word = w; depth = d;  
+   }  
+ }  
+CODE_END#
+
+H3#@20. Given a 2D board and a word, find if the word exists in the grid. Word can be constructed using adjacent.
+
+The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring. The same letter cell may not be used more than once.
+
+For example,
+Given board =
+[
+  ["ABCE"],
+  ["SFCS"],
+  ["ADEE"]
+]
+word = "ABCCED", -> returns true,
+word = "SEE", -> returns true,
+word = "ABCB", -> returns false.
+
+For example, given word = "SEE" and a board =
+[
+  ["ABCE"],
+  ["SFCS"],
+  ["ADEE"]
+]
+
+Convert the board to node sets < 'S', [(1, 0), (1, 3)]>, < 'E', [(0, 3), (2, 2), (2, 3)]>.
+For 'S' at (1, 0), there is no adjacent 'E';
+For 'S' at (1, 3), the 2nd 'E' can be (0, 3), but then there is no adjacent 'E' next to the 2nd 'E'; 
+the 2nd 'E' can also be (2, 3) and the 3rd 'E' will be (2, 2).
+
+Notice that we still perform DFS-like actions on those nodes but the size of node set could be smaller than the original matrix.
+
+CODE_START#
+START_SNIPPET
+public boolean exist(char[][] board, String word) {  
+   HashMap< Character, ArrayList< Integer>> allNodes = preprocess(board);  
+   if (!allNodes.containsKey(word.charAt(0))) return false;  
+   
+   boolean[] visited = new boolean[board.length*board[0].length];;  
+   for (int node : allNodes.get(word.charAt(0))) {  
+     if (expand(allNodes, node, visited, word, 1, board[0].length)) return true;  
+   }  
+   
+   return false;  
+ }  
+   
+ private boolean expand(HashMap< Character, ArrayList< Integer>> allNodes, int preNode,  
+     boolean[] visited, String word, int cur, int m) {  
+   if (cur == word.length()) return true;  
+   if (!allNodes.containsKey(word.charAt(cur))) return false;  
+   
+   visited[preNode] = true;  
+   for (int node : allNodes.get(word.charAt(cur))) {  
+     if (!visited[node] && isAdjacent(preNode, node, m) && expand(allNodes, node, visited, word, cur+1, m)) return true;  
+   }  
+   visited[preNode] = false;  
+   
+   return false;  
+ }  
+   
+ private HashMap< Character, ArrayList< Integer>> preprocess(char[][] board) {  
+   HashMap< Character, ArrayList< Integer>> allNodes = new HashMap< Character, ArrayList< Integer>>();  
+   
+   for (int i=0; i< board.length; ++i) {  
+     for (int j=0; j< board[0].length; ++j) {  
+       ArrayList< Integer> nodes;  
+       if (!allNodes.containsKey(board[i][j])) {  
+         nodes = new ArrayList< Integer>();  
+         allNodes.put(board[i][j], nodes);  
+       } else {  
+         nodes = allNodes.get(board[i][j]);  
+       }  
+       nodes.add(i*board[0].length+j);  
+     }  
+   }  
+   
+   return allNodes;  
+ }  
+   
+ private boolean isAdjacent(int n1, int n2, int m) {  
+   int min = Math.min(n1, n2), max = Math.max(n1, n2);  
+   return ((max-min) == m || (max-min == 1 && (max % m) != 0));  
+ }  
+CODE_END#
+
+H3#@21. Find unique path : A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
+
+The robot can only move either down or right at any point in time.
+The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).
+
+img#@http://4.bp.blogspot.com/-Vn8USHnYLuw/Udzw6TEqeLI/AAAAAAAAEig/0xSVzHdb7wc/s320/robot_maze.png
+img#@http://3.bp.blogspot.com/-4c8K2-jRyaY/Udzw6R1CgQI/AAAAAAAAEic/PoE7_A88sh8/s1600/Screen+Shot+2013-07-09+at+10.27.02+PM.png
+
+
+BOX_START#
+START_BOX_CONTENT
+public int uniquePaths(int m, int n) {  
+   if (m == 0 || n == 0) return 0;  
+   int x = Math.max(m, n), y = Math.min(m, n);  
+   int[] row = new int[y];  
+   
+   row[0] = 1;  
+   
+   // fill up the table  
+   for (int i=0; i< x; ++i) {  
+     for (int j=1; j< y; ++j) {  
+       row[j] += row[j-1];  
+     }  
+   }  
+   
+   return row[y-1];  
+ }  
+ 
+ link: http://n00tc0d3r.blogspot.com/2013/07/unique-paths.html?showComment=1441257624516&view=sidebar
+
+BOX_END#
+
+H3#@23. Unique Binary Search Trees from 1 to N
+Given n, generate all structurally unique BST's (binary search trees) that store values 1...n.
+
+For example,
+Given n = 3, there are a total of 5 unique BST's.
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+   
+b#@Solution:
+1. create a for loop 1 to n
+2. create tree  by creating : left(i-1) and right(i+1)
+3. after getting left and right: put two loops and one by one make them root node
+b. and keep other two left and right   
+
+CODE_START#
+START_SNIPPET
+private ArrayList< TreeNode> genSubTrees(int l, int r) {  
+   ArrayList< TreeNode> trees = new ArrayList< TreeNode>();  
+   if (l > r) { // return an empty tree 
+     trees.add(null);  
+   } else {  
+     for (int i=l; i< =r; ++i) {  
+       ArrayList< TreeNode> lefts = genSubTrees(l, i-1);  
+       ArrayList< TreeNode> rights = genSubTrees(i+1, r);  
+       for (TreeNode left : lefts) {  
+         for (TreeNode right : rights) {  
+           TreeNode root = new TreeNode(i);  
+           root.left = left;  
+           root.right = right;  
+           trees.add(root);  
+         }  
+       }  
+     }  
+   }  
+   return trees;  
+ }  
+   
+ public ArrayList< TreeNode> generateTrees(int n) {  
+   return genSubTrees(1, n);  
+ } 
+CODE_END#
+
+H3#@24. Count Inversions: unsorted elements
+
+For example, given [22, 48, 12, 35, 57], return 3 since there are three inversions, (22, 12), (48, 12), (48, 35).
+
+b#@Solution
+we can modify the merge sort algorithm a little bit so as to solve this problem:
+Divide the array into two subarrays;
+Sort each subarray;
+Merge the two sorted subarrays and count the total number of steps for elements that move forwards.
+
+CODE_START#
+START_SNIPPET
+ /* merge two sorted subarrays A[l..mid) and A[mid..r) into one sorted array  
+   and count inversions during the process. B is a temporary array for merging. */  
+ private long mergeAndCount(int[] A, int l, int mid, int r, int[] B) {  
+   long count = 0;  
+
+   // copy from A to B  
+   System.arraycopy(A, l, B, l, r-l);  
+   // merge
+   for (int i=l, h1=l, h2=mid; i< r; ++i) {  
+     if (h1 >= mid || (h2 <  r && B[h2] <  B[h1])) {
+       count += (h2 - i);
+       A[i] = B[h2++];
+     } else {
+       A[i] = B[h1++];
+     }
+   }  
+   
+   return count;  
+ }  
+   
+ /* count inversions in A[l..r) */  
+ public long countInversion(int[] A, int l, int r, int[] B) {  
+   if (l >= r || l <  0 || r > A.length) return 0;  
+   
+   long count = 0;  
+   int mid = l + (r - l) / 2;  
+   
+   // sort subarrays if needed  
+   if (mid > l+1) count += countInversion(A, l, mid, B);  
+   if (mid <  r-1) count += countInversion(A, mid, r, B);  
+   
+   // merge and count inversions  
+   count += mergeAndCount(A, l, mid, r, B);  
+   
+   return count;  
+ }  
+CODE_END#
+
+H3#@25. Count Unique Binary Search Trees
+Given n, how many structurally unique BST's (binary search trees) that store values 1...n?
+
+For example,
+Given n = 3, there are a total of 5 unique BST's.
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+b#@Solution
+count(n) = Combination(2n, n) - Combination(2n, n+1) = (2n)! / ((n+1)!n!)
+
+BOX_START#
+START_BOX_CONTENT
+ public int numTrees(int n) {  
+   if (n == 0) return 0;  
+   int count = 1;  
+   
+   for (int i=2; i< =n; ++i) {  
+     count *= ((2*i - 1) / (i+1));  
+   }  
+   
+   return count;  
+ }  
+BOX_END#
+
+H3#@26. Validate if a given string is numeric
+
+BOX_START#
+START_BOX_CONTENT
+Is it possible to have leading/trailing spaces?
+Possibly. Leading/trailing spaces can be ignored. That said, "   90   " is okay but "9 0" is not.
+Is sign (+/-) accepted?
+Yes. "+10", "-3", "10" are all valid.
+Is decimals accepted?
+Yes. "2.413", ".413", and "143." are all valid.
+Is hexadecimal accepted?
+No. "0x34AF" can be treated as invalid.
+Is it possible to use "E notation"?
+Yes. But you can assume power is integer, i.e. "89e9" and "1.23e4" is an valid input but "52e4.2" is not. Also, both power and exponent may have sign and , e.g. "+23e-3".
+
+So, an valid input could be something like
+(space)*[+-]?([0-9]+|[0-9]*\.[0-9]+|[0-9]+\.[0-9]*)([eE][+-]?[0-9]+)?(space)*$
+where '*' means 0 or more occurrences, '+' means 1 or more occurrence, and '?' means 0 or 1.
+
+
+ public boolean isNumber(String s) {  
+   return s.matches("^\\s*[+-]?(\\d+|\\d*\\.\\d+|\\d+\\.\\d*)([eE][+-]?\\d+)?\\s*$");  
+ }  
+ 
+
+BOX_END#
+
+H3#@27. Text Justification
+
+For example, words: ["This", "is", "an", "example", "of", "text", "justification."], L = 16.
+Return the formatted lines as:
+[
+   "This    is    an",
+   "example  of text",
+   "justification.  "
+]
+Note: Each word is guaranteed not to exceed L in length.
+Main logic: 
+int len = 0, start = 0;;  
+   for (int i=0; i< words.length; ++i) {  
+     len += words[i].length();  
+     if ((len + i - start) > L) {  
+
+CODE_START#
+START_SNIPPET
+// generate a string of n spaces  
+ private String stuffSpaces(int n) {  
+   if (n==0) return "";  
+   StringBuilder ss = new StringBuilder();  
+   while (n > 0) {  
+     ss.append(' ');  
+     --n;  
+   }  
+   return ss.toString();  
+ }  
+   
+ // generate a string of length L, containing words[start..end], inclusively  
+ private String justify(String[] words, int start, int end, int total, int L) {  
+   StringBuilder ss = new StringBuilder();  
+   if (end == start || end == words.length-1) { // single word or last words  
+     while (start <  end) {  
+       ss.append(words[start++]);  
+       ss.append(stuffSpaces(1));  
+     }  
+     ss.append(words[end]);  
+     ss.append(stuffSpaces(L - ss.length()));  
+   } else {  
+     int spaces = (L - total) / (end - start);  
+     int extras = (L - total) % (end - start);  
+     // buld up full string  
+     while (start <  end) {  
+       ss.append(words[start++]);  
+       ss.append(stuffSpaces(spaces));  
+       if (extras > 0) {  
+         ss.append(stuffSpaces(1));  
+         --extras;  
+       }  
+     }  
+     ss.append(words[end]);  
+   }  
+   return ss.toString();  
+ }  
+   
+ public ArrayList< String> fullJustify(String[] words, int L) {  
+   ArrayList< String> res = new ArrayList< String>();  
+   
+   // count word length  
+   int len = 0, start = 0;;  
+   for (int i=0; i< words.length; ++i) {  
+     len += words[i].length();  
+     if ((len + i - start) > L) {  
+       res.add(justify(words, start, i-1, len-=words[i].length(), L));  
+       // reset  
+       len = words[i].length();  
+       start = i;  
+     }  
+   }  
+   // last line  
+   if (len > 0) {  
+     res.add(justify(words, start, words.length-1, len, L));  
+   }  
+   
+   // if words is empty, stuff results with L spaces  
+   if (res.size() == 0) {  
+     res.add(stuffSpaces(L));  
+   }  
+   return res;  
+ }  
+CODE_END#
+
+
+H3#@28. Trapping Rain Water
+
+Given n non-negative integers representing an elevation map where the width of each bar is 1, 
+compute how much water it is able to trap after raining.
+
+For example, 
+Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
+
+img#@http://articles.leetcode.com/wp-content/uploads/2012/08/rainwatertrap.png
+
+ie: 4,3,2,6
+1. start from 4 and moving forward if level lower then take the difference and sun up
+because those difference will tell how much water can be consumed
+2. as soon as we see bigger pile (ie:6)  sum-up volume and store it.
+
+CODE_START#
+START_SNIPPET
+ private int getVolume(int[] A, boolean isForward, int end, int[] boundary) {  
+   // skip zeros  
+   int cur = 0;  
+   if (!isForward) cur = A.length - 1;  
+   while (cur != end && A[cur] == 0) {  
+     cur += (isForward ? 1 : -1);  
+   }  
+   
+   // calculate trapped volume  
+   int vol = 0, newEnd = cur;  
+   for (int i=cur, tempSum=0; i!=end; i+=(isForward ? 1 : -1)) {  
+     if (A[i] >= A[newEnd]) {  
+       vol += tempSum;  
+       // reset  
+       tempSum = 0;  
+       newEnd = i;  
+     } else {  
+       tempSum += (A[newEnd] - A[i]);  
+     }  
+   }  
+   boundary[0] = newEnd;  
+   return vol;  
+ }  
+   
+ public int trap(int[] A) {  
+   int[] boundary = new int[1];  
+   int vol = getVolume(A, true, A.length, boundary);  
+   vol += getVolume(A, false, boundary[0]-1, boundary);  
+   
+   return vol;  
+ }  
+CODE_END#
+
+
+H3#@29. Find the element that appears once
+
+Given an array where every element occurs three times, except one element which occurs only once. Find the element that occurs once. Expected time complexity is O(n) and O(1) extra space.
+Examples:
+
+Input: arr[] = {12, 1, 12, 3, 12, 1, 1, 2, 3, 3}
+Output: 2
+
+b#@Solution
+What if we sum up each bit of numbers? Then for each digit, mod the sum by 3 and the left-over must be the bit in the single element.
+
+BOX_START#
+START_BOX_CONTENT
+ public static int findSingle(int[] array) {  
+   int result = 0;  
+   
+   // Note: Java integer size is always 32-bit  
+   for (int i=0; i< 32; ++i) {  
+     int mask = (1 < <  i);  
+     int sum = 0;  
+     for (int j=0; j< array.length; ++j) {  
+       if ((array[j] & mask) != 0) ++sum;  
+     }  
+     result |= ((sum%3) < <  i);  
+   }  
+   
+   return result;  
+ }  
+BOX_END#
+
+H3#@30. Surrounded Regions
+
+Given a 2D board containing 'X' and 'O', capture all regions surrounded by 'X'.
+A region is captured by flipping all 'O's into 'X's in that surrounded region .
+
+For example,
+X X X X
+X O O X
+X X O X
+X O X X
+After running your function, the board should be:
+X X X X
+X X X X
+X X X X
+X O X X
+
+b#@Solution
+The algorithm will be something like:
+Start from those boundary cells, use BFS or DFS to traverse all non-flipable 'O' cells, 
+and mark them with a special sign, say 'N'.
+Revisit the board, flip all remaining 'O' cells to 'X' and also flip back 'N' cells to 'O'.
+Notice that for each boundary cell, no matter what value it has, it will never be flipped.
+Also, for the four corner cells, their value will not impact any other cells.
+
+
+BOX_START#
+START_BOX_CONTENT
+ private void mark(char[][] board, int row, int col, Queue< Integer> que) {  
+   if (board[row][col] != 'O') {  
+     return;  
+   }  
+   board[row][col] = 'N';  
+   int columns = board[0].length;  
+   que.offer(row * columns + col);  
+ }  
+   
+ private void markBFS(char[][] board, int row, int col) {  
+   Queue< Integer> que = new LinkedList< Integer>();  
+   mark(board, row, col, que);  
+   int rows = board.length, columns = board[0].length;  
+   while (!que.isEmpty()) {  
+     int cell = que.poll();  
+     int x = cell / columns, y = cell % columns;  
+     // push its neighbors to stack if needed  
+     if (x+1 <  rows-1)  mark(board, x+1, y, que);  
+     if (x-1 > 0)  mark(board, x-1, y, que);  
+     if (y+1 <  columns-1)  mark(board, x, y+1, que);  
+     if (y-1 > 0)  mark(board, x, y-1, que);  
+   }  
+ }  
+   
+ private void markDFS(char[][] board, int x, int y) {  
+   if (board[x][y] != 'O') {  
+     return;  
+   }  
+   // mark the current node  
+   board[x][y] = 'N';  
+   // mark its neighbors if needed  
+   int rows = board.length, columns = board[0].length;  
+   if (x+1 <  rows-1)  markDFS(board, x+1, y);  
+   if (x-1 > 0)  markDFS(board, x-1, y);  
+   if (y+1 <  columns-1)  markDFS(board, x, y+1);  
+   if (y-1 > 0)  markDFS(board, x, y-1);  
+ }  
+   
+ public void solve(char[][] board) {  
+   if (board.length < = 0 || board[0].length < = 0) return;  
+   int rows = board.length, columns = board[0].length;  
+   
+   // Start from 'O's on the edge and mark connected ones as non-flipable.  
+   // first and last columns  
+   for (int i=1; columns>2 && i< rows-1; ++i) {  
+     if (board[i][0] == 'O')  markBFS(board, i, 1);  
+     if (board[i][columns-1] == 'O')  markBFS(board, i, columns-2);  
+   }  
+   // first and last rows  
+   for (int j=1; rows>2 && j< columns-1; ++j) {  
+     if (board[0][j] == 'O')  markBFS(board, 1, j);  
+     if (board[rows-1][j] == 'O')  markBFS(board, rows-2, j);  
+   }  
+   
+   // flip  
+   for (int i=1; i< rows-1; ++i) {  
+     for (int j=1; j< columns-1; ++j) {  
+       if (board[i][j] == 'O') {  
+         board[i][j] = 'X';  
+       } else if (board[i][j] == 'N') {  
+         board[i][j] = 'O';  
+       }  
+     }  
+   }  
+ }  
+
+BOX_END#
+
+H3#@31. Swap Linked list Nodes in Pairs
+
+CODE_START#
+START_SNIPPET
+ public ListNode swapPairs(ListNode head) {  
+   ListNode dummy = new ListNode(0);  
+   dummy.next = head;  
+   ListNode cur = dummy;  
+   
+   while (cur.next != null && cur.next.next != null) {  
+     ListNode temp = cur.next;  
+     cur.next = cur.next.next;  
+     cur = cur.next;  
+     temp.next = cur.next;  
+     cur.next = temp;  
+     cur = cur.next;  
+   }  
+   
+   return dummy.next;  
+ }  
+CODE_END#
+
+H3#@32. check list of string are substring in sequence
+
+You are given a string, S, and a list of words, L, that are all of the same length. Find all starting indices of substring(s) in S that is a concatenation of each word in L exactly once and without any intervening characters.
+
+For example, given:
+S: "barfoothefoobarman"
+L: ["foo", "bar"]
+
+You should return the indices: [0,9].
+(order does not matter).
+
+b#@Solution:
+1. create a hashmap of all words' frequency
+2. now, slide word by word from original string
+3. if hit the word then reduce frequency from hash-map and increment counter of total words which we want to find
+4. if not found then set the counter and slide the widow to next word
+
+CODE_START#
+START_SNIPPET
+private void addWord(String w, HashMap< String, Integer> words) {  
+   if (words.containsKey(w)) {  
+     words.put(w, words.get(w)+1);  
+   } else {  
+     words.put(w, 1);  
+   }  
+ }  
+   
+ private void removeWord(String w, HashMap< String, Integer> words) {  
+   if (!words.containsKey(w)) return;  
+   if (words.get(w) > 1) {  
+     words.put(w, words.get(w)-1);  
+   } else {  
+     words.remove(w);  
+   }  
+ }  
+   
+ private int slideWindow(String S, int begin, int wordLen, HashMap< String, Integer> words) {  
+   String old = S.substring(begin, begin+wordLen);  
+   addWord(old, words);  
+   return begin+wordLen;  
+ }  
+   
+ public ArrayList< Integer> findSubstring(String S, String[] L) {  
+   ArrayList< Integer> indices = new ArrayList< Integer>();  
+   if (L.length == 0) return indices;  
+   
+   int total = L.length, wordLen = L[0].length();  
+   
+   // store the words and frequencies in a hash table  
+   HashMap< String, Integer> expectWords = new HashMap< String, Integer>();  
+   for (String w : L) {  
+     addWord(w, expectWords);  
+   }  
+   
+   // find concatenations  
+   for (int i=0; i <  wordLen; ++i) {  
+     // check if there are any concatenations  
+     int count = 0;  
+     HashMap< String, Integer> collectWords = new HashMap< String, Integer>(expectWords);  
+     for (int j = i, begin = i; j < = S.length() - (total-count)*wordLen && begin < = S.length() - total*wordLen;) {  
+       String sub = S.substring(j, j+wordLen);  
+       if (!expectWords.containsKey(sub)) { // if not an expect word, reset  
+         begin = j + wordLen;  
+         j = begin;  
+         count = 0;  
+         collectWords.putAll(expectWords);  
+       } else if (!collectWords.containsKey(sub)) { // if duplicate, forward begin by 1  
+         begin = slideWindow(S, begin, wordLen, collectWords);  
+       } else {  
+         removeWord(sub, collectWords);  
+         j += wordLen;  
+         ++count;  
+         if (collectWords.isEmpty()) {  
+           indices.add(begin);  
+           begin = slideWindow(S, begin, wordLen, collectWords);  
+           --count;  
+         }  
+       }  
+     }  
+   }  
+   
+   return indices;  
+ }  
+CODE_END#
+
+
+H3#@33. Subsets - No Duplicates
+
+Given a set of distinct integers, S, return all possible subsets.
+
+Note:
+Elements in a subset must be in non-descending order.
+The solution set must not contain duplicate subsets.
+For example,
+If S = [1,2,3], a solution is: [[3],[1], [2], [1,2,3], [1,3], [2,3], [1,2], []]
+
+b#@Solution
+1. sort the array
+2. recurrsion and keep Array of string/array
+3. make sure appending char should be > than previous one and not equal to previous one
+in that way we can prevent
+ie: 1,1 or 2,1
+
+CODE_START#
+START_SNIPPET
+private ArrayList< ArrayList< Integer>> subsetsHelper(int[] S, int cur,  
+     ArrayList< Integer> path, ArrayList< ArrayList< Integer>> results) {  
+   results.add(path);  
+   for (int i=cur; i< S.length; ++i) {  
+     // skip duplicates  
+     if (i > cur && S[i] == S[i-1])  
+       continue;  
+     ArrayList< Integer> result = new ArrayList< Integer>(path);  
+     result.add(S[i]);  
+     results = subsetsHelper(S, i+1, result, results);  
+   }  
+   return results;  
+ }  
+   
+ public ArrayList< ArrayList< Integer>> subsetsWithDup(int[] num) {  
+   // sort the given set  
+   Arrays.sort(num);  
+   // generate subsets  
+   return subsetsHelper(num, 0, new ArrayList< Integer>(), new ArrayList< ArrayList< Integer>>());  
+ }  
+CODE_END#
+
+
+H3#@34. Zigzag : convert string into column and row table in zigzag
+he string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
+P   A   H   N
+A P L S I I G
+Y   I   R
+And then read line by line: "PAHNAPLSIIGYIR"
+Write the code that will take a string and make this conversion given a number of rows:
+
+string convert(string text, int nRows);
+convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
+
+b#@Soltion
+If you see the pattern:
+P->A (4 char) : 2rows-2 = 2*3-2 = 4 = n
+A->p (2 char) : n - 1-1 = 2
+P->A (2 char) : n -2 = 2
+
+CODE_START#
+START_SNIPPET
+public String convert(String s, int nRows) {  
+   if (nRows == 1) return s;  
+   
+   StringBuilder ss = new StringBuilder();  
+   int n = nRows + nRows - 2;  
+   // rest rows  
+   for (int i = 0; i < nRows; ++i) {  
+     int cur = i;  
+     while (cur < s.length()) {  
+       ss.append(s.charAt(cur));  
+       cur += n;  
+       if (i > 0 && i < nRows - 1 && (cur - i - i) < s.length()) {  
+         ss.append(s.charAt(cur - i - i));  
+       }  
+     }  
+   }  
+   return ss.toString();  
+ }  
+CODE_END#
+
+H3#@ Simplify Path Unix path
+
+Given an absolute path for a file (Unix-style), simplify it.
+
+For example,
+path = "/home/", => "/home"
+path = "/a/./b/../../c/", => "/c"
+
+b#@Solution
+Use stack for validation
+1. split by /
+2. 
+
+CODE_START#
+START_SNIPPET
+public String simplifyPath(String path) {  
+   if (path == null || path.charAt(0) != '/') return null;  
+   
+   // split by "/"  
+   String[] splits = path.split("/");  
+   
+   // simplify  
+   Stack stack = new Stack();  
+   for (String split : splits) {  
+     if (split.equals("..") && !stack.isEmpty()) stack.pop();  
+     else if (!split.equals(".") && !split.equals("..") && !split.isEmpty()) {  
+       stack.push(split);  
+     }  
+   }  
+   
+   // print new path  
+   if (stack.isEmpty()) return "/";  
+   StringBuilder sb = new StringBuilder();  
+   while (!stack.isEmpty()) {  
+     sb.insert(0, "/" + stack.pop());  
+   }  
+   return sb.toString();  
+ }  
+CODE_END#
+
+H3#@35. Scramble String
+a#@http://n00tc0d3r.blogspot.com/2013/05/scramble-string.html?showComment=1441257624516#@scramble string
+
+H3#@36. Restore IP Addresses
+Given a string containing only digits, restore it by returning all possible valid IP address combinations.
+
+For example:
+Given "25525511135", return ["255.255.11.135", "255.255.111.35"]. (Order does not matter)
+
+b#@Solution
+It would be recurrsive solution.
+1. take sub-string one by one in a for loop
+for(i=0;i< 3;i++){
+  num = s.substring(0,i);
+}
+2. if num is valid then take the rest string and do recurssive check
+Array< String> tokens = isIp(s.substring(i),field-1);
+and add these tokens to the end in array and return array
+
+
+
+CODE_START#
+START_SNIPPET
+// a valid field value is 1-3 digits, "0", "1**", ~ "255", and not 0??  
+ private boolean isValidField(String s) {  
+   if (s.length() == 1 || (!s.isEmpty() && s.length() <  4 && !s.startsWith("0"))) {  
+     int num = Integer.parseInt(s);  
+     if (num >= 0 && num < = 255) return true;  
+   }  
+   return false;  
+ }  
+   
+ private ArrayList< String> restoreIPAddrHelper(String s, int fields) {  
+   ArrayList< String> results = new ArrayList< String>();  
+   
+   // last field  
+   if (fields == 1) {  
+     if (isValidField(s)) results.add(s);  
+     return results;  
+   }  
+   
+   // 1-3 digits for a field  
+   for (int i=1; i< =3 && i< =s.length(); ++i) {  
+     String num = s.substring(0,i);  
+     if (!isValidField(num)) return results;  
+   
+     ArrayList< String> substrings = restoreIPAddrHelper(s.substring(i), fields-1);  
+     for (String substr : substrings)  results.add(num + "." + substr);  
+   }  
+   
+   return results;  
+ }  
+   
+ public ArrayList< String> restoreIpAddresses(String s) {  
+   return restoreIPAddrHelper(s, 4);  
+ }  
+CODE_END#
+
+H3#@37. Regex Wildcard Matching
+Implement wildcard pattern matching with support for '?' and '*'.
+
+'?' Matches any single character.
+'*' Matches any sequence of characters (including the empty sequence).
+
+The matching should cover the entire input string (not partial).
+
+The function prototype should be:
+bool isMatch(const char *s, const char *p)
+
+Some examples:
+isMatch("aa","a") ? false
+isMatch("aa","aa") ? true
+isMatch("aaa","aa") ? false
+isMatch("aa", "*") ? true
+isMatch("aa", "a*") ? true
+isMatch("ab", "?*") ? true
+isMatch("aab", "c*a*b") ? false
+
+b#@Solution
+We can use similar ideas to solve this problem.
+If current of p is not '*', try to match single char. If succeed, move to next; if fail, fail.
+If current of p is '*', firstly, skip duplicate '*'s; then use backtracking to test all subsequences of s.
+
+CODE_START#
+START_SNIPPET
+public boolean isMatch(String s, String p) {  
+   if (s == null || p == null) return false;  
+   if (p.isEmpty()) return s.isEmpty();  
+     
+   // '*'  
+   if (p.charAt(0) == '*') {  
+     // skip duplicate '*'  
+     int nonstar = 0;  
+     while (nonstar <  p.length() && p.charAt(nonstar) == '*') ++nonstar;  
+     int index = 0;  
+     while (index < = s.length()) {  
+       if (isMatch(s.substring(index), p.substring(nonstar)))  
+         return true;  
+       ++index;  
+     }  
+   } else {  
+     // single char match  
+     if (!s.isEmpty() &&  
+         (s.charAt(0) == p.charAt(0) || p.charAt(0) == '?')) {  
+       return isMatch(s.substring(1), p.substring(1));  
+     }  
+   }  
+   
+   // no match  
+   return false;  
+ }  
+CODE_END#
+
+H3#@38. Remove Duplicates from Sorted List
+
+Given a sorted linked list, delete all nodes that have duplicate numbers, leaving only distinct numbers from the original list.
+
+For example,
+Given 1->2->3->3->4->4->5, return 1->2->5.
+Given 1->1->1->2->3, return 2->3.
+
+b#@Solution:
+Have two pointers.
+1. one pointer check if we have deuplicate then go next
+2. once reach to non-duplicate, other pointer skip those nodes
+3. make sure to check edge case: first node is duplicate
+
+CODE_START#
+START_SNIPPET
+public ListNode deleteDuplicates(ListNode head) {  
+   ListNode pre = null, cur = head;  
+   while (cur != null && cur.next != null) {  
+     if (cur.val != cur.next.val) { // non-duplicate, move on  
+       pre = cur;  
+     } else { // has duplicates  
+       while (cur.next != null && cur.val == cur.next.val) { // skip duplicates  
+         cur.next = cur.next.next;  
+       }  
+       // skip the one has duplicates  
+       if (pre == null)  
+         head = cur.next;  
+       else  
+         pre.next = cur.next;  
+     }  
+     cur = cur.next;  
+   }  
+   return head;  
+ }  
+CODE_END#
+
+
+H3#@40. Remove the n-th Element From End of List
+To do these in one pass, we need two pointers and keep them n+1 nodes away, i.e. having n nodes between the two pointers. We also need to consider special case where n is not valid (i.e. n > list length) or n-th-to-end is the head node.
+CODE_START#
+START_SNIPPET
+public ListNode removeNthFromEnd(ListNode head, int n) {  
+   // pilot is supposed to be n+1 ahead of pre  
+   // so when pilot reaches the end, pre points to the node right before n-th  
+   // that said, there has to be n nodes between the two pointers  
+   ListNode pilot = head, pre = head;  
+   while (pilot != null) {  
+     if (n >= 0) { // forward pilot pointer  
+       --n;  
+     } else { // forward pre pointer  
+       pre = pre.next;  
+     }  
+     pilot = pilot.next;  
+   }  
+   
+   if (n > 0) { // nothing to remove  
+   } else if (n == 0) { // remove head  
+     head = head.next;  
+   } else { // remove n-th  
+     pre.next = pre.next.next;  
+   }  
+   return head;  
+ }  
+CODE_END#
+
+
+
+H3#@41. Pow(x, n)
+log(n)
+CODE_START#
+START_SNIPPET
+double power(double x, int y) {
+    if(y == 0) return 1;
+
+    double d = power(x, y/2);
+
+    if(y%2 == 0) return d*d;
+    else return x*d*d;
+}
+CODE_END#
+
+H3#@42. RIght pointer to sibling in binary tree
+Populating Next Right Pointers for Each Tree Node in a full binary tree
+
+Given the following perfect binary tree,
+        1
+       /  \
+      2    3
+     / \  / \
+    4  5  6  7
+After calling your function, the tree should look like:
+        1 -> NULL
+       /  \
+      2 -> 3 -> NULL
+     / \  / \
+    4->5->6->7 -> NULL
+
+CODE_START#
+START_SNIPPET#
+private void fillRow(TreeLinkNode cur) {  
+   while (cur != null) {  
+     if (cur.left != null && cur.right != null) {  
+       cur.left.next = cur.right;  
+     }  
+   
+     // find next has-child node  
+     TreeLinkNode next = cur.next;  
+     while (next != null && next.left == null && next.right == null) {  
+       next = next.next;  
+     }  
+     if (next == null) break;  
+     // find next child and link it  
+     TreeLinkNode nextChild = (next.left != null) ? next.left : next.right;  
+     if (cur.right != null) {  
+       cur.right.next = nextChild;  
+     } else if (cur.left != null) {  
+       cur.left.next = nextChild;  
+     }  
+   
+     // move to next has-child node directly  
+     cur = next;  
+   }  
+ }  
+
+ public void connect(TreeLinkNode root) {  
+   TreeLinkNode first = root;  
+   while (first != null) {  
+     fillRow(first);  
+     // move to next level  
+     while (first != null && first.left == null && first.right == null) first = first.next;  
+     if (first != null) first = (first.left != null) ? first.left : first.right;  
+   }  
+ }  
+CODE_END#
+
+H3#@43. BFS in java
+
+b#@Using queue: LinkedList.removeFirst()
+
+CODE_START#
+START_SNIPPET
+public ArrayList< ArrayList< Integer>> levelOrder(TreeNode root) {  
+   ArrayList< ArrayList< Integer>> resSet = new ArrayList< ArrayList< Integer>>();  
+   if (root == null) return resSet;  
+   LinkedList< TreeNode> queue = new LinkedList< TreeNode>();  
+   queue.add(root);  
+   queue.add(null); // flag of end-of-level  
+   while (!queue.isEmpty()) {  
+     ArrayList< Integer> res = new ArrayList< Integer>();  
+     TreeNode cur = queue.removeFirst();  
+     while (cur != null) { // go through one level  
+       res.add(cur.val);  
+       if (cur.left != null) queue.add(cur.left);  
+       if (cur.right != null) queue.add(cur.right);  
+       cur = queue.removeFirst();  
+     }  
+     // add result of one level  
+     resSet.add(res);  
+     // add a flag for end-of-level if needed  
+     if (!queue.isEmpty()) queue.add(null);  
+   }  
+   return resSet;  
+ }  
+CODE_END#
+
+b#@Bottom-up Level Order Traversal
+Bottom-up level order traversal: from left to right, level by level from leaf to root.
+For example, given a tree as shown below, returns [[7,8], [4,5,6], [2,3], [1]].
+           1
+         /   \
+       2     3
+      / \    /
+    4   5 6
+        /     \
+       7      8
+Solution
+
+With solutions to level order traversal above, to solve this problem, we only need to reverse the result set at the very end.
+
+
+
+
+
+H3#@44. Zigzag Level Order Traversal
+
+Zigzag level order traversal: from left to right, then right to left for the next level and alternate between.
+For example, given a tree as shown below, returns [[1], [3,2], [4,5,6], [8,7]].
+           1
+         /   \
+       2     3
+      / \    /
+    4   5 6
+        /     \
+       7      8
+
+b#@Solution
+In this case, we need a LIFO stack for each level so that it could return nodes in a reverse order as we push in. Also, we need to check whether the level is odd level or even and when we read current level from right to left, we need to push right children and then left child for each node.
+
+CODE_START#
+START_SNIPPET
+public ArrayList< ArrayList< Integer>> zigzagLevelOrder(TreeNode root) {  
+   ArrayList< ArrayList< Integer>> resSet = new ArrayList< ArrayList< Integer>>();  
+   if (root == null) return resSet;  
+   Stack< TreeNode> stack = new Stack< TreeNode>();  
+   stack.push(root);  
+   boolean oddLevel = false; // false - 0,2,4,...,levels  
+   while (!stack.isEmpty()) {  
+     ArrayList< Integer> res = new ArrayList< Integer>();  
+     Stack< TreeNode> stackTmp = new Stack< TreeNode>();  
+     while (!stack.isEmpty()) { // go through one level  
+       TreeNode cur = stack.pop();  
+       res.add(cur.val);  
+       if (oddLevel) {  
+         if (cur.right != null) stackTmp.push(cur.right);  
+         if (cur.left != null) stackTmp.push(cur.left);  
+       } else {  
+         if (cur.left != null) stackTmp.push(cur.left);  
+         if (cur.right != null) stackTmp.push(cur.right);  
+       }  
+     }  
+     // add result of one level  
+     resSet.add(res);  
+     // switch  
+     stack = stackTmp;  
+     oddLevel = !oddLevel;  
+   }  
+   return resSet;  
+ } 
+CODE_END#
+
+H3#@45. Pascal's tringle
+     [1],
+    [1,1],
+   [1,2,1],
+  [1,3,3,1],
+ [1,4,6,4,1]
+
+b#@Solution
+It just stores all number for a given row
+ie: for row 5: 1 4 6 4 1
+
+iteration:
+1: 1
+2: row[i] = row[i] + row[i-1] = 
+ row[2] = row[2] + row[1] = 1 +0 =1
+3: row[3] = row[3] + row[2] = 0+ 1 = 1
+   row[2] = row[2] + row[1] = 1 + 1 =2
+4: row[4] = row[4] + row[3] = 0+1 = 1
+   row[3] = row[3] + row[2] = 2+0 = 2
+here, we sum current element num + previous
+1 3 3 1
+next iteration
+      [1]   [3+1]  [3+3] [3+1] [1+0]
+
+
+CODE_START#
+START_SNIPPET
+public ArrayList< Integer> getRow(int rowIndex) {  
+   Integer[] row = new Integer[rowIndex+1];  
+   for (int i=0; i< =rowIndex; ++i) {  
+     row[0] = 1;  
+     for (int j=i; j>0; --j) {  
+       int num = row[j-1];  
+       if (j< i) num += row[j];  
+       row[j] = num;  
+     }  
+   }  
+   return new ArrayList< Integer>(Arrays.asList(row));  
+ }  
+CODE_END#
+
+
+H3#@47. Next Permutation in sorted numbers
+
+Here are some examples. Inputs are in the left-hand column and its corresponding outputs are in the right-hand column.
+1,2,3 → 1,3,2 → 2,1,3 → 2,3,1 → 3,1,2 → 3,2,1 → 1,2,3
+1,1,5 → 1,5,1 → 5,1,1 → 1,1,5
+2,2,7,5,4,3,2,2,1 → 2,3,1,2,2,2,4,5,7
+
+b#@Solution
+1. start from end and find a bigger digit which shoud be greater than previous one
+i.e: 123 => 3>2 so, => 132 swap 2 and 3
+
+CODE_START#
+START_SNIPPET
+/* O(1) -- swap the two elements in the array, given the indexes */  
+ private void swap(int[] num, int a, int b) {  
+   int temp = num[a];  
+   num[a] = num[b];  
+   num[b] = temp;  
+ }  
+   
+ /* O(n) -- reverse the array, given a range */  
+ private void reverse(int[] num, int l, int r) {  
+   while (l <  r)  swap(num, l++, r--);  
+ }  
+   
+ /* O(n) -- find the next permutation */  
+ public void nextPermutation(int[] num) {  
+   // find longest descending tail
+   int cur = num.length - 1;  
+   while (cur > 0 && num[cur-1] >= num[cur]) --cur;  
+   reverse(num, cur, num.length-1);  
+   if (cur > 0) {  
+     // insert cur-1 to the right spot  
+     int next = cur;  
+     cur -= 1;  
+     while (num[next] < = num[cur]) ++next;  
+     swap(num, next, cur);  
+   }  
+ } 
+CODE_END#
+
+H3#@48. Minimum Window Substring 
+Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
+
+For example, S = "ADOBECODEBANC",  T = "ABC",
+Minimum window is "BANC".
+
+Note:
+If there is no such window in S that covers all characters in T, return the emtpy string "".
+If there are multiple such windows, you are guaranteed that there will always be only one unique minimum window in S.
+
+b#@Solution
+1. create a frequency hash map of all finding character
+2. Keep counter which make sure all characters comes in a range
+here once index 0 to 8 will be hit all characters are there in range
+and counter will be hit.
+3. now let's do back tracking again for duplicate
+4. as soon as we find "Duplicate" D at index=left=50. reduce counter by "1"
+5. It means second range will start from 5 to ..
+ie:
+S = ACDFGDSEDSHACDE
+T= ACDE
+
+CODE_START#
+START_SNIPPET
+public String minWindow(String S, String T) {
+    if(S==null || S.length()==0)
+        return "";
+    HashMap< Character, Integer> map = new HashMap< Character, Integer>();
+    for(int i=0; i< T.length();i++)
+    {
+        if(map.containsKey(T.charAt(i)))
+        {
+            map.put(T.charAt(i),map.get(T.charAt(i))+1);
+        }
+        else
+        {
+            map.put(T.charAt(i),1);
+        }
+    }
+    int left = 0;
+    int count = 0;
+    int minLen = S.length()+1;
+    int minStart = 0;
+    for(int right=0; right< S.length();right++)
+    {
+        if(map.containsKey(S.charAt(right)))
+        {
+            map.put(S.charAt(right),map.get(S.charAt(right))-1);
+            if(map.get(S.charAt(right))>=0)
+            {
+                count++;
+            }
+            while(count == T.length())
+            {
+                if(right-left+1< minLen)
+                {
+                    minLen = right-left+1;
+                    minStart = left;                    
+                }
+                if(map.containsKey(S.charAt(left)))
+                {
+                    map.put(S.charAt(left), map.get(S.charAt(left))+1);
+                    if(map.get(S.charAt(left))>0)
+                    {
+                        count--;
+                    }
+                }
+                left++;
+            }
+        }
+    }
+    if(minLen>S.length())
+    {
+        return "";
+    }
+    return S.substring(minStart,minStart+minLen);
+}
+CODE_END#
+
+H3#@49. Sliding Window to find maximum number
+A long array A[] is given to you. There is a sliding window of size w which is moving from the very left of the array to the very right. You can only see the w numbers in the window. Each time the sliding window moves rightwards by one position. Following is an example: The array is [1 3 -1 -3 5 3 6 7], and w is 3.
+
+Window position                Max
+---------------               -----
+[1  3  -1] -3  5  3  6  7       3
+ 1 [3  -1  -3] 5  3  6  7       3
+ 1  3 [-1  -3  5] 3  6  7       5
+ 1  3  -1 [-3  5  3] 6  7       5
+ 1  3  -1  -3 [5  3  6] 7       6
+ 1  3  -1  -3  5 [3  6  7]      7
+
+Input: A long array A[], and a window width w
+Output: An array B[], B[i] is the maximum value of from A[i] to A[i+w-1]
+Requirement: Find a good optimal way to get B[]
+
+b#@Solution
+
+1. We will use ArrayDeque< > : as it has getFirst(), addLast(), removeLast()
+- Make sure first element will be always big
+- so, when you add in last: make sure current last should be bigger than insertion
+- else remove all last till we make sure we have higher number while getting from first
+
+It's like in Queue we will insert elements and when window ends, we will get Max element
+ie:
+1,3,-1,2,0
+Window 1: 1,3,-1
+-1-
+-remove 1-
+-3-
+-3,-1-
+Max: first = 3
+Window 2: 3,-1,1
+-Clean 1st window: so always store index
+-3,-1-
+-3,2-
+Max: 3
+Window 3: -1,2,0
+-Clean 2nd window
+-2-
+-2,0-
+max: 2
+
+It means If we consider it as a train:
+-ENgine has to be max
+- and add 
+2. Now, we will insert the index of element for each window
+3. ie:
+a. Insert : index(1) : addLast(0)
+b. Now insert 3 in the last: but make sure 
+
+BOX_START#
+START_BOX_CONTENT
+/*  
+  * Given an array of numbers and a sliding window, find out the maximal  
+  * number within the window as its moving.  
+  * @param nums the array of numbers.  
+  * @param window the size of the sliding window.  
+  * @return an array of window maximals, i.e. B[i] is the maximal of A[i, i+w).  
+  */  
+ public int[] windowMax(int[] nums, int window) {  
+   int w = (nums.length <  window) ? nums.length : window;  
+   // A deque allows insertion/deletion on both ends.  
+   // Maintain the first as the index of maximal of the window  
+   // and elements after it are all smaller and came later than the first.  
+   Deque< Integer> que = new ArrayDeque< Integer>();  
+   
+   // initialize window  
+   int i=0;  
+   while (i< w) {  
+     while (!que.isEmpty() && nums[que.getLast()] < = nums[i]) {  
+       que.removeLast();  
+     }  
+     que.addLast(i++);  
+   }  
+   
+   // sliding window  
+   int[] max = new int[nums.length - w + 1];  
+   max[i-w] = num[que.getFirst()];  
+   while (i< nums.length) {  
+     // add new element  
+     while (!que.isEmpty() && nums[que.getLast()] < = nums[i]) {  
+       que.removeLast();  
+     }  
+     que.addLast(i);  
+     // remove old element if still in que  
+     if (!que.isEmpty() && i-w >= que.getFirst()) {  
+       que.removeFirst();  
+     }  
+     // get maximal  
+     ++i;  
+     max[i-w] = num[que.getFirst()];  
+   }  
+   
+   return max;  
+ }  
+BOX_END#
+
+
+H3#@50. Minimum Path Sum in 2D matrix : path -> down or right
+
+Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.
+Note: You can only move either down or right at any point in time.
+
+b#@Solution:
+- Here, we can go either right or down
+- so, like Dijkstra algorithm
+- check sum from your: and take min
+   - same row : left
+   - above row: up
+
+
+BOX_START#
+START_BOX_CONTENT
+public int minPathSum(int[][] grid) {  
+   if (grid.length == 0 || grid[0].length == 0) return 0;  
+     
+   int[][] sum = new int[grid.length][2];  
+   sum[0][0] = grid[0][0];  
+   // initialized the first row  
+   int row = 0;  
+   for (int j=1; j< grid.length; ++j) {  
+     sum[j][row] = grid[j][0] + sum[j-1][row];  
+   }  
+   // fill up the rest of table  
+   for (int i=1; i< grid[0].length; ++i) {  
+     // switch the two rows  
+     row = 1 - row;  
+     // initialize the first element in the row  
+     sum[0][row] = grid[0][i] + sum[0][1-row];  
+     for (int j=1; j< grid.length; ++j) {  
+       sum[j][row] = Math.min(sum[j-1][row], sum[j][1-row]);  
+       sum[j][row] += grid[j][i];  
+     }  
+   }  
+   
+   return sum[grid.length-1][row];  
+ }  
+BOX_END#
+
+
+H3#@51. Min Depth of binray tree
+
+CODE_START#
+START_SNIPPET
+/* DFS can be improved a little bit by passing in the current min depth  
+  * and then it could prune the subtress deeper than minDep.  
+  */  
+ private int minDepthDFS(TreeNode root, int depth, int minDep) {  
+   if (root == null || depth >= minDep) return depth;  
+   
+   if (root.left == null && root.right == null) return depth+1;  
+   if (root.left != null) minDep = Math.min(minDep, minDepthDFS(root.left, depth+1, minDep));  
+   if (root.right != null) minDep = Math.min(minDep, minDepthDFS(root.right, depth+1, minDep));  
+   return minDep;  
+ }  
+
+ public int maxDepth(TreeNode root) {  
+   if (root == null) return 0;  
+   return 1 + Math.max(maxDepth(root.left), maxDepth(root.right));  
+ }
+CODE_END#
+
+
+
+H3#@52. Merge k Sorted Lists
+
+In previous post (Merge Sorted Lists/Arrays I), we've discussed how to merge two sorted linked list into one with O(1) extra space. Here, we can use that as a subroutine to solve this problem:
+Merge lists 2 by 2.
+E.g. Give 4 lists, l1, l2, l3, l4,
+merge l1 and l4 to l1
+merge l2 and l3 to l2
+merge l1 and l2 to l1
+
+CODE_START#
+START_SNIPPET
+public ListNode mergeKLists(ArrayList< ListNode> lists) {  
+   int last = lists.size() - 1;  
+   if (last <  0) return null;  
+     
+   while (last > 0) {  
+     int cur = 0;  
+     while (cur <  last) {  
+       lists.set(cur, mergeTwoLists(lists.get(cur++), lists.get(last--)));  
+     }  
+   }  
+     
+   return lists.get(0);  
+ }  
+
+ public ListNode mergeTwoLists(ListNode l1, ListNode l2) {  
+   if (l1 == null) return l2;  
+   if (l2 == null) return l1;  
+
+   ListNode root;  
+   if (l1.val < = l2.val) {  
+     root = l1;  
+     l1 = l1.next;  
+   } else {  
+     root = l2;  
+     l2 = l2.next;  
+   }  
+
+   ListNode cur = root;  
+   while (l1 != null || l2 != null) {  
+     if (l2 == null || (l1 != null && l1.val < = l2.val)) {  
+       cur.next = l1;  
+       l1 = l1.next;  
+     } else {  
+       cur.next = l2;  
+       l2 = l2.next;  
+     }  
+     cur = cur.next;  
+   }  
+
+   return root;  
+ }  
+CODE_END#
+
+
+
+H3#@53 Merge Intervals
+
+Given a collection of intervals, merge all overlapping intervals.
+
+For example,
+Given [1,3],[8,10],[2,6],[15,18],
+return [1,6],[8,10],[15,18].
+
+b#@Solution
+1. sort Intervals
+ie: [1,3] [2,6] [8,10] [15,18]
+2. Now merge
+[1,6] [8,10] [15,18]
+
+CODE_START#
+START_SNIPPET
+/**  
+  * Definition for an interval.  
+  * public class Interval {  
+  *   int start;  
+  *   int end;  
+  *   Interval() { start = 0; end = 0; }  
+  *   Interval(int s, int e) { start = s; end = e; }  
+  * }  
+  */  
+   
+ private ArrayList< Interval> mergeInPlace(ArrayList< Interval> intervals) {  
+   int cur = 0, next = 1;  
+   while (next <  intervals.size()) {  
+     if (intervals.get(cur).end >= intervals.get(next).start) {  
+       intervals.get(cur).end = Math.max(intervals.get(cur).end,  
+                     intervals.get(next).end);  
+       ++next;  
+     } else {  
+       if (next > cur) {  
+         intervals.subList(cur+1, next).clear();  
+       }  
+       ++cur;  
+       next = cur + 1; // after removal, index has changed  
+     }  
+   }  
+   if (cur <  intervals.size()-1) {  
+     intervals.subList(cur+1, intervals.size()).clear();  
+   }  
+   return intervals;  
+ }  
+   
+ private ArrayList< Interval> mergeWithArray(ArrayList< Interval> intervals) {  
+   ArrayList< Interval> results = new ArrayList< Interval>();  
+   Interval cur = null;  
+   for (int i=0; i< intervals.size(); ++i) {  
+     if (cur == null) {  
+       cur = intervals.get(i);  
+     } else if (cur.end >= intervals.get(i).start) { // overlapping  
+       cur.end = Math.max(cur.end, intervals.get(i).end);  
+     } else { // gap  
+       results.add(cur);  
+       cur = intervals.get(i);  
+     }  
+   }  
+   if (cur != null) results.add(cur);  
+   return results;  
+ }  
+   
+ public ArrayList< Interval> merge(ArrayList< Interval> intervals) {  
+   // sort the intervals based on start points  
+   Comparator< Interval> comparator = new Comparator< Interval>() {  
+     @Override  
+     public int compare(Interval i1, Interval i2) {  
+       if (i1.start <  i2.start) {  
+         return -1;  
+       } else {  
+         return 1;  
+       }  
+     }  
+   };  
+   Collections.sort(intervals, comparator);  
+   
+   //return mergeWithArray(intervals);  
+   return mergeInPlace(intervals);  
+ }  
+CODE_END#
+
+
+H3#@54. Maximum Rectangle
+Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing all ones and return its area.
+
+For example, given a rectangle as shown below, return 6.
+
+0 0 0 1 1 0 1
+0 1 0 1 0 1 1
+1 0 1 1 1 0 0
+0 1 1 1 1 0 1
+
+b#@Solution
+a#@http://n00tc0d3r.blogspot.com/2013/04/maximum-rectangle.html?showComment=1441257624516#@Click here.
+
+
+H3#@55. Largest Rectangle in Histogram
+
+img#@http://4.bp.blogspot.com/-EKJWTW9077U/UUgAKv5NiOI/AAAAAAAAEa0/WGI9HYIxUcY/s320/histogram_area.png
+The largest rectangle is shown in the shaded area, which has area = 10 unit.
+
+For example, given height = [2,1,5,6,2,3], return 10.
+
+b#@Solution
+Notice that we only push a new item into stack when the new item is no less than the top one in the stack. That said, when we pop up an item, the new top in the stack is the first one (go backwards from the popped one) that is smaller than the popped one, which implies that the left boundary of the current rectangle is top+1, inclusively.
+Also, when we pop it up, it means that we hit a new height that is smaller than it, which implies that the right boundary is cur-1, inclusively.
+
+With these information in hand, we only need to maintain one stack!
+
+CODE_START#
+START_SNIPPET
+public int largestRectangleArea(int[] height) {  
+   Stack< Integer> left = new Stack< Integer>();  
+   int cur = 0, area = 0;  
+   while (cur <  height.length) {  
+     if (left.isEmpty() || height[cur] >= height[left.peek()]) {  
+       // push to stack if we hit a greater or equal height  
+       left.push(cur++);  
+     } else {  
+       int top = left.pop();  
+       // the height at left.peek() must be smaller than the current one  
+       // so, the width of the rectangle is [left.peek()+1, cur)  
+       area = Math.max(area, height[top]*(left.isEmpty() ? cur : (cur-left.peek()-1)));  
+     }  
+   }  
+   while (!left.isEmpty()) {  
+       int top = left.pop();  
+       area = Math.max(area, height[top]*(left.isEmpty() ? cur : (cur-left.peek()-1)));  
+   }  
+   return area;  
+ }  
+CODE_END#
+
+
+
+H3#@56. Longest Substring Without Repeating Characters
+ "abcabcbb" is "abc", 
+
+ b#@Solution
+ 1. maintain Hashmap with occurrence
+ 2. as soon as found a entry in hashmap- means duplicate
+ 3. count start from there
+ ie:
+ start=0-> abcde
+ as soon as duplicate "c" comes in abcdec -> set "Start" from that index
+ - start=3 which d (index(c)+1)
+
+CODE_START#
+START_SNIPPET
+public int lengthOfLongestSubstring(String s) {  
+   int maxLen = 0;  
+   int start = 0, end = 0;  
+   // a map mapping a char to its prior index in s  
+   HashMap< Character, Integer> map = new HashMap< Character, Integer>();  
+   while (end <  s.length()) {  
+     char cur = s.charAt(end);  
+     if (map.containsKey(cur) && map.get(cur) >= start) {  
+       // hit a recurrence  
+       maxLen = Math.max(maxLen, end-start);  
+       start = map.get(cur) + 1;  
+     }  
+     map.put(cur, end++);  
+   }  
+   maxLen = Math.max(maxLen, end-start);  
+   return maxLen;  
+ } 
+CODE_END#
+
+H3#@57. Good Unix command question
+a#@http://javarevisited.blogspot.com/2011/05/unix-command-interview-questions.html#@Unix Command
+
+b#@Good commands:
+1. AWK: to parse column ie. AWK '{print $1}' test.txt
+2. grep : grep 'Error' test.txt
+3. egrep: grep 'Error|Exception' test.txt (enhanced grep)
+4. tail -15 test.txt
+5. head -15 test.txt
+6. watch : repeatedly watch specific data
+7. cut is like AWK
+8. sed : stream editor: you can directly edit file from here
+ sed -i.bak '1d' /tmp/passwd
+ In the above sed command , 1st line of file /tmp/passwd will be deleted but before that sed command takes the backup of /tmp/passwd as /tmp/passwd.bak
+
+
+
+H3#@58. Distributed Consistent Hashing
+
+img#@http://4.bp.blogspot.com/_IhqEHw4_Ick/Rz9cwyPnAFI/AAAAAAAAABA/aW5zxmOIIN0/s400/consistent_hashing_2.png
+
+CODE_START#
+START_SNIPPET
+import java.util.Collection;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+public class ConsistentHash< T> {
+
+  private final HashFunction hashFunction;
+  private final int numberOfReplicas;
+  private final SortedMap< Integer, T> circle =
+    new TreeMap< Integer, T>();
+
+  public ConsistentHash(HashFunction hashFunction,
+    int numberOfReplicas, Collection< T> nodes) {
+
+    this.hashFunction = hashFunction;
+    this.numberOfReplicas = numberOfReplicas;
+
+    for (T node : nodes) {
+      add(node);
+    }
+  }
+
+  public void add(T node) {
+    for (int i = 0; i <  numberOfReplicas; i++) {
+      circle.put(hashFunction.hash(node.toString() + i),
+        node);
+    }
+  }
+
+  public void remove(T node) {
+    for (int i = 0; i <  numberOfReplicas; i++) {
+      circle.remove(hashFunction.hash(node.toString() + i));
+    }
+  }
+
+  public T get(Object key) {
+    if (circle.isEmpty()) {
+      return null;
+    }
+    int hash = hashFunction.hash(key);
+    if (!circle.containsKey(hash)) {
+      SortedMap< Integer, T> tailMap =
+        circle.tailMap(hash);
+      hash = tailMap.isEmpty() ?
+             circle.firstKey() : tailMap.firstKey();
+    }
+    return circle.get(hash);
+  } 
+
+}
+CODE_END#
+
+
+
+H3#@59. Coin combination
+
+CODE_START#
+START_SNIPPET
+public static void main( String[] args )
+    {
+        System.out.println( "Combinations of Coins" );
+        int[] arr = {1,2,3};
+        findComb(arr,"",4);
+    }
+    
+   static void findComb(int[] coins, String op,int target){
+      
+     for(int i=0;i less_than coins.length;i++){
+       int total = calculateTotal(op);
+       total+=coins[i];
+       if(total==target){
+         System.out.println(op+","+coins[i]);
+       }else if(total>target){
+         return;
+       }else{
+         findComb(coins, op+","+coins[i],target);
+       }
+         
+     }
+     
+   }
+
+private static int calculateTotal(String op) {
+  if(op!=null){
+    String[] tokens = op.split(",");
+    int total = 0;
+    for(String s: tokens){
+      if(s.length()>=1)
+      total+=Integer.parseInt(s);
+    }
+    return total;
+  }
+  return 0;
+}
+CODE_END#
+
+
+H3#@60. Keypad
+
+CODE_START#
+START_SNIPPET
+static final HashMap< String,String> map = new HashMap< String,String>(){{
+        put("2","abc");
+        put("3","def");
+        put("4","ghi");
+        put("5","jkl");
+        put("6","mno");
+        put("7","pqrs");
+        put("8","tuv");
+        put("9","wxyz");
+    }} ;
+    
+    public static void main(String[] args){
+      
+      printComb("234","",0);
+      
+    }
+
+  private static void printComb(String num,String output,int index) {
+    
+    if(output.length()==num.length()){
+      System.out.println(output);
+      return;
+    }else if(output.length()>num.length()){return ;}
+    
+    for(int i=0;i< 3;i++){
+      String temp = output+map.get(""+num.charAt(output.length())).substring(i, i+1);
+      printComb(num,temp,index+1); 
+    }
+    
+    
+  }
+CODE_END#
+
+
+H3#@61. Minimum string which covers all character of a given string
+
+CODE_START#
+START_SNIPPET
+public static void main(String[] args){
+    
+    System.out.println(minWindow("ABCDECEDHCDH","CDH"));
+  }
+  
+  public static String minWindow(String S, String T) {
+      if(S==null || S.length()==0)
+          return "";
+      HashMap< Character, Integer> map = new HashMap< Character, Integer>();
+      for(int i=0; i< T.length();i++)
+      {
+          if(map.containsKey(T.charAt(i)))
+          {
+              map.put(T.charAt(i),map.get(T.charAt(i))+1);
+          }
+          else
+          {
+              map.put(T.charAt(i),1);
+          }
+      }
+      int left = 0;
+      int count = 0;
+      int minLen = S.length()+1;
+      int minStart = 0;
+      for(int right=0; right< S.length();right++)
+      {
+          if(map.containsKey(S.charAt(right)))
+          {
+              map.put(S.charAt(right),map.get(S.charAt(right))-1);
+              if(map.get(S.charAt(right))>=0)
+              {
+                  count++;
+              }
+              while(count == T.length())
+              {
+                  if(right-left+1< minLen)
+                  {
+                      minLen = right-left+1;
+                      minStart = left;                    
+                  }
+                  if(map.containsKey(S.charAt(left)))
+                  {
+                      map.put(S.charAt(left), map.get(S.charAt(left))+1);
+                      if(map.get(S.charAt(left))>0)
+                      {
+                          count--;
+                      }
+                  }
+                  left++;
+              }
+          }
+      }
+      if(minLen>S.length())
+      {
+          return "";
+      }
+      return S.substring(minStart,minStart+minLen);
+  }
+CODE_END#
+
+H3#@62. Design a stack with minPop() in o(1)
+
+CODE_START#
+START_SNIPPET
+public class StackWithMin {
+    int min;
+    int size;
+    int[] data = new int[1024];
+
+    public void push ( int val ) {
+        if ( size == 0 ) {
+            data[size] = val;
+            min = val;
+        } else if ( val < min) {
+            data[size] = 2 * val - min;
+            min = val;
+
+            assert (data[size] < min); 
+        } else {
+            data[size] = val;
+        }
+
+        ++size;
+
+        // check size and grow array
+    }
+
+    public int getMin () {
+        return min;
+    }
+
+    public int pop () {
+        --size;
+
+        int val = data[size];
+
+        if ( ( size > 0 ) && ( val < min ) ) {
+            int prevMin = min;
+            min += min - val;
+            return prevMin;
+        } else {
+            return val;
+        }
+    }
+
+    public boolean isEmpty () {
+        return size == 0;
+    }
+
+    public static void main (String...args) {
+        StackWithMin stack = new StackWithMin();
+
+        for ( String arg: args ) 
+            stack.push( Integer.parseInt( arg ) );
+
+        while ( ! stack.isEmpty() ) {
+            int min = stack.getMin();
+            int val = stack.pop();
+
+            System.out.println( val + " " + min );
+        }
+
+        System.out.println();
+    }
+
+}
+CODE_END#
+
+H3#@63. Append non-zero element at end
+
+CODE_START#
+START_SNIPPET
+// Function which pushes all zeros to end of an array.
+void pushZerosToEnd(int arr[], int n)
+{
+    int count = 0;  // Count of non-zero elements
+ 
+    // Traverse the array. If element encountered is non-zero, then
+    // replace the element at index 'count' with this element
+    for (int i = 0; i < n; i++)
+        if (arr[i] != 0)
+            arr[count++] = arr[i]; // here count is incremented
+ 
+    // Now all non-zero elements have been shifted to front and 'count' is
+    // set as index of first 0. Make all elements 0 from count to end.
+    while (count < n)
+        arr[count++] = 0;
+}
+CODE_END#
+
+H3#@64. Longest sub-string
+
+BOX_START#
+START_BOX_CONTENT#
+0. S = {} - Initialize S to the empty set
+1. S = {2} - New largest LIS
+2. S = {2, 6} - New largest LIS
+3. S = {2, 3} - Changed 6 to 3
+4. S = {2, 3, 4} - New largest LIS
+5. S = {1, 3, 4} - Changed 2 to 1
+6. S = {1, 2, 4} - Changed 3 to 2
+7. S = {1, 2, 4, 9} - New largest LIS
+8. S = {1, 2, 4, 5} - Changed 9 to 5
+9. S = {1, 2, 4, 5, 8} - New largest LIS
+
+Total runtime - N integers and a binary search for each of them - N * log(N) = O(N log N)
+BOX_END#
+
+H3#@65. Valid Tringles
+Three segments of lengths A, B, C form a triangle iff
+A + B > C
+B + C > A
+A + C > B
+
+e.g.
+6, 4, 5 can form a triangle
+10, 2, 7 can’t
+CODE_START#
+START_SNIPPET
+vector< double> valid_triangle(vector< double> nums) {
+    sort(nums.begin(), nums.end());
+   
+    for(int i = 0; i < (int)nums.size() - 2; ++i) {
+        int k = i + 2;
+        for (int j = i + 1; j < nums.size(); ++j) {
+            if(j != k && nums[i] + nums[j] > nums[k]) {
+                return {nums[i], nums[j], nums[k]};
+            }
+        }
+    }
+    return {};
+}
+CODE_END#
+
+H3#@66.  Longest Consecutive Sequence (Java)
+
+For example, given [100, 4, 200, 1, 3, 2], the longest consecutive elements sequence should be [1, 2, 3, 4]. Its length is 4.
+O(mn)
+
+CODE_START#
+START_SNIPPET
+public static int longestConsecutive(int[] num) {
+  // if array is empty, return 0
+  if (num.length == 0) {
+    return 0;
+  }
+ 
+  Set< Integer> set = new HashSet< Integer>();
+  int max = 1;
+ 
+  for (int e : num)
+    set.add(e);
+ 
+  for (int e : num) {
+    int left = e - 1;
+    int right = e + 1;
+    int count = 1;
+ 
+    while (set.contains(left)) {
+      count++;
+      set.remove(left);
+      left--;
+    }
+ 
+    while (set.contains(right)) {
+      count++;
+      set.remove(right);
+      right++;
+    }
+ 
+    max = Math.max(count, max);
+  }
+ 
+  return max;
+}
+CODE_END#
+
+H#@67. Largest Rectangle in Histogram (Java)
+
+Above is a histogram where width of each bar is 1, given height = [2,1,5,6,2,3].
+
+img#@http://www.programcreek.com/wp-content/uploads/2015/05/largest-rectangle-in-histogram2.png
+
+CODE_START#
+START_SNIPPET
+public int largestRectangleArea(int[] height) {
+  if (height == null || height.length == 0) {
+    return 0;
+  }
+ 
+  Stack< Integer> stack = new Stack< Integer>();
+ 
+  int max = 0;
+  int i = 0;
+ 
+  while (i < height.length) {
+    //push index to stack when the current height is larger than the previous one
+    if (stack.isEmpty() || height[i] >= height[stack.peek()]) {
+      stack.push(i);
+      i++;
+    } else {
+    //calculate max value when the current height is less than the previous one
+      int p = stack.pop();
+      int h = height[p];
+      int w = stack.isEmpty() ? i : i - stack.peek() - 1;
+      max = Math.max(h * w, max);
+    }
+ 
+  }
+ 
+  while (!stack.isEmpty()) {
+    int p = stack.pop();
+    int h = height[p];
+    int w = stack.isEmpty() ? i : i - stack.peek() - 1;
+    max = Math.max(h * w, max);
+  }
+ 
+  return max;
+}
+CODE_END#
+
+H3#@68. Another good source of questions
+a#@http://www.programcreek.com/2012/11/top-10-algorithms-for-coding-interview/#@Click here
+
+H3#@69. Median of Two Sorted Arrays (Java)
+
+BOX_START#
+START_BOX_CONTENT
+1) Calculate the medians m1 and m2 of the input arrays ar1[] and ar2[] respectively.
+2) If m1 and m2 both are equal then we are done, and return m1 (or m2)
+3) If m1 is greater than m2, then median is present in one of the below two subarrays.
+  a) From first element of ar1 to m1 (ar1[0...|_n/2_|])
+  b) From m2 to last element of ar2 (ar2[|_n/2_|...n-1])
+4) If m2 is greater than m1, then median is present in one of the below two subarrays.
+  a) From m1 to last element of ar1 (ar1[|_n/2_|...n-1])
+  b) From first element of ar2 to m2 (ar2[0...|_n/2_|])
+5) Repeat the above process until size of both the subarrays becomes 2.
+6) If size of the two arrays is 2 then use below formula to get the median.
+Median = (max(ar1[0], ar2[0]) + min(ar1[1], ar2[1]))/2
+
+BOX_END#
+
+
+
+CODE_START#
+START_SNIPPET
+public static double findMedianSortedArrays(int A[], int B[]) {
+  int m = A.length;
+  int n = B.length;
+ 
+  if ((m + n) % 2 != 0) // odd
+    return (double) findKth(A, B, (m + n) / 2, 0, m - 1, 0, n - 1);
+  else { // even
+    return (findKth(A, B, (m + n) / 2, 0, m - 1, 0, n - 1) 
+      + findKth(A, B, (m + n) / 2 - 1, 0, m - 1, 0, n - 1)) * 0.5;
+  }
+}
+ 
+public static int findKth(int A[], int B[], int k, 
+  int aStart, int aEnd, int bStart, int bEnd) {
+ 
+  int aLen = aEnd - aStart + 1;
+  int bLen = bEnd - bStart + 1;
+ 
+  // Handle special cases
+  if (aLen == 0)
+    return B[bStart + k];
+  if (bLen == 0)
+    return A[aStart + k];
+  if (k == 0)
+    return A[aStart] < B[bStart] ? A[aStart] : B[bStart];
+ 
+  int aMid = aLen * k / (aLen + bLen); // a's middle count
+  int bMid = k - aMid - 1; // b's middle count
+ 
+  // make aMid and bMid to be array index
+  aMid = aMid + aStart;
+  bMid = bMid + bStart;
+ 
+  if (A[aMid] > B[bMid]) {
+    k = k - (bMid - bStart + 1);
+    aEnd = aMid;
+    bStart = bMid + 1;
+  } else {
+    k = k - (aMid - aStart + 1);
+    bEnd = bMid;
+    aStart = aMid + 1;
+  }
+ 
+  return findKth(A, B, k, aStart, aEnd, bStart, bEnd);
+}
+CODE_END#
+
+H3#@70. Combination Sum
+The same repeated number may be chosen from C unlimited number of times.
+[7] 
+[2, 2, 3] 
+
+CODE_START#
+START_SNIPPET
+public ArrayList< ArrayList< Integer>> combinationSum(int[] candidates, int target) {
+    ArrayList< ArrayList< Integer>> result = new ArrayList< ArrayList< Integer>>();
+ 
+    if(candidates == null || candidates.length == 0) return result;
+ 
+    ArrayList< Integer> current = new ArrayList< Integer>();
+    Arrays.sort(candidates);
+ 
+    combinationSum(candidates, target, 0, current, result);
+ 
+    return result;
+}
+ 
+public void combinationSum(int[] candidates, int target, int j, ArrayList< Integer> curr, ArrayList< ArrayList< Integer>> result){
+   if(target == 0){
+       ArrayList< Integer> temp = new ArrayList< Integer>(curr);
+       result.add(temp);
+       return;
+   }
+   int t1 = target;//this is to avoid formatting of this website
+   for(int i=j; i< candidates.length; i++)
+   {   
+        if(t1 < candidates[i]){ 
+            return;
+        }
+ 
+       curr.add(candidates[i]);
+       combinationSum(candidates, t1 - candidates[i], i, curr, result);
+       curr.remove(curr.size()-1); 
+   }
+}
+CODE_END#
+
+H3#@71. find subsequent dictionary words from string
+
+For example, given s = "catsanddog", dict = ["cat", "cats", "and", "sand", "dog"], the solution is ["cats and dog", "cat sand dog"].
+
+img#@http://www.programcreek.com/wp-content/uploads/2014/03/word-break-II-java-298x400.png
+
+1. put all words to the end index
+ie:
+a. Dictionary = Shit, hit
+b. String  = Shit => index[4]=hit,shit (both)
+2. then do reverse traversing to find out path
+
+
+CODE_START#
+START_SNIPPET
+public static List< String> wordBreak(String s, Set< String> dict) {
+    //create an array of ArrayList< String>
+    List< String> dp[] = new ArrayList[s.length()+1];
+    dp[0] = new ArrayList< String>();
+ 
+    for(int i=0; i< s.length(); i++){
+        if( dp[i] == null ) 
+            continue; 
+ 
+        for(String word:dict){
+            int len = word.length();
+            int end = i+len;
+            if(end > s.length()) 
+                continue;
+ 
+            if(s.substring(i,end).equals(word)){
+                if(dp[end] == null){
+                    dp[end] = new ArrayList< String>();
+                }
+                dp[end].add(word);
+            }
+        }
+    }
+ 
+    List< String> result = new LinkedList< String>();
+    if(dp[s.length()] == null) 
+        return result; 
+ 
+    ArrayList< String> temp = new ArrayList< String>();
+    dfs(dp, s.length(), result, temp);
+ 
+    return result;
+}
+ 
+public static void dfs(List< String> dp[],int end,List< String> result, ArrayList< String> tmp){
+    if(end < = 0){
+        String path = tmp.get(tmp.size()-1);
+        for(int i=tmp.size()-2; i>=0; i--){
+            path += " " + tmp.get(i) ;
+        }
+ 
+        result.add(path);
+        return;
+    }
+ 
+    for(String str : dp[end]){
+        tmp.add(str);
+        dfs(dp, end-str.length(), result, tmp);
+        tmp.remove(tmp.size()-1);
+    }
+}
+CODE_END#
+
+H3#@72. Palindrome cut
+
+ given s = "aab", return 1 since the palindrome partitioning ["aa","b"] could be produced using 1 cut.
+
+ ie: abcdcba => cut=0
+ 1. two pointers
+  a. j=> moves right side
+  b. i=> starts from 0 to j
+
+ 2. if s[i]=s[j]
+  a. check [j-1] previous element of right pointer(j) is also palindrome
+  b. previous can be palindrome in two conditions
+   1. when i=j means same element, i=3,j=3 s[3]=s[3]=d => dp[3][3]=true
+  c. now, check s[4]=C
+   1. j=4, when i=2 => s[j=4]=s[i=2]=c
+   2. check previous of C which D is palindrome => dp[(i+1)3][(j-1)3]=true
+   3. so, S[j=4,i=2]=>cdc is palindrome
+  d. always make sure, previous is palindrome then make dp[i][j]=true means palindrome
+
+CODE_START#
+START_SNIPPET
+public int minCut(String s) {
+    int n = s.length();
+ 
+  boolean dp[][] = new boolean[n][n];
+  int cut[] = new int[n];
+ 
+  for (int j = 0; j < n; j++) {
+    cut[j] = j; //set maximum # of cut
+    for (int i = 0; i < = j; i++) {
+      if (s.charAt(i) == s.charAt(j) && (j - i < = 1 || dp[i+1][j-1])) {
+        dp[i][j] = true;
+ 
+        // if need to cut, add 1 to the previous cut[i-1]
+        if (i > 0){
+          cut[j] = Math.min(cut[j], cut[i-1] + 1);
+        }else{
+        // if [0...j] is palindrome, no need to cut    
+          cut[j] = 0; 
+        } 
+      }
+    }
+  }
+ 
+  return cut[n-1];
+}
+CODE_END#
+
+H3#@< = House robber: steal from alternate house
+
+CODE_START#
+START_SNIPPET
+public int rob(int[] num) {
+    if(num==null || num.length==0)
+        return 0;
+ 
+    int n = num.length;
+ 
+    int[] dp = new int[n+1];
+    dp[0]=0;
+    dp[1]=num[0];
+ 
+    for (int i=2; i< n+1; i++){
+       dp[i] = Math.max(dp[i-1], dp[i-2]+num[i-1]);
+    }
+ 
+    return dp[n];
+}
+
+CODE_END#
+
+H3#@74. Jump Game: to reach at last element
+For example: A = [2,3,1,1,4], return true. A = [3,2,1,0,4], return false.
+CODE_START#
+START_SNIPPET
+public boolean canJump(int[] A) {
+    if(A.length < = 1)
+        return true;
+ 
+    int next_destination = A[0]; //max stands for the largest index that can be reached.
+ 
+    for(int i=0; i< A.length; i++){
+        //if not enough to go to next
+        if(next_destination < = i && A[i] == 0) 
+            return false;
+ 
+        //update next_destination    
+        if(i + A[i] > next_destination){
+            next_destination = i + A[i];
+        }
+ 
+        //next_destination is enough to reach the end
+        if(next_destination >= A.length-1) 
+            return true;
+    }
+ 
+    return false;    
+}
+CODE_END#
+
+H3#@75. Valid Parentheses
+"()" => Length is 2
+stack: push "(" then if ")" comes
+1. pop inserted =( if stack is empty after that then Index(")")+1 = 1+1 =2
+")(())" => Length is 4
+stack: push ")"  then push "(" then if ")" comes
+1. pop inserted =( if stack is empty after that then Index(")")+1 = 1+1 =2
+else: (In this case not empty because "(" is peek)
+index(stack.peek())=0
+index(current(")"))=2
+Length 2-0=2
+Same when )()() => 3rd ")" comes:
+length = 4-0 = 4
+
+CODE_START#
+START_SNIPPET
+public static int longestValidParentheses(String s) {
+  Stack< int[]> stack = new Stack< int[]>();
+  int result = 0;
+ 
+  for(int i=0; i< =s.length()-1; i++){
+    char c = s.charAt(i);
+    if(c=='('){
+      int[] a = {i,0};
+      stack.push(a);
+    }else{
+      if(stack.empty()||stack.peek()[1]==1){
+        int[] a = {i,1};
+        stack.push(a);
+      }else{
+        stack.pop();
+        int currentLen=0;
+        if(stack.empty()){
+          currentLen = i+1;
+        }else{
+          currentLen = i-stack.peek()[0];
+        }
+        result = Math.max(result, currentLen);
+      }
+    }
+  }
+ 
+  return result;
+}
+CODE_END#
+
+H3#@76. Implement strStr(), KMP to find subString
+ie: hastack="aaabbbcccddd", needle="abbb" => index=3
+
+CODE_START#
+START_SNIPPET
+public static int strStr(String haystack, String needle) {
+        if(haystack==null || needle==null)    
+            return 0;
+ 
+  int h = haystack.length();
+  int n = needle.length();
+ 
+  if (n > h)
+    return -1;
+  if (n == 0)
+    return 0;
+ 
+  int[] next = getNext(needle);
+  IntStream.of(next).forEach(System.out::println);
+  int i = 0;
+ 
+  while (i < = h - n) {
+    int success = 1;
+    for (int j = 0; j < n; j++) {
+      char haystackCurrentInxex = haystack.charAt(i);
+      char needleFirstChar = needle.charAt(0);
+      char needleCurrentChar = needle.charAt(j);
+      char haystackMatchingChar = haystack.charAt(i + j);
+      if (needleFirstChar != haystackCurrentInxex) {//if first character of needle is not matching with current scanning character of haystack then brean
+        success = 0;
+        i++;
+        break;
+      } else if (needleCurrentChar != haystackMatchingChar) {
+        /**
+         * if subsequent sequence is not matching then break: but then we whatever subsequent match we can utilize that
+         * instead again starting from the haystack.next and needle.first
+         * 
+         * so, check : if we can skip haystack next element? h=aaabbb.. , n=bbcbbc
+         * -> so in h= from bbbbb matched with first n=bb so, next i = i + (j - next[j-1] (previous index of j))
+         */
+        success = 0;
+        i = i + j - next[j - 1];
+        break;
+      }
+    }
+    if (success == 1)
+      return i;
+  }
+ 
+  return -1;
+}
+ 
+//calculate KMP array
+  /**
+   * 
+   * Here, if needle="bbcbbc" => then int[]next = 0,1,0,1,2,3
+   * Now, to do it in O(n)
+   * =>next[] says: how many prefix character match
+   * ie:
+   * next[0] b= 0 match
+   * next[1] b= 1 match "b=b"
+   * next[2] c= 0 match "b!=c" so, make index=0
+   * next[3] b= 1 match from the begining "b=b" so, make index= previous next next[2]+1 =1 => index=1
+   * next[4] b= next[4]=next[index] = "b=b" => so index = previous next next[3]+1=2 => index=2
+   * next[5] c= next[5] = next[index] = c=c => so index = previous next next[4]+1=3
+   * 
+   * @param needle
+   * @return
+   */
+public static int[] getNext(String needle) {
+  int[] next = new int[needle.length()];
+  next[0] = 0;
+ 
+  for (int i = 1; i < needle.length(); i++) {
+    int index = next[i - 1];
+    /**
+     * ie: needle[6]=d which is != needle[index=last matched prefix =next[i-1] = till C=3] needle[3] which is "b"
+     * i think we can ignore below block as well.
+     */
+    while (index > 0 && needle.charAt(index) != needle.charAt(i)) {  
+      index = next[index - 1];
+    }
+ 
+    if (needle.charAt(index) == needle.charAt(i)) {
+      next[i] = next[i - 1] + 1;
+    } else {
+      next[i] = 0;
+    }
+  }
+ 
+  return next;
+}
+
+CODE_END#
+
+H3#@77. Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the row below.
+
+For example, given the following triangle
+
+[
+     [2],
+    [3,4],
+   [6,5,7],
+  [4,1,8,3]
+]
+
+CODE_START#
+START_SNIPPET
+public int minimumTotal(ArrayList< ArrayList< Integer>> triangle) {
+  int[] total = new int[triangle.size()];
+  int l = triangle.size() - 1;
+ 
+  for (int i = 0; i < triangle.get(l).size(); i++) {
+    total[i] = triangle.get(l).get(i);
+  }
+ 
+  // iterate from last second row
+  for (int i = triangle.size() - 2; i >= 0; i--) {
+    for (int j = 0; j < triangle.get(i + 1).size() - 1; j++) {
+      total[j] = triangle.get(i).get(j) + Math.min(total[j], total[j + 1]);
+    }
+  }
+ 
+  return total[0];
+}
+CODE_END#
+
+H3#@78. At most only two duplicates are allowed in sorted array
+For example, given sorted array A = [1,1,1,2,2,3], your function should return length = 5, and A is now [1,1,2,2,3].
+
+1,      1,      1,   2
+(pre-1),prev,  Curr
+        (pre-1),prev,Curr => 1,2,2
+
+if(curr!=prev!=(prev-1)){
+  arr[prev]=arr[curr]
+}
+It means ignore first two element(prev-1,prev) and start assigning current to prev and increment current
+
+CODE_START#
+START_SNIPPET
+public class Solution {
+  public int removeDuplicates(int[] A) {
+    if (A.length < = 2)
+      return A.length;
+ 
+    int prev = 1; // point to previous
+    int curr = 2; // point to current
+ 
+    while (curr < A.length) {
+      if (A[curr] == A[prev] && A[curr] == A[prev - 1]) {
+        curr++;
+      } else {
+        prev++;
+        A[prev] = A[curr];
+        curr++;
+      }
+    }
+ 
+    return prev + 1;
+  }
+}
+CODE_END#
+
+H3#@79. Longest Substring Which Contains 2 Unique Characters
+Given a string, find the longest substring that contains only two unique characters. For example, given "abcbbbbcccbdddadacb", the longest substring that contains 2 unique character is "bcbbbbcccb".
+
+CODE_START#
+START_SNIPPET
+public static String maxSubStringKUniqueChars(String s, int k) {
+  //declare a counter
+  HashMap< Character, Integer> map = new HashMap< Character, Integer>();    
+  int start = 0;
+  int maxLen = 0;
+  String maxSubstring = null;
+ 
+  for (int i = 0; i < s.length(); i++) {
+    //add each char to the counter
+    char c = s.charAt(i);
+    if(map.containsKey(c)){
+      map.put(c, map.get(c)+1);
+    }else{
+      map.put(c, 1);
+    }
+ 
+    if(map.size() == k+1){
+      //get maximum
+      int range = i-start;
+      if(range > maxLen){
+        maxLen = range;
+        maxSubstring = s.substring(start, i);
+      }
+ 
+      //move left cursor toward right, so that substring contains only k chars
+      while(map.size()>k){
+        char first = s.charAt(start);
+        int count = map.get(first);
+        if(count>1){
+          map.put(first,count-1);
+        }else{
+          map.remove(first);
+        }
+        start++;
+      }
+    }
+  }
+ 
+  if (map.size() == k && maxLen == 0) {
+    return s;
+  }
+ 
+  return maxSubstring;
+}
+CODE_END#
+
+H3#@80.  Remove all occarance of specific Element 
+
+CODE_START#
+START_SNIPPET#
+public int removeElement(int[] A, int elem) {
+    int i=0;
+    int j=0;
+ 
+    while(j < A.length){
+        if(A[j] != elem){
+            A[i] = A[j];
+            i++; 
+        }
+ 
+        j++;
+    }
+ 
+    return i;
+}
+CODE_END#
+
+H3#@81. Longest Common Prefix 
+Write a function to find the longest common prefix string amongst an array of strings.
+["raj","raju","rajan"] => raj
+
+CODE_START#
+START_SNIPPET
+public String longestCommonPrefix(String[] strs) {
+    if(strs == null || strs.length == 0)
+        return "";
+ 
+    int minLen=Integer.MAX_VALUE;
+    for(String str: strs){
+        if(minLen > str.length())
+            minLen = str.length();
+    }
+    if(minLen == 0) return "";
+ 
+    for(int j=0; j<minLen; j++){
+        char prev='0';
+        for(int i=0; i<strs.length ;i++){
+            if(i==0) {
+                prev = strs[i].charAt(j);
+                continue;
+            }
+ 
+            if(strs[i].charAt(j) != prev){
+                return strs[i].substring(0, j);
+            }
+        }
+    }
+ 
+    return strs[0].substring(0,minLen);
+}
+CODE_END#
+
+H3#@81. find the longest common prefix string amongst an array of strings.
+
+
+CODE_START#
+START_SNIPPET
+public String longestCommonPrefix(String[] strs) {
+    if(strs == null || strs.length == 0)
+        return "";
+ 
+    int minLen=Integer.MAX_VALUE;
+    for(String str: strs){
+        if(minLen > str.length())
+            minLen = str.length();
+    }
+    if(minLen == 0) return "";
+ 
+    for(int j=0; j< minLen; j++){
+        char prev='0';
+        for(int i=0; i< strs.length ;i++){
+            if(i==0) {
+                prev = strs[i].charAt(j);
+                continue;
+            }
+ 
+            if(strs[i].charAt(j) != prev){
+                return strs[i].substring(0, j);
+            }
+        }
+    }
+ 
+    return strs[0].substring(0,minLen);
+}
+CODE_END#
+
+H3#@82. Largest Number : semantic sorting 
+For example, given [3, 30, 34, 5, 9], the largest formed number is 9534330. (Note: The result may be very large, so you need to return a string instead of an integer.)
+
+CODE_START#
+START_SNIPPET
+public String largestNumber(int[] nums) {
+    String[] strs = new String[nums.length];
+    for(int i=0; i< nums.length; i++){
+        strs[i] = String.valueOf(nums[i]);
+    }
+ 
+    Arrays.sort(strs, new Comparator< String>(){
+        public int compare(String s1, String s2){
+            String leftRight = s1+s2;
+            String rightLeft = s2+s1;
+            return -leftRight.compareTo(rightLeft);
+ 
+        }
+    });
+ 
+    StringBuilder sb = new StringBuilder();
+    for(String s: strs){
+        sb.append(s);
+    }
+ 
+    while(sb.charAt(0)=='0' && sb.length()>1){
+        sb.deleteCharAt(0);
+    }
+ 
+    return sb.toString();
+}
+CODE_END#
+
+H3#@83. Container With Most Water 
+img#@http://www.programcreek.com/wp-content/uploads/2014/03/container-with-most-water-400x161.png
+
+CODE_START#
+START_SNIPPET
+public int maxArea(int[] height) {
+  if (height == null || height.length < 2) {
+    return 0;
+  }
+ 
+  int max = 0;
+  int left = 0;
+  int right = height.length - 1;
+ 
+  while (left < right) {
+    max = Math.max(max, (right - left) * Math.min(height[left], height[right]));
+    if (height[left] < height[right])
+      left++;
+    else
+      right--;
+  }
+ 
+  return max;
+}
+CODE_END#
+
+H3#@84. Candy
+There are N children standing in a line. Each child is assigned a rating value. You are giving candies to these children subjected to the following requirements:
+
+1. Each child must have at least one candy.
+2. Children with a higher rating get more candies than their neighbors.
+
+What is the minimum candies you must give?
+
+This problem can be solved in O(n) time.
+
+We can always assign a neighbor with 1 more if the neighbor has higher a rating value. However, to get the minimum total number, we should always start adding 1s in the ascending order. We can solve this problem by scanning the array from both sides. First, scan the array from left to right, and assign values for all the ascending pairs. Then scan from right to left and assign values to descending pairs.
+
+
+CODE_START#
+START_SNIPPET
+public int candy(int[] ratings) {
+  if (ratings == null || ratings.length == 0) {
+    return 0;
+  }
+ 
+  int[] candies = new int[ratings.length];
+  candies[0] = 1;
+ 
+  //from let to right
+  for (int i = 1; i < ratings.length; i++) {
+    if (ratings[i] > ratings[i - 1]) {
+      candies[i] = candies[i - 1] + 1;
+    } else { 
+      // if not ascending, assign 1
+      candies[i] = 1;
+    }
+  }
+ 
+  int result = candies[ratings.length - 1];
+ 
+  //from right to left
+  for (int i = ratings.length - 2; i >= 0; i--) {
+    int cur = 1;
+    if (ratings[i] > ratings[i + 1]) {
+      cur = candies[i + 1] + 1;
+    }
+ 
+    result += Math.max(cur, candies[i]);
+    candies[i] = cur;
+  }
+ 
+  return result;
+}
+CODE_END#
+
+H3#@85. Prepare range summary
+
+Given a sorted integer array without duplicates, return the summary of its ranges for consecutive numbers.
+
+For example, given [0,1,2,4,5,7], return ["0->2","4->5","7"].
+
+CODE_START#
+START_SNIPPET
+public List< String> summaryRanges(int[] nums) {
+    List< String> result = new ArrayList< String>();
+ 
+    if(nums == null || nums.length==0)
+        return result;
+ 
+    if(nums.length==1){
+        result.add(nums[0]+"");
+    }
+ 
+    int pre = nums[0]; // previous element   
+    int first = pre; // first element of each range
+ 
+    for(int i=1; i< nums.length; i++){
+            if(nums[i]==pre+1){
+                if(i==nums.length-1){
+                    result.add(first+"->"+nums[i]);
+                }
+            }else{
+                if(first == pre){
+                    result.add(first+"");
+                }else{
+                    result.add(first + "->"+pre);   
+                }
+ 
+                if(i==nums.length-1){
+                    result.add(nums[i]+"");
+                }
+ 
+                first = nums[i];
+            }
+ 
+            pre = nums[i];
+    }
+ 
+    return result;
+}
+CODE_END#
+
+H3#@86. Spiral Matrix 
+[
+ [ 1, 2, 3 ],
+ [ 4, 5, 6 ],
+ [ 7, 8, 9 ]
+]
+You should return [1,2,3,6,9,8,7,4,5].
+
+CODE_START#
+START_SNIPPET
+public class Solution {
+    public ArrayList< Integer> spiralOrder(int[][] matrix) {
+        ArrayList< Integer> result = new ArrayList< Integer>();
+ 
+        if(matrix == null || matrix.length == 0) return result;
+ 
+        int m = matrix.length;
+        int n = matrix[0].length;
+ 
+        int x=0; 
+        int y=0;
+ 
+        while(m>0 && n>0){
+ 
+            //if one row/column left, no circle can be formed
+            if(m==1){
+                for(int i=0; i< n; i++){
+                    result.add(matrix[x][y++]);
+                }
+                break;
+            }else if(n==1){
+                for(int i=0; i< m; i++){
+                    result.add(matrix[x++][y]);
+                }
+                break;
+            }
+ 
+            //below, process a circle
+ 
+            //top - move right
+            for(int i=0;i< n-1;i++){
+                result.add(matrix[x][y++]);
+            }
+ 
+            //right - move down
+            for(int i=0;i< m-1;i++){
+                result.add(matrix[x++][y]);
+            }
+ 
+            //bottom - move left
+            for(int i=0;i< n-1;i++){
+                result.add(matrix[x][y--]);
+            }
+ 
+            //left - move up
+            for(int i=0;i< m-1;i++){
+                result.add(matrix[x--][y]);
+            }
+ 
+            x++;
+            y++;
+            m=m-2;
+            n=n-2;
+        }
+ 
+        return result;
+    }
+}
+CODE_END#
+
+H3#@87. Maximum path sum in matrix
+Given a m x n grid filled with non-negative numbers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.
+
+CODE_START#
+START_SNIPPET
+public int minPathSum(int[][] grid) {
+    if(grid == null || grid.length==0)
+        return 0;
+ 
+    int m = grid.length;
+    int n = grid[0].length;
+ 
+    int[][] dp = new int[m][n];
+    dp[0][0] = grid[0][0];    
+ 
+    // initialize top row
+    for(int i=1; i< n; i++){
+        dp[0][i] = dp[0][i-1] + grid[0][i];
+    }
+ 
+    // initialize left column
+    for(int j=1; j< m; j++){
+        dp[j][0] = dp[j-1][0] + grid[j][0];
+    }
+ 
+    // fill up the dp table
+    for(int i=1; i< m; i++){
+        for(int j=1; j< n; j++){
+            if(dp[i-1][j] > dp[i][j-1]){
+                dp[i][j] = dp[i][j-1] + grid[i][j];
+            }else{
+                dp[i][j] = dp[i-1][j] + grid[i][j];
+            }
+        }
+    }
+ 
+    return dp[m-1][n-1];
+}
+CODE_END#
+
+H3#@88. A robot can move only one step down and right: find unique path
+
+CODE_START#
+START_SNIPPET
+public int uniquePaths(int m, int n) {
+    if(m==0 || n==0) return 0;
+    if(m==1 || n==1) return 1;
+ 
+    int[][] dp = new int[m][n];
+ 
+    //left column
+    for(int i=0; i< m; i++){
+        dp[i][0] = 1;
+    }
+ 
+    //top row
+    for(int j=0; j< n; j++){
+        dp[0][j] = 1;
+    }
+ 
+    //fill up the dp table
+    for(int i=1; i< m; i++){
+        for(int j=1; j< n; j++){
+            dp[i][j] = dp[i-1][j] + dp[i][j-1];
+        }
+    }
+ 
+    return dp[m-1][n-1];
+}
+CODE_END#
+
+H3#@89. Unique path with the obstacle
+An obstacle and empty space is marked as 1 and 0 respectively in the grid. For example, there is one obstacle in the middle of a 3x3 grid as illustrated below,
+
+[
+  [0,0,0],
+  [0,1,0],
+  [0,0,0]
+]
+the total number of unique paths is 2.
+
+CODE_START#
+START_SNIPPET
+public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+    if(obstacleGrid==null||obstacleGrid.length==0)
+        return 0;
+ 
+    int m = obstacleGrid.length;
+    int n = obstacleGrid[0].length;
+ 
+    if(obstacleGrid[0][0]==1||obstacleGrid[m-1][n-1]==1) 
+        return 0;
+ 
+ 
+    int[][] dp = new int[m][n];
+    dp[0][0]=1;
+ 
+    //left column
+    for(int i=1; i< m; i++){
+        if(obstacleGrid[i][0]==1){
+            dp[i][0] = 0;
+        }else{
+            dp[i][0] = dp[i-1][0];
+        }
+    }
+ 
+    //top row
+    for(int i=1; i< n; i++){
+        if(obstacleGrid[0][i]==1){
+            dp[0][i] = 0;
+        }else{
+            dp[0][i] = dp[0][i-1];
+        }
+    }
+ 
+    //fill up cells inside
+    for(int i=1; i< m; i++){
+        for(int j=1; j< n; j++){
+            if(obstacleGrid[i][j]==1){
+                dp[i][j]=0;
+            }else{
+                dp[i][j]=dp[i-1][j]+dp[i][j-1];
+            }
+ 
+        }
+    }
+ 
+    return dp[m-1][n-1];
+}
+CODE_END#
+
+H3#@90. Maximal Square Area in matrix
+Given a 2D binary matrix filled with 0's and 1's, find the largest square containing all 1's and return its area.
+
+For example, given the following matrix:
+
+1101
+1101
+1111
+Return 4.
+
+CODE_START#
+START_SNIPPET
+public int maximalSquare(char[][] matrix) {
+  if (matrix == null || matrix.length == 0 || matrix[0].length == 0)
+    return 0;
+ 
+  int m = matrix.length;
+  int n = matrix[0].length;
+ 
+  int[][] t = new int[m][n];
+ 
+  //top row
+  for (int i = 0; i < m; i++) {
+    t[i][0] = Character.getNumericValue(matrix[i][0]);
+  }
+ 
+  //left column
+  for (int j = 0; j < n; j++) {
+    t[0][j] = Character.getNumericValue(matrix[0][j]);
+  }
+ 
+  //cells inside
+  for (int i = 1; i < m; i++) {
+    for (int j = 1; j < n; j++) {
+      if (matrix[i][j] == '1') {
+        int min = Math.min(t[i - 1][j], t[i - 1][j - 1]);
+        min = Math.min(min,t[i][j - 1]);
+        t[i][j] = min + 1;
+      } else {
+        t[i][j] = 0;
+      }
+    }
+  }
+ 
+  int max = 0;
+  //get maximal length
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      if (t[i][j] > max) {
+        max = t[i][j];
+      }
+    }
+  }
+ 
+  return max * max;
+}
+CODE_END#
+
+
+H3#@91. Word Search IN MATRIX
+
+Given a 2D board and a word, find if the word exists in the grid.
+
+The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring. The same letter cell may not be used more than once.
+
+For example, given board =
+
+[
+  ["ABCE"],
+  ["SFCS"],
+  ["ADEE"]
+]
+word = "ABCCED", -> returns true,
+word = "SEE", -> returns true,
+word = "ABCB", -> returns false.
+
+HERE, KEY thing is: to avoid consideration of same element
+        char temp = board[i][j];
+        board[i][j]='#';
+        DO-LOGIC
+        board[i][j]=temp;
+
+CODE_START#
+START_SNIPPET
+    int m = board.length;
+    int n = board[0].length;
+ 
+    boolean result = false;
+    for(int i=0; i< m; i++){
+        for(int j=0; j< n; j++){
+           if(dfs(board,word,i,j,0)){
+               result = true;
+           }
+        }
+    }
+ 
+    return result;
+}
+ 
+public boolean dfs(char[][] board, String word, int i, int j, int k){
+    int m = board.length;
+    int n = board[0].length;
+ 
+    if(i< 0 || j< 0 || i>=m || j>=n){
+        return false;
+    }
+ 
+    if(board[i][j] == word.charAt(k)){
+        char temp = board[i][j];
+        board[i][j]='#';
+        if(k==word.length()-1){
+            return true;
+        }else if(dfs(board, word, i-1, j, k+1)
+        ||dfs(board, word, i+1, j, k+1)
+        ||dfs(board, word, i, j-1, k+1)
+        ||dfs(board, word, i, j+1, k+1)){
+            return true;
+        }
+        board[i][j]=temp;
+    }
+ 
+    return false;
+}
+CODE_END#
+
+H3#@92. Reorder Linked List.
+
+Given a singly linked list L: L0→L1→ ... →Ln-1→Ln,
+reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→...
+
+For example, given {1,2,3,4}, reorder it to {1,4,2,3}. You must do this in-place without altering the nodes' values.
+
+Analysis
+
+This problem is not straightforward, because it requires "in-place" operations. That means we can only change their pointers, not creating a new list.
+
+Java Solution
+
+This problem can be solved by doing the following:
+
+Break list in the middle to two lists (use fast & slow pointers)
+Reverse the order of the second list
+Merge two list back together
+The following code is a complete runnable class with testing.
+
+H3#@93. Remove Duplicates from Sorted List
+
+CODE_START#
+START_SNIPPET
+public class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        if(head == null || head.next == null)
+            return head;
+ 
+        ListNode prev = head;    
+        ListNode p = head.next;
+ 
+        while(p != null){
+            if(p.val == prev.val){
+                prev.next = p.next;
+                p = p.next;
+                //no change prev
+            }else{
+                prev = p;
+                p = p.next; 
+            }
+        }
+ 
+        return head;
+    }
+}
+CODE_END#
+
+H3#@94. Partition List 
+For example, given 1->4->3->2->5->2 and x = 3, return 1->2->2->4->3->5.
+
+CODE_START#
+START_SNIPPET
+public class Solution {
+    public ListNode partition(ListNode head, int x) {
+        if(head == null) return null;
+ 
+        ListNode fakeHead1 = new ListNode(0);
+        ListNode fakeHead2 = new ListNode(0);
+        fakeHead1.next = head;
+ 
+        ListNode p = head;
+        ListNode prev = fakeHead1;
+        ListNode p2 = fakeHead2;
+ 
+        while(p != null){
+            if(p.val < x){
+                p = p.next;
+                prev = prev.next;
+            }else{
+ 
+                p2.next = p;
+                prev.next = p.next;
+ 
+                p = prev.next;
+                p2 = p2.next;
+            } 
+        }
+ 
+        // close the list
+        p2.next = null;
+ 
+        prev.next = fakeHead2.next;
+ 
+        return fakeHead1.next;
+    }
+}
+CODE_END#
+
+H3#@95. Write a program to find the node at which the intersection of two singly linked lists begins.
+
+For example, the following two linked lists:
+
+A:          a1 -> a2
+                    ->
+                      c1 -> c2 -> c3
+                    ->           
+B:     b1 -> b2 -> b3
+begin to intersect at node c1.
+
+First calculate the length of two lists and find the difference. Then start from the longer list at the diff offset, iterate though 2 lists and find the node.
+CODE_START#
+START_SNIPPET
+public class Solution {
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        int len1 = 0;
+        int len2 = 0;
+        ListNode p1=headA, p2=headB;
+        if (p1 == null || p2 == null)
+            return null;
+ 
+        while(p1 != null){
+            len1++;
+            p1 = p1.next;
+        }
+        while(p2 !=null){
+            len2++;
+            p2 = p2.next;
+        }
+ 
+        int diff = 0;
+        p1=headA;
+        p2=headB;
+ 
+        if(len1 > len2){
+            diff = len1-len2;
+            int i=0;
+            while(i< diff){
+                p1 = p1.next;
+                i++;
+            }
+        }else{
+            diff = len2-len1;
+            int i=0;
+            while(i< diff){
+                p2 = p2.next;
+                i++;
+            }
+        }
+ 
+        while(p1 != null && p2 != null){
+            if(p1.val == p2.val){
+                return p1;
+            }else{
+ 
+            }
+            p1 = p1.next;
+            p2 = p2.next;
+        }
+ 
+        return null;
+    }
+}
+CODE_END#
+
+H3#@96. Palindrome linked list.
+1. reverse it in another linked list
+2. start compmaring in O(n) complexity.
+
+H3#@97. Implement a Queue using an Array in Java
+
+CODE_START#
+START_SNIPPET
+public class Queue< E> {
+ 
+  E[] arr;
+  int head = -1;
+  int tail = -1;
+  int size;
+ 
+  public Queue(Class< E> c, int size) {
+    E[] newInstance = (E[]) Array.newInstance(c, size);
+    this.arr = newInstance;
+    this.size = 0;
+  }
+ 
+  boolean push(E e) {
+    if (size == arr.length)
+      return false;
+ 
+    head = (head + 1) % arr.length;
+    arr[head] = e;
+    size++;
+ 
+    if(tail == -1){
+      tail = head;
+    }
+ 
+    return true;
+  }
+ 
+  boolean pop() {
+    if (size == 0) {
+      return false;
+    }
+ 
+    E result = arr[tail];
+    arr[tail] = null;
+    size--;
+    tail = (tail+1)%arr.length;
+ 
+    if (size == 0) {
+      head = -1;
+      tail = -1;
+    }
+ 
+    return true;
+  }
+ 
+  E peek(){
+    if(size==0)
+      return null;
+ 
+    return arr[tail];
+  }
+ 
+  public int size() {
+    return this.size;
+  }
+ 
+  public String toString() {
+    return Arrays.toString(this.arr);
+  }
+ 
+  public static void main(String[] args) {
+    Queue< Integer> q = new Queue< Integer>(Integer.class, 5);
+    q.push(1);
+    q.push(2);
+    q.push(3);
+    q.push(4);
+    q.push(5);
+    q.pop();
+    q.push(6);
+    System.out.println(q);
+  }
+}
+CODE_END#
+
+H3#@98. priority queue
+a#@http://www.programcreek.com/2009/02/using-the-priorityqueue-class-example/#@Click here
+
+H3#@99. Binary Tree Maximum Path Sum 
+       1
+      / \
+     2   3
+     the result is 6.
+
+(1) find left
+(2) find right
+(3) total = root + left + right
+(4) if max< total => max = total
+(5) return total
+
+CODE_START#
+START_SNIPPET
+public int maxPathSum(TreeNode root) {
+  int max[] = new int[1]; 
+  max[0] = Integer.MIN_VALUE;
+  calculateSum(root, max);
+  return max[0];
+}
+ 
+public int calculateSum(TreeNode root, int[] max) {
+  if (root == null)
+    return 0;
+ 
+  int left = calculateSum(root.left, max);
+  int right = calculateSum(root.right, max);
+ 
+  int current = Math.max(root.val, Math.max(root.val + left, root.val + right));
+ 
+  max[0] = Math.max(max[0], Math.max(current, left + root.val + right));
+ 
+  return current;
+}
+CODE_END#
+
+H3#@99. BSTIterator
+
+CODE_START#
+START_SNIPPET
+public class BSTIterator {
+  Stack< TreeNode> stack;
+ 
+  public BSTIterator(TreeNode root) {
+    stack = new Stack< TreeNode>();
+    while (root != null) {
+      stack.push(root);
+      root = root.left;
+    }
+  }
+ 
+  public boolean hasNext() {
+    return !stack.isEmpty();
+  }
+ 
+  public int next() {
+    TreeNode node = stack.pop();
+    int result = node.val;
+    if (node.right != null) {
+      node = node.right;
+      while (node != null) {
+        stack.push(node);
+        node = node.left;
+      }
+    }
+    return result;
+  }
+}
+CODE_END#
+
+H3#@100. Merge K Sorted Arrays in Java
+
+CODE_START#
+START_SNIPPET
+class ArrayContainer implements Comparable< ArrayContainer> {
+  int[] arr;
+  int index;
+ 
+  public ArrayContainer(int[] arr, int index) {
+    this.arr = arr;
+    this.index = index;
+  }
+ 
+  @Override
+  public int compareTo(ArrayContainer o) {
+    if (this.arr[this.index] > o.arr[o.index]) {
+      return 1;
+    } else if (this.arr[this.index] < o.arr[o.index]) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+}
+public class KSortedArray {
+  public static int[] mergeKSortedArray(int[][] arr) {
+    //PriorityQueue is heap in Java 
+    PriorityQueue< ArrayContainer> queue = new PriorityQueue< ArrayContainer>();
+    int total=0;
+ 
+    //add arrays to heap
+    for (int i = 0; i < arr.length; i++) {
+      queue.add(new ArrayContainer(arr[i], 0));
+      total = total + arr[i].length;
+    }
+ 
+    int m=0;
+    int result[] = new int[total];
+ 
+    //while heap is not empty
+    while(!queue.isEmpty()){
+      ArrayContainer ac = queue.poll();
+      result[m++]=ac.arr[ac.index];
+ 
+      if(ac.index < ac.arr.length-1){
+        queue.add(new ArrayContainer(ac.arr, ac.index+1));
+      }
+    }
+ 
+    return result;
+  }
+ 
+  public static void main(String[] args) {
+    int[] arr1 = { 1, 3, 5, 7 };
+    int[] arr2 = { 2, 4, 6, 8 };
+    int[] arr3 = { 0, 9, 10, 11 };
+ 
+    int[] result = mergeKSortedArray(new int[][] { arr1, arr2, arr3 });
+    System.out.println(Arrays.toString(result));
+  }
+}
+
+CODE_END#
+
+H3#@101. Binary Tree Right Side View 
+
+   1            < ---
+ /   \
+2     3         < ---
+ \     
+  5             < ---
+You can see [1, 3, 5].
+
+
+CODE_START#
+START_SNIPPET
+public List< Integer> rightSideView(TreeNode root) {
+    ArrayList< Integer> result = new ArrayList< Integer>();
+ 
+    if(root == null) return result;
+ 
+    LinkedList< TreeNode> queue = new LinkedList< TreeNode>();
+    queue.add(root);
+ 
+    while(queue.size() > 0){
+        //get size here
+        int size = queue.size();
+ 
+        for(int i=0; i< size; i++){
+            TreeNode top = queue.remove();
+ 
+            //the first element in the queue (right-most of the tree)
+            if(i==0){
+                result.add(top.val);
+            }
+            //add right first
+            if(top.right != null){
+                queue.add(top.right);
+            }
+            //add left
+            if(top.left != null){
+                queue.add(top.left);
+            }
+        }
+    }
+ 
+    return result;
+}
+CODE_END#
+
+H3#@102. Divide Two Integers
+
+CODE_START#
+START_SNIPPET
+public int divide(int dividend, int divisor) {  
+   if (dividend == 0 || divisor == 1) return dividend;  
+   if (divisor == -1) return 0-dividend;  
+     
+   long divd = Math.abs((long)dividend), divs = Math.abs((long)divisor);  
+     
+   ArrayList< Long> divisors = new ArrayList< Long>();  
+   while (divs < = divd) {  
+     divisors.add(divs);  
+     divs = divs < < 1;  
+   }  
+     
+   int result = 0, cur = divisors.size() - 1;  
+   while (divd > 0 && cur >= 0) {  
+     while (divd >= divisors.get(cur)) {  
+       divd -= divisors.get(cur);  
+       result += 1 < < cur;  
+     }  
+     --cur;  
+   }  
+     
+   return (dividend>0)^(divisor>0) ? (-result) : result;  
+ }  
+CODE_END#
+
+H3#@103. Sum Root to Leaf Numbers 
+For example,
+
+    1
+   / \
+  2   3
+The root-to-leaf path 1->2 represents the number 12.
+The root-to-leaf path 1->3 represents the number 13.
+Return the sum = 12 + 13 = 25.
+
+CODE_START#
+START_SNIPPET
+public int sumNumbers(TreeNode root) {
+    int result = 0;
+    if(root==null)
+        return result;
+ 
+    ArrayList< ArrayList< TreeNode>> all = new ArrayList< ArrayList< TreeNode>>();
+    ArrayList< TreeNode> l = new ArrayList< TreeNode>();
+    l.add(root);
+    dfs(root, l, all);
+ 
+    for(ArrayList< TreeNode> a: all){
+        StringBuilder sb = new StringBuilder();
+        for(TreeNode n: a){
+            sb.append(String.valueOf(n.val));
+        }
+        int currValue = Integer.valueOf(sb.toString());
+        result = result + currValue;
+    }
+ 
+    return result;
+}
+ 
+public void dfs(TreeNode n, ArrayList< TreeNode> l,  ArrayList< ArrayList< TreeNode>> all){
+    if(n.left==null && n.right==null){
+        ArrayList< TreeNode> t = new ArrayList< TreeNode>();
+        t.addAll(l);
+        all.add(t);
+    }
+ 
+    if(n.left!=null){
+        l.add(n.left);
+        dfs(n.left, l, all);
+        l.remove(l.size()-1);
+    }
+ 
+    if(n.right!=null){
+        l.add(n.right);
+        dfs(n.right, l, all);
+        l.remove(l.size()-1);
+    }
+ 
+}
+CODE_END#
+
+H3#@104. Count Complete Tree Nodes 
+img#@http://www.programcreek.com/wp-content/uploads/2014/06/count-complete-tree-nodes-400x286.jpg
+
+Steps to solve this problem:
+1) get the height of left-most part
+2) get the height of right-most part
+3) when they are equal, the # of nodes = 2^h -1
+4) when they are not equal, recursively get # of nodes from left&right sub-trees
+
+Time complexity is O(h^2).
+
+CODE_START#
+START_SNIPPET
+public int countNodes(TreeNode root) {
+    if(root==null)
+        return 0;
+ 
+    int left = getLeftHeight(root)+1;    
+    int right = getRightHeight(root)+1;
+ 
+    if(left==right){
+        return (2< < (left-1))-1;
+    }else{
+        return countNodes(root.left)+countNodes(root.right)+1;
+    }
+}
+ 
+public int getLeftHeight(TreeNode n){
+    if(n==null) return 0;
+ 
+    int height=0;
+    while(n.left!=null){
+        height++;
+        n = n.left;
+    }
+    return height;
+}
+ 
+public int getRightHeight(TreeNode n){
+    if(n==null) return 0;
+ 
+    int height=0;
+    while(n.right!=null){
+        height++;
+        n = n.right;
+    }
+    return height;
+}
+CODE_END#
+
+H3#@105. Invert Binary Tree 
+CODE_START#
+START_SNIPPET
+public TreeNode invertTree(TreeNode root) {
+    if(root!=null){
+        helper(root);
+    }
+ 
+    return root;    
+}
+ 
+public void helper(TreeNode p){
+ 
+    TreeNode temp = p.left;
+    p.left = p.right;
+    p.right = temp;
+ 
+    if(p.left!=null)
+        helper(p.left);
+ 
+    if(p.right!=null)
+        helper(p.right);
+}
+CODE_END#
+
+H3#@106. Kth Smallest Element in a BST 
+CODE_START#
+START_SNIPPET
+public int kthSmallest(TreeNode root, int k) {
+    Stack< TreeNode> stack = new Stack< TreeNode>();
+ 
+    TreeNode p = root;
+    int result = 0;
+ 
+    while(!stack.isEmpty() || p!=null){
+        if(p!=null){
+            stack.push(p);
+            p = p.left;
+        }else{
+            TreeNode t = stack.pop();
+            k--;
+            if(k==0)
+                result = t.val;
+            p = t.right;
+        }
+    }
+ 
+    return result;
+}
+CODE_END#
+
+H3#@107. Lowest Common Ancestor of a Binary Search Tree 
+CODE_START#
+START_SNIPPET
+public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+    TreeNode m = root;
+ 
+    if(m.val > p.val && m.val < q.val){
+        return m;  
+    }else if(m.val>p.val && m.val > q.val){
+        return lowestCommonAncestor(root.left, p, q);
+    }else if(m.val< p.val && m.val < q.val){
+        return lowestCommonAncestor(root.right, p, q);
+    }
+ 
+    return root;
+}
+CODE_END#
+
+H3#@108. Maximum Gap 
+Given an unsorted array, find the maximum difference between the successive elements in its sorted form.
+
+ie:
+0,50,90,100
+
+put every element into bucket
+interval = length/(max-min)= length/100-0
+it: means min< interval< max
+
+CODE_START#
+START_SNIPPET
+class Bucket{
+    int low;
+    int high;
+    public Bucket(){
+        low = -1;
+        high = -1; 
+    }
+}
+ 
+public int maximumGap(int[] num) {
+    if(num == null || num.length < 2){
+        return 0;
+    }
+ 
+    int max = num[0];
+    int min = num[0];
+    for(int i=1; i< num.length; i++){
+        max = Math.max(max, num[i]);
+        min = Math.min(min, num[i]);
+    }
+ 
+    // initialize an array of buckets
+    Bucket[] buckets = new Bucket[num.length+1]; //project to (0 - n)
+    for(int i=0; i< buckets.length; i++){
+        buckets[i] = new Bucket();
+    }
+ 
+    double interval = (double) num.length / (max - min);
+    //distribute every number to a bucket array
+    for(int i=0; i< num.length; i++){
+        int index = (int) ((num[i] - min) * interval);
+ 
+        if(buckets[index].low == -1){
+            buckets[index].low = num[i];
+            buckets[index].high = num[i];
+        }else{
+            buckets[index].low = Math.min(buckets[index].low, num[i]);
+            buckets[index].high = Math.max(buckets[index].high, num[i]);
+        }
+    }
+ 
+    //scan buckets to find maximum gap
+    int result = 0;
+    int prev = buckets[0].high;
+    for(int i=1; i< buckets.length; i++){
+        if(buckets[i].low != -1){
+            result = Math.max(result, buckets[i].low-prev);
+            prev = buckets[i].high;
+        }
+ 
+    }
+ 
+    return result;
+}
+CODE_END#
+
+H3#@109. Sort Colors : put all same number of elements together
+
+a#@http://www.cs.miami.edu/home/burt/learning/Csc517.101/workbook/countingsort.html#@animation
+
+CODE_START#
+START_SNIPPET
+public void sortColors(int[] nums) {
+    if(nums==null||nums.length< 2){
+        return;
+    }
+ 
+    int[] countArray = new int[3];
+    for(int i=0; i< nums.length; i++){
+        countArray[nums[i]]++;
+    }
+ 
+    int j = 0;
+    int k = 0;
+    while(j< =2){
+        if(countArray[j]!=0){
+            nums[k++]=j;
+            countArray[j] = countArray[j]-1;
+        }else{
+            j++;
+        }
+    }
+}
+CODE_END#
+
+H3#@110. Best time to buy and sell stock
+Instead of keeping track of largest element in the array, we track the maximum profit so far.
+CODE_START#
+START_SNIPPET
+public int maxProfit(int[] prices) {
+    int profit = 0;
+    int minElement = Integer.MAX_VALUE;
+    for(int i=0; i< prices.length; i++){
+       profit = Math.max(profit, prices[i]-minElement);
+       minElement = Math.min(minElement, prices[i]);
+    }
+    return profit;
+}
+CODE_END#
+
+H3#@111. Dungeon Game
+The demons had captured the princess (P) and imprisoned her in the bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid out in a 2D grid. Our valiant knight (K) was initially positioned in the top-left room and must fight his way through the dungeon to rescue the princess.
+The knight has an initial health point represented by a positive integer. If at any point his health point drops to 0 or below, he dies immediately.
+Some of the rooms are guarded by demons, so the knight loses health (negative integers) upon entering these rooms; other rooms are either empty (0’s) or contain magic orbs that increase the knight’s health (positive integers).
+In order to reach the princess as quickly as possible, the knight decides to move only rightward or downward in each step.
+Write a function to determine the knight’s minimum initial health so that he is able to rescue the princess.
+
+CODE_START#
+START_SNIPPET
+public int calculateMinimumHP(int[][] dungeon) {
+  int m = dungeon.length;
+  int n = dungeon[0].length;
+ 
+  //init dp table
+  int[][] h = new int[m][n];
+ 
+  h[m - 1][n - 1] = Math.max(1 - dungeon[m - 1][n - 1], 1);
+ 
+  //init last row
+  for (int i = m - 2; i >= 0; i--) {
+    h[i][n - 1] = Math.max(h[i + 1][n - 1] - dungeon[i][n - 1], 1);
+  }
+ 
+  //init last column
+  for (int j = n - 2; j >= 0; j--) {
+    h[m - 1][j] = Math.max(h[m - 1][j + 1] - dungeon[m - 1][j], 1);
+  }
+ 
+  //calculate dp table
+  for (int i = m - 2; i >= 0; i--) {
+    for (int j = n - 2; j >= 0; j--) {
+      int down = Math.max(h[i + 1][j] - dungeon[i][j], 1);
+      int right = Math.max(h[i][j + 1] - dungeon[i][j], 1);
+      h[i][j] = Math.min(right, down);
+    }
+  }
+ 
+  return h[0][0];
+}
+CODE_END#
+
+H3#@112. Repeated DNA Sequences 
+For example, given s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT", return: ["AAAAACCCCC", "CCCCCAAAAA"].
+
+The key to solve this problem is that each of the 4 nucleotides can be stored in 2 bits. So the 10-letter-long sequence can be converted to 20-bits-long integer. The following is a Java solution. You may use an example to manually execute the program and see how it works.
+
+CODE_START#
+START_SNIPPET
+public List< String> findRepeatedDnaSequences(String s) {
+  List< String> result = new ArrayList< String>();
+ 
+  int len = s.length();
+  if (len < 10) {
+    return result;
+  }
+ 
+  Map< Character, Integer> map = new HashMap< Character, Integer>();
+  map.put('A', 0);
+  map.put('C', 1);
+  map.put('G', 2);
+  map.put('T', 3);
+ 
+  Set< Integer> temp = new HashSet< Integer>();
+  Set< Integer> added = new HashSet< Integer>();
+ 
+  int hash = 0;
+  for (int i = 0; i < len; i++) {
+    if (i < 9) {
+      //each ACGT fit 2 bits, so left shift 2
+      hash = (hash < < 2) + map.get(s.charAt(i)); 
+    } else {
+      hash = (hash < < 2) + map.get(s.charAt(i));
+      //make length of hash to be 20
+      hash = hash &  (1 < < 20) - 1; 
+ 
+      if (temp.contains(hash) && !added.contains(hash)) {
+        result.add(s.substring(i - 9, i + 1));
+        added.add(hash); //track added
+      } else {
+        temp.add(hash);
+      }
+    }
+ 
+  }
+ 
+  return result;
+}
+CODE_END#
+
+H3#@113. Bitwise AND of Numbers Range 
+Given a range [m, n] where 0 < = m < = n < = 2147483647, return the bitwise AND of all numbers in this range, inclusive. For example, given the range [5, 7], you should return 4.
+
+The key to solve this problem is bitwise AND consecutive numbers. You can use the following example to walk through the code.
+
+    8  4  2  1
+---------------
+5 | 0  1  0  1
+6 | 0  1  1  0
+7 | 0  1  1  1
+
+When you do : n & (n-1) => It will remove least significant 1
+ie:
+X=7&6 = 0110 =6
+Y=6&5 = 0100 = 4
+
+
+CODE_START#
+START_SNIPPET
+public int rangeBitwiseAnd(int m, int n) {
+     while (n > m) {
+          n = n & n - 1;
+     }
+     return m & n;
+}
+CODE_END#
+
+H3#@114. Palindrome Number (No extra space)
+
+CODE_START#
+START_SNIPPET
+public class Solution {
+    public boolean isPalindrome(int x) {
+        //negative numbers are not palindrome
+    if (x < 0)
+      return false;
+ 
+    // initialize how many zeros
+    int div = 1;
+    while (x / div >= 10) {
+      div *= 10;
+    }
+ 
+    while (x != 0) {
+      int left = x / div;
+      int right = x % 10;
+ 
+      if (left != right)
+        return false;
+ 
+      x = (x % div) / 10;
+      div /= 100;
+    }
+ 
+    return true;
+    }
+}
+CODE_END#
+
+H3#@115. Fraction to Recurring Decimal 
+Given two integers representing the numerator and denominator of a fraction, return the fraction in string format.
+
+If the fractional part is repeating, enclose the repeating part in parentheses.
+
+For example,
+
+Given numerator = 1, denominator = 2, return "0.5".
+Given numerator = 2, denominator = 1, return "2".
+Given numerator = 2, denominator = 3, return "0.(6)".
+
+CODE_START#
+START_SNIPPET
+public String fractionToDecimal(int numerator, int denominator) {
+  if (numerator == 0)
+    return "0";
+  if (denominator == 0)
+    return "";
+ 
+  String result = "";
+ 
+  // is result is negative
+  if ((numerator < 0) ^ (denominator < 0)) {
+    result += "-";
+  }
+ 
+  // convert int to long
+  long num = numerator, den = denominator;
+  num = Math.abs(num);
+  den = Math.abs(den);
+ 
+  // quotient 
+  long res = num / den;
+  result += String.valueOf(res);
+ 
+  // if remainder is 0, return result
+  long remainder = (num % den) * 10;
+  if (remainder == 0)
+    return result;
+ 
+  // right-hand side of decimal point
+  HashMap< Long, Integer> map = new HashMap< Long, Integer>();
+  result += ".";
+  while (remainder != 0) {
+    // if digits repeat
+    if (map.containsKey(remainder)) {
+      int beg = map.get(remainder); 
+      String part1 = result.substring(0, beg);
+      String part2 = result.substring(beg, result.length());
+      result = part1 + "(" + part2 + ")";
+      return result;
+    }
+ 
+    // continue
+    map.put(remainder, result.length());
+    res = remainder / den;
+    result += String.valueOf(res);
+    remainder = (remainder % den) * 10;
+  }
+ 
+  return result;
+}
+CODE_END#
+
+H3#@116. Count Primes 
+CODE_START#
+START_SNIPPET
+public int countPrimes(int n) {
+  if (n < = 2)
+    return 0;
+ 
+  // init an array to track prime numbers
+  boolean[] primes = new boolean[n];
+  for (int i = 2; i < n; i++)
+    primes[i] = true;
+ 
+  for (int i = 2; i < = Math.sqrt(n - 1); i++) {
+  // or for (int i = 2; i < = n-1; i++) {
+    if (primes[i]) {
+      for (int j = i + i; j < n; j += i)
+        primes[j] = false;
+    }
+  }
+ 
+  int count = 0;
+  for (int i = 2; i < n; i++) {
+    if (primes[i])
+      count++;
+  }
+ 
+  return count;
+}
+CODE_END#
+
+H3#@117. Divide Two Integers 
+Divide two integers without using multiplication, division and mod operator. If it is overflow, return MAX_INT.
+
+ie: 15/3 = 5
+d=15,
+di-3
+(di< < shift)=>3(left shift)->6(left shift)->12(left shift)= 3 times shift
+result+=1< < (3-1)=> 1< < 2 =>4
+now,
+d=15-12=3
+Same like above: now, shift=1
+result+=1< < (1-1)=1 => 4+1=5
+CODE_START#
+START_SNIPPET
+public int divide(int dividend, int divisor) {
+    //handle special cases
+    if(divisor==0) return Integer.MAX_VALUE;
+    if(divisor==-1 && dividend == Integer.MIN_VALUE)
+        return Integer.MAX_VALUE;
+ 
+    //get positive values
+    long pDividend = Math.abs((long)dividend);
+    long pDivisor = Math.abs((long)divisor);
+ 
+    int result = 0;
+    while(pDividend>=pDivisor){
+        //calculate number of left shifts
+        int numShift = 0;    
+        while(pDividend>=(pDivisor< < numShift)){
+            numShift++;
+        }
+ 
+        //dividend minus the largest shifted divisor
+        result += 1< < (numShift-1);
+        pDividend -= (pDivisor< < (numShift-1));
+    }
+ 
+    if((dividend>0 && divisor>0) || (dividend< 0 && divisor< 0)){
+        return result;
+    }else{
+        return -result;
+    }
+}
+CODE_END#
+
+H3#118. Multiplication in array except self
+CODE_START#
+START_SNIPPET
+public int[] productExceptSelf(int[] nums) {
+    int[] result = new int[nums.length];
+    result[result.length-1] = 1;
+ 
+    for(int i=nums.length-2; i>=0; i--) {
+        result[i] = result[i+1] * nums[i+1];
+    }
+ 
+    int left = 1;
+    for(int i=0; i< nums.length; i++) {
+        result[i] *= left;
+        left *= nums[i];
+    }
+ 
+    return result;
+}
+CODE_END#
+
+H3#@119. Twitter Codility Problem – Max Binary Gap
+For example, 9's binary form is 1001, the gap is 2.
+CODE_START#
+START_SNIPPET
+public class Solution {
+  public static int solution(int N) {
+    int max = 0;
+    int count = -1;
+    int r = 0;
+ 
+    while (N > 0) {
+      // get right most bit & shift right
+      r = N & 1;
+      N = N >> 1;
+ 
+      if (0 == r && count >= 0) {
+        count++;
+      }
+ 
+      if (1 == r) {
+        max = count > max ? count : max;
+        count = 0;
+      }
+    }
+ 
+    return max;
+  }
+ 
+  public static void main(String[] args) {
+    System.out.println(solution(9));
+  }
+}
+CODE_END#
+
+H3#@120. Reverse Bits 
+CODE_START#
+START_SNIPPET
+public int reverseBits(int n) {
+  for (int i = 0; i < 16; i++) {
+    n = swapBits(n, i, 32 - i - 1);
+  }
+ 
+  return n;
+}
+ 
+public int swapBits(int n, int i, int j) {
+  int a = (n >> i) & 1;
+  int b = (n >> j) & 1;
+ 
+  if ((a ^ b) != 0) {
+    return n ^= (1 < < i) | (1 < < j);
+  }
+ 
+  return n;
+}
+CODE_END#
+
+H3#@121.  s
