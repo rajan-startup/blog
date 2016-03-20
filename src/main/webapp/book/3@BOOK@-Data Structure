@@ -2959,10 +2959,12 @@ public static bool Find(Node node, string key)
 }
 CODE_END#
 
-H3#72. Volatile vs Atomic
+H3#@72. Volatile vs Atomic
 Volatile and Atomic are two different concepts. Volatile ensures, that a certain, expected (memory) state is true across 
 different threads, while Atomics ensure that operation on variables are performed atomically.
 
+BOX_START#
+START_BOX_CONTENT
 - If the variable is not volatile and atomic. and if two threads reads at same time then they will take same value in 
 entire thread. if one thread changes it
 then second thread will not aware about it.
@@ -2971,10 +2973,13 @@ then second thread will not aware about it.
 Take the following example:
 
 i = i + 1;
+BOX_END#
+
 No matter how you define i, a different Thread reading the value just when the above line is executed might get i, 
 or i + 1, because the operation is not atomically. If the other thread sets i to a different value, in worst case 
 i could be set back to whatever it was before by thread A, because it was just in the middle of calculating i + 1 based 
 on the old value, and then set i again to that old value + 1. Explanation:
+
 
 - volatile = visibility is useful when you just have to do assignment of attribute. so, other thread can refreshed value. 
 But if you want to modify value by non-atomic operation (ie: sum)
@@ -2986,3 +2991,9 @@ V on which to operate, the expected old value A, and the new value B. CAS atomic
 if the value in V matches the expected old value A; otherwise it does nothing. In either case, it returns the value currently in V.
 This is used by JVM in AtomicInteger, AtomicReference and they call the function as compareAndSet() if this functionality is not 
 supported by underlying processor then JVM implements it by spin lock.
+
+H3#@73. Java Questions:
+a#@http://www.javatpoint.com/multithreading-in-java#@Java interview questions
+
+H3#@74. Database Questions:
+a#@http://www.programmerinterview.com/index.php/database-sql/introduction/#@Database Questions
