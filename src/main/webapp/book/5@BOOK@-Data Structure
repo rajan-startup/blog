@@ -4973,3 +4973,58 @@ public class KthSmallestElement {
 	}
 }
 CODE_END#
+
+H3#@122. Lamda
+
+CODE_START#
+START_SNIPPET
+
+
+	public static void main(String[] args){
+		
+		List<Integer> list = Arrays.asList(1,2,10,15,20,18,24);
+		
+		list.stream().filter(i -> {return i%2==0;}).
+		map(i -> {return "raj"+i;}).
+		collect(Collectors.toList()).
+		forEach(System.out::println);
+		
+		System.out.println("********************************");
+		
+		Set<String> set = new HashSet<String>();
+		set.add("raj");
+		set.add("raju");
+		set.add("rajan");
+		set.stream().filter(s ->{return s.length()%2==1;}).
+			collect(Collectors.toList()).
+				forEach(System.out::println);
+		
+		System.out.println("********************************");
+		
+		Map<String,Integer> map = new HashMap<String,Integer>();
+		map.put("1", 1);
+		map.put("2", 2);
+		map.put("3", 3);
+		map.entrySet().stream().filter(e -> {return e.getValue()%2==0;}).
+			map(e -> {return e.getKey();}).collect(Collectors.toList()).
+				forEach(System.out::println);
+		
+		System.out.println("********************************");
+		
+	}
+	
+
+
+raj2
+raj10
+raj20
+raj18
+raj24
+********************************
+raj
+rajan
+********************************
+2
+********************************
+
+CODE_END#
