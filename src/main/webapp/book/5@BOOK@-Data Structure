@@ -5014,17 +5014,125 @@ START_SNIPPET
 	}
 	
 
+	private static void charSort() {
+		String str = "431";
+		List<Character> chars = str.chars().mapToObj(c -> (char)c).collect(Collectors.toList());
+		Collections.sort(chars);
+		chars.stream().forEach(System.out::print);
+	}
+	//output: 134
 
 raj2
 raj10
 raj20
 raj18
 raj24
-********************************
+------------------------
 raj
 rajan
-********************************
+------------------------
 2
-********************************
+------------------------
+
+CODE_END#
+
+
+H3#@123. Scheduler
+
+CODE_START#
+START_SNIPPET
+package com.test.test;
+
+import static com.google.common.util.concurrent.Futures.allAsList;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
+import static com.google.common.util.concurrent.Futures.transform;
+
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.google.common.util.concurrent.AsyncFunction;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
+
+
+public class GuavaTest {
+	
+	private static final ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newCachedThreadPool());
+	
+	public static void main(String[] args){
+		
+		/**
+		 * 1. It fetches bucket(N=33) async : gets N ListenableFuture
+		 * 2. For each bucket fetch M(M=100) records async: gets M ListenableFuture
+		 * 3. Process each M record and gets result in form of true/false
+		 * 4
+		 */
+		processBucket();
+		
+	}
+
+
+	private static void processBucket() {
+		long start = Calendar.getInstance().getTimeInMillis();
+		//(1) Get record into listenable future
+		List<ListenableFuture<StringBuilder>> buckets = findBucket(Arrays.asList(1,2,3));
+		ListenableFuture<List<StringBuilder>> bucketResult = allAsList(buckets);
+		ListenableFuture<List<List<Pair<String, Boolean>>>> elementResult = transform(bucketResult, (AsyncFunction<List<StringBuilder>, List<List<Pair<String, Boolean>>>>) bucks -> {
+			return allAsList(bucks.parallelStream().map(b ->{
+				List<ListenableFuture<StringBuilder>> elList = findElements(b, IntStream.range(0, 100).boxed().collect(Collectors.toList()));
+				ListenableFuture<List<StringBuilder>> el = allAsList(elList);
+				return transform(el, (AsyncFunction<List<StringBuilder>, List<Pair<String, Boolean>>>) eList -> {
+					List<Pair<String, Boolean>> evenSucccess = eList.parallelStream().map(e ->{
+						String[] tokens = e.toString().split("-");
+						return new ImmutablePair(e.toString(), Integer.parseInt(tokens[tokens.length-1])%2 == 0);
+					}).collect(Collectors.toList());
+					return immediateFuture(evenSucccess);
+				});
+			}).collect(Collectors.toList()));
+        });
+		try {
+			List<Pair<String, Boolean>> resultList = elementResult.get().stream().flatMap(l -> l.stream()).collect(Collectors.toList());
+			final AtomicInteger count = new AtomicInteger(0);
+			resultList.stream().forEach(r -> {System.out.println((count.getAndIncrement())+", "+r.getLeft()+", "+r.getRight());});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		long end = Calendar.getInstance().getTimeInMillis();
+		System.out.println("total time : "+((end-start)));
+	}
+
+
+	private static List<ListenableFuture<StringBuilder>> findElements(StringBuilder str, List<Integer> elements) {
+		
+		return elements.stream().map(e -> {
+			StringBuilder name = new StringBuilder(str);
+			return executorService.submit(() -> {
+				try{Thread.sleep(1000);}catch(Exception ex){ex.printStackTrace();}
+				name.append("-"+e);
+			}, name);
+		}).collect(Collectors.toList());
+	}
+
+
+	private static List<ListenableFuture<StringBuilder>> findBucket(List<Integer> list) {
+		 return list.stream().map(l ->  {
+			StringBuilder str = new StringBuilder("Bucket");
+			return executorService.submit(() -> {
+				try{Thread.sleep(1000);}catch(Exception e){e.printStackTrace();}
+				str.append("_"+l);
+			}, str);
+		}).collect(Collectors.toList());
+	}
+
+}
 
 CODE_END#
