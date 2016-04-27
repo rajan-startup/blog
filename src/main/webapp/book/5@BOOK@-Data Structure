@@ -5240,3 +5240,23 @@ public class TaskExecutor {
 }
 
 CODE_END#
+
+H3#@124. Power of lambda
+
+CODE_START#
+START_SNIPPET
+
+testCallable(() -> print());
+
+public static String print(){
+    	String str = "I am callable";
+    	System.out.println(str);
+    	return str;
+ }
+public static void testCallable(Callable<String> c){
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(100, 100, 100, TimeUnit.SECONDS, 
+ 				new SynchronousQueue<>(), (r) -> new Thread(r, "IngestionProcessor"), new ThreadPoolExecutor.CallerRunsPolicy());
+ executor.submit(c);
+}
+
+CODE_END#
