@@ -5135,4 +5135,108 @@ public class GuavaTest {
 
 }
 
+
+public enum IngestionProcessor {
+	
+	INSTNACE;
+	
+	public final ThreadPoolExecutor executor;
+	
+	private IngestionProcessor(){
+		executor = new ThreadPoolExecutor(100, 100, 100, TimeUnit.SECONDS, 
+				new SynchronousQueue<>(), (r) -> new Thread(r, "IngestionProcessor"), new CallerRunsPolicy());
+		executor.prestartAllCoreThreads();
+	}
+}
+
+CODE_END#
+
+
+H3#@124. Task Executor
+
+CODE_START#
+START_SNIPPET
+package executor;
+
+
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningScheduledExecutorService;
+
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+
+import static com.google.common.util.concurrent.Futures.*;
+import static com.google.common.util.concurrent.MoreExecutors.listeningDecorator;
+import static java.lang.Integer.getInteger;
+import static java.lang.Runtime.getRuntime;
+
+
+public class TaskExecutor {
+
+    private final Set<Class<?>> retryableExceptions;
+
+    public TaskExecutor(Set<Class<?>> retryableExceptions) {
+        this.retryableExceptions = retryableExceptions;
+    }
+
+    public <R> ListenableFuture<R> async(Callable<ListenableFuture<R>> task, String taskId, int maxRetries, int delay, int backoffMultiplier, TimeUnit timeUnit) {
+        return async(() -> task, taskId, maxRetries, delay, backoffMultiplier, timeUnit);
+    }
+
+    public <R> ListenableFuture<R> async(Supplier<Callable<ListenableFuture<R>>> task, String taskId, int maxRetries, int delay, int backoffMultiplier, TimeUnit timeUnit) {
+        return async(task, taskId, 0, maxRetries, delay, backoffMultiplier, timeUnit);
+    }
+
+    private <R> ListenableFuture<R> async(Supplier<Callable<ListenableFuture<R>>> task, String taskId, int retryCount, int maxRetries,
+                                          int delay, int backoffMultiplier, TimeUnit timeUnit) {
+        try {
+            return withFallback(task.get().call(), t -> mayBeRetry(task, taskId, retryCount, maxRetries, delay, backoffMultiplier, timeUnit, t));
+        } catch (Throwable t) {
+            return mayBeRetry(task, taskId, retryCount, maxRetries, delay, backoffMultiplier, timeUnit, t);
+        }
+    }
+
+
+    private <R> ListenableFuture<R> mayBeRetry(Supplier<Callable<ListenableFuture<R>>> task, String taskId, int retryCount, int maxRetries,
+                                               int delay, int backoffMultiplier, TimeUnit timeUnit, Throwable t) {
+        final Throwable cause = getRootCause(t);
+        if (shouldRetry(cause)) {
+            if (retryCount < maxRetries) {
+                return dereference(RETRY_POOL.schedule(() -> {
+                    return async(task, taskId, retryCount + 1, maxRetries, backoffMultiplier * delay, backoffMultiplier, timeUnit);
+                }, delay, timeUnit));
+            } else {
+                return immediateFailedFuture(cause);
+            }
+        } else {
+            return immediateFailedFuture(cause);
+        }
+    }
+
+    private boolean shouldRetry(Throwable cause) {
+        return cause != null && retryableExceptions.stream().anyMatch(t -> t.isAssignableFrom(cause.getClass()));
+    }
+
+    private static final AtomicInteger serial = new AtomicInteger();
+    private static final ListeningScheduledExecutorService RETRY_POOL = listeningDecorator(
+            new ScheduledThreadPoolExecutor(
+                    getInteger("dao.retry.thread.count", getRuntime().availableProcessors()),
+                    (r) -> new Thread(r, "DataManager-Retry-Worker#" + serial.getAndIncrement()), new CallerRunsPolicy()));
+
+    public static Throwable getRootCause(Throwable t) {
+		if (t == null) {
+			return null;
+		}
+		Throwable cause = t.getCause();
+		return (cause == null ? t : getRootCause(cause));
+	}
+    
+
+}
+
 CODE_END#
